@@ -1,0 +1,25 @@
+.profile {
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding-bottom: 140px;
+  box-sizing: border-box;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 32px;
+    padding-top: calc(env(safe-area-inset-top) + 60px) !important;
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  }
+
+  &__title {
+    font-size: 38px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  &__body {
+    padding-top: 24px;
+  }
+}

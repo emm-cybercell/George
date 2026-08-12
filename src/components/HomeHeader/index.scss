@@ -1,0 +1,24 @@
+.home-header {
+  display: flex;
+  align-items: center;
+  padding: 24px 32px;
+  padding-top: calc(env(safe-area-inset-top) + 60px) !important;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+
+  &__brand {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__logo {
+    font-size: 40px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  &__slogan {
+    margin-top: 8px;
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.85);
+  }
+}

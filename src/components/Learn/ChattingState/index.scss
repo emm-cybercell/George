@@ -1,0 +1,46 @@
+.chatting-state {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__avatar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  &__list {
+    flex: 1;
+    padding-top: 116px;
+    box-sizing: border-box;
+  }
+
+  &__bubble {
+    max-width: 80%;
+    margin-bottom: 20px;
+    padding: 20px 24px;
+    font-size: 26px;
+    line-height: 1.6;
+    border-radius: 20px;
+
+    &--user {
+      margin-left: auto;
+      color: #fff;
+      background: #8b5cf6;
+      border-bottom-right-radius: 6px;
+    }
+
+    &--assistant {
+      margin-right: auto;
+      color: #1f2430;
+      background: #fff;
+      border-bottom-left-radius: 6px;
+    }
+  }
+}

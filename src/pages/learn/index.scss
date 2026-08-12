@@ -1,0 +1,35 @@
+.learn {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f8f9fa;
+  padding-bottom: 120px;
+  box-sizing: border-box;
+
+  &__header {
+    padding: 24px 32px;
+    padding-top: calc(env(safe-area-inset-top) + 60px) !important;
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  }
+
+  &__title {
+    font-size: 38px;
+    font-weight: 700;
+    color: #fff;
+    display: block;
+  }
+
+  &__subtitle {
+    margin-top: 8px;
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.85);
+    display: block;
+  }
+
+  &__body {
+    flex: 1;
+    overflow: hidden;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+}

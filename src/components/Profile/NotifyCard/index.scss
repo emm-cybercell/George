@@ -1,0 +1,50 @@
+.notify-card {
+  display: flex;
+  align-items: center;
+  margin: 0 24px 24px;
+  padding: 26px 28px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+
+  &__icon {
+    font-size: 40px;
+  }
+
+  &__text {
+    flex: 1;
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__label {
+    font-size: 28px;
+    color: #1f2430;
+  }
+
+  &__sub {
+    margin-top: 4px;
+    font-size: 22px;
+    color: #9ca3af;
+  }
+
+  &__badge {
+    min-width: 36px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    padding: 0 10px;
+    margin-right: 12px;
+    font-size: 22px;
+    color: #fff;
+    background: #f43f5e;
+    border-radius: 999px;
+    box-sizing: border-box;
+  }
+
+  &__arrow {
+    font-size: 40px;
+    color: #c0c4cc;
+  }
+}

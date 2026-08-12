@@ -1,0 +1,16 @@
+.prompt-pill {
+  display: inline-flex;
+  padding: 14px 24px;
+  margin: 0 12px 12px 0;
+  font-size: 24px;
+  color: #8b5cf6;
+  background: #ffffff;
+  border: 1px solid #ddd2ff;
+  border-radius: 999px;
+  transition: transform 0.1s ease;
+
+  &:active {
+    transform: scale(0.96);
+    background: #f3eeff;
+  }
+}

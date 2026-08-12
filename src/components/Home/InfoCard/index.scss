@@ -1,0 +1,53 @@
+.info-card {
+  display: flex;
+  flex-direction: column;
+  margin: 0 24px 24px;
+  padding: 28px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+
+  &__badge {
+    align-self: flex-start;
+    padding: 6px 16px;
+    font-size: 22px;
+    color: #8b5cf6;
+    background: #f3eeff;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+
+  &__feature-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2430;
+    margin-bottom: 12px;
+  }
+
+  &__desc {
+    font-size: 26px;
+    line-height: 1.6;
+    color: #6b7280;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  &__tag {
+    padding: 8px 16px;
+    margin-right: 12px;
+    margin-bottom: 12px;
+    font-size: 22px;
+    color: #4b5563;
+    background: #f3f4f6;
+    border-radius: 999px;
+  }
+}

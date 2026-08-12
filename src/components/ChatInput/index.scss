@@ -1,0 +1,41 @@
+.chat-input {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: calc(env(safe-area-inset-bottom) + 88px);
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: transparent;
+  z-index: 200;
+
+  &__field {
+    flex: 1;
+    height: 64px;
+    padding: 0 24px;
+    font-size: 26px;
+    background: #f5f5f7;
+    border-radius: 999px;
+  }
+
+  &__mic {
+    margin-left: 12px;
+    font-size: 40px;
+    z-index: 201;
+  }
+
+  &__send {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin-left: 12px;
+    font-size: 28px;
+    color: #fff;
+    background: #8b5cf6;
+    border-radius: 50%;
+    z-index: 201;
+    cursor: pointer;
+  }
+}

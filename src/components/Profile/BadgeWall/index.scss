@@ -1,0 +1,52 @@
+.badge-wall {
+  margin: 0 24px 24px;
+
+  &__title {
+    display: block;
+    font-size: 30px;
+    font-weight: 700;
+    color: #1f2430;
+    margin: 8px 0 16px;
+  }
+
+  &__list {
+    white-space: nowrap;
+  }
+
+  &__item {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 180px;
+    height: 180px;
+    margin-right: 20px;
+    border-radius: 16px;
+
+    &--purple {
+      background: #f3eeff;
+      color: #8b5cf6;
+    }
+
+    &--green {
+      background: #e8fbe8;
+      color: #22c55e;
+    }
+
+    &--locked {
+      background: #f9fafb;
+      color: #9ca3af;
+      border: 2px dashed #d1d5db;
+    }
+  }
+
+  &__icon {
+    font-size: 56px;
+  }
+
+  &__label {
+    margin-top: 12px;
+    font-size: 24px;
+    font-weight: 600;
+  }
+}

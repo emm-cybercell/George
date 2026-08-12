@@ -1,0 +1,127 @@
+.home {
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding-bottom: 140px;
+  box-sizing: border-box;
+
+  &__desc {
+    font-size: 26px;
+    line-height: 1.6;
+    color: #6b7280;
+  }
+
+  &__section-title {
+    display: block;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2430;
+    margin: 8px 24px 20px;
+  }
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 24px;
+  padding: 40px 32px;
+  padding-top: calc(env(safe-area-inset-top) + 60px) !important;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  &__title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  &__subtitle {
+    margin-top: 12px;
+    font-size: 26px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  &__btn {
+    margin-top: 24px;
+    align-self: flex-start;
+    padding: 16px 28px;
+    font-size: 26px;
+    color: #fff;
+    background: #22c55e;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+
+  &__mascot {
+    font-size: 120px;
+    margin-left: 16px;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  margin: 0 24px 24px;
+  padding: 28px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+
+  &__badge {
+    align-self: flex-start;
+    padding: 6px 16px;
+    font-size: 22px;
+    color: #8b5cf6;
+    background: #f3eeff;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+
+  &__feature-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2430;
+    margin-bottom: 12px;
+  }
+
+  &__desc {
+    font-size: 26px;
+    line-height: 1.6;
+    color: #6b7280;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+}
+
+.tag {
+  padding: 8px 16px;
+  margin-right: 12px;
+  margin-bottom: 12px;
+  font-size: 22px;
+  color: #4b5563;
+  background: #f3f4f6;
+  border-radius: 999px;
+}
+
+.section-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1f2430;
+  margin: 8px 24px 20px;
+}

@@ -1,0 +1,45 @@
+.menu-list {
+  margin: 0 24px 24px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    padding: 26px 28px;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__icon {
+    font-size: 40px;
+  }
+
+  &__text {
+    flex: 1;
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__label {
+    font-size: 28px;
+    color: #1f2430;
+  }
+
+  &__sub {
+    margin-top: 4px;
+    font-size: 22px;
+    color: #9ca3af;
+  }
+
+  &__arrow {
+    font-size: 40px;
+    color: #c0c4cc;
+  }
+}

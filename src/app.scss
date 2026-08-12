@@ -1,0 +1,21 @@
+// NutUI 组件样式通过 babel-plugin-import 按需引入（见 babel.config.js）
+// 这里只定义全局主题 Token 与基础样式
+
+// ===== 桥智同学全局主题 Token (对齐 docs/PRD_MVP.md) =====
+page {
+  // 主品牌紫
+  --color-primary: #8b5cf6;
+  --color-primary-dark: #7c3aed;
+  // 科技绿（选中高亮、成功）
+  --color-accent: #76c843;
+  --color-accent-strong: #22c55e;
+  // 页面背景 / 卡片
+  --color-bg: #f8f9fa;
+  --color-card: #ffffff;
+  --radius-card: 16px;
+
+  background-color: var(--color-bg);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+}
