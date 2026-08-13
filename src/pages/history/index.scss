@@ -1,0 +1,131 @@
+.history {
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding-bottom: 40px;
+  box-sizing: border-box;
+
+  &__header {
+    padding: 24px 32px;
+    padding-top: calc(env(safe-area-inset-top) + 40px) !important;
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  }
+
+  &__header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__back {
+    padding: 10px 20px;
+    font-size: 24px;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 999px;
+  }
+
+  &__title {
+    font-size: 38px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  &__list {
+    padding: 24px;
+    box-sizing: border-box;
+  }
+
+  &__empty {
+    display: block;
+    text-align: center;
+    margin-top: 120px;
+    font-size: 26px;
+    color: #9ca3af;
+  }
+
+  &__session {
+    margin-bottom: 20px;
+    padding: 24px 28px;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1f2430;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__time {
+    margin-top: 6px;
+    font-size: 22px;
+    color: #9ca3af;
+  }
+
+  &__arrow {
+    margin-left: 16px;
+    font-size: 36px;
+    color: #c0c4cc;
+  }
+}
+
+.history-detail {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+
+  &__row {
+    display: flex;
+    width: 100%;
+    margin-bottom: 16px;
+
+    &--user {
+      justify-content: flex-end;
+    }
+
+    &--ai {
+      justify-content: flex-start;
+    }
+  }
+
+  &__bubble {
+    max-width: 85%;
+    padding: 16px 20px;
+    font-size: 24px;
+    line-height: 1.6;
+    word-break: break-all;
+    border-radius: 16px;
+
+    &--user {
+      margin-right: 12px;
+      color: #fff;
+      background: #8b5cf6;
+      border-radius: 16px 16px 2px 16px;
+    }
+
+    &--ai {
+      margin-left: 12px;
+      color: #1f2430;
+      background: #f3f4f6;
+      border-radius: 16px 16px 16px 2px;
+    }
+  }
+}

@@ -13,6 +13,8 @@ page {
   --color-bg: #f8f9fa;
   --color-card: #ffffff;
   --radius-card: 16px;
+  // 底部 TabBar 内容高度（不含安全区）
+  --tabbar-h: 100px;
 
   background-color: var(--color-bg);
   font-family:

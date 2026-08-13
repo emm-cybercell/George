@@ -1,12 +1,13 @@
 .chat-input {
   position: fixed;
-  left: 16px;
-  right: 16px;
-  bottom: calc(env(safe-area-inset-bottom) + 88px);
+  left: 0;
+  right: 0;
+  bottom: calc(env(safe-area-inset-bottom) + var(--tabbar-h));
   display: flex;
   align-items: center;
   padding: 12px 16px;
-  background: transparent;
+  background: #ffffff;
+  border-top: 1px solid #f0f0f0;
   z-index: 200;
 
   &__field {
@@ -21,7 +22,6 @@
   &__mic {
     margin-left: 12px;
     font-size: 40px;
-    z-index: 201;
   }
 
   &__send {
@@ -35,7 +35,5 @@
     color: #fff;
     background: #8b5cf6;
     border-radius: 50%;
-    z-index: 201;
-    cursor: pointer;
   }
 }

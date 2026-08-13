@@ -1,5 +1,5 @@
 import { View, Text, Image, ScrollView } from "@tarojs/components";
-import mascotImg from "../../../../assets/桥智同学.jpg";
+import mascotImg from "../../../../assets/images/桥智同学.jpg";
 import type { ChatMessage } from "../types";
 import "./index.scss";
 
@@ -8,6 +8,8 @@ interface ChattingStateProps {
 }
 
 const ChattingState = ({ messages }: ChattingStateProps) => {
+  const lastId = messages.length ? messages[messages.length - 1].id : "";
+
   return (
     <View className="chatting-state">
       <Image
@@ -15,17 +17,31 @@ const ChattingState = ({ messages }: ChattingStateProps) => {
         src={mascotImg}
         mode="aspectFit"
       />
-      <ScrollView scrollY className="chatting-state__list">
+      <ScrollView
+        scrollY
+        className="chatting-state__list"
+        scrollIntoView={lastId}
+        scrollWithAnimation
+      >
         {messages.map((m) => (
           <View
             key={m.id}
-            className={`chatting-state__bubble ${
+            id={m.id}
+            className={`chatting-state__row ${
               m.role === "user"
-                ? "chatting-state__bubble--user"
-                : "chatting-state__bubble--assistant"
+                ? "chatting-state__row--user"
+                : "chatting-state__row--assistant"
             }`}
           >
-            <Text>{m.content}</Text>
+            <View
+              className={`chatting-state__bubble ${
+                m.role === "user"
+                  ? "chatting-state__bubble--user"
+                  : "chatting-state__bubble--assistant"
+              }`}
+            >
+              <Text>{m.content}</Text>
+            </View>
           </View>
         ))}
       </ScrollView>

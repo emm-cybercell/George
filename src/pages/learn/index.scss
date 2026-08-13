@@ -3,13 +3,35 @@
   flex-direction: column;
   height: 100vh;
   background: #f8f9fa;
-  padding-bottom: 120px;
+  padding-bottom: calc(env(safe-area-inset-bottom) + var(--tabbar-h) + 88px);
   box-sizing: border-box;
 
   &__header {
+    flex-shrink: 0;
     padding: 24px 32px;
     padding-top: calc(env(safe-area-inset-top) + 60px) !important;
     background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  }
+
+  &__header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__header-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  &__history-btn {
+    padding: 10px 20px;
+    font-size: 24px;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 999px;
   }
 
   &__title {
@@ -28,7 +50,10 @@
 
   &__body {
     flex: 1;
+    min-height: 0;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
     padding: 0 32px;
     box-sizing: border-box;
   }

@@ -12,7 +12,8 @@ const ChatInput = ({ value, onChange, onSend }: ChatInputProps) => {
     <View className="chat-input">
       <Input
         className="chat-input__field"
-        placeholder="有什么我能帮您的吗？"
+        placeholder="和桥智同桌聊点什么..."
+        maxlength={1000}
         value={value}
         onInput={(e) => onChange(e.detail.value)}
         confirmType="send"

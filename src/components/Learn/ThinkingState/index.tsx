@@ -1,5 +1,5 @@
 import { View, Text, Image } from "@tarojs/components";
-import thinkingImg from "../../../../assets/思考.jpg";
+import thinkingImg from "../../../../assets/images/思考.jpg";
 import "./index.scss";
 
 const ThinkingState = () => {

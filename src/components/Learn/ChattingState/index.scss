@@ -2,7 +2,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
 
   &__avatar {
     position: absolute;
@@ -17,30 +18,46 @@
 
   &__list {
     flex: 1;
+    min-height: 0;
+    height: 100%;
     padding-top: 116px;
     box-sizing: border-box;
   }
 
-  &__bubble {
-    max-width: 80%;
+  &__row {
+    display: flex;
+    width: 100%;
     margin-bottom: 20px;
-    padding: 20px 24px;
-    font-size: 26px;
-    line-height: 1.6;
-    border-radius: 20px;
 
     &--user {
-      margin-left: auto;
-      color: #fff;
-      background: #8b5cf6;
-      border-bottom-right-radius: 6px;
+      justify-content: flex-end;
     }
 
     &--assistant {
-      margin-right: auto;
+      justify-content: flex-start;
+    }
+  }
+
+  &__bubble {
+    max-width: 75%;
+    padding: 20px 24px;
+    font-size: 26px;
+    line-height: 1.6;
+    word-break: break-all;
+    border-radius: 20px;
+
+    &--user {
+      margin-right: 16px;
+      color: #fff;
+      background: #8b5cf6;
+      border-radius: 16px 16px 2px 16px;
+    }
+
+    &--assistant {
+      margin-left: 16px;
       color: #1f2430;
       background: #fff;
-      border-bottom-left-radius: 6px;
+      border-radius: 16px 16px 16px 2px;
     }
   }
 }
