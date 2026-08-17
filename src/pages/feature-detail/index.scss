@@ -1,0 +1,111 @@
+.feature-detail {
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding-bottom: 40px;
+  box-sizing: border-box;
+
+  &__body {
+    padding-top: 24px;
+  }
+
+  &__hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 24px 24px;
+    padding: 40px 28px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+    flex-direction: column;
+
+    &:active {
+      transform: scale(0.97);
+      opacity: 0.9;
+    }
+  }
+
+  &__icon {
+    font-size: 72px;
+  }
+
+  &__title {
+    margin-top: 16px;
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  &__slogan {
+    margin-top: 10px;
+    font-size: 26px;
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  &__section {
+    margin: 0 24px 24px;
+    padding: 28px;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &:active {
+      transform: scale(0.97);
+      opacity: 0.9;
+    }
+  }
+
+  &__heading {
+    display: block;
+    font-size: 30px;
+    font-weight: 700;
+    color: #1f2430;
+    margin-bottom: 16px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &--action {
+      cursor: pointer;
+      padding: 12px;
+      margin: 0 -12px 8px;
+      border-radius: 12px;
+
+      &:active {
+        background: rgba(139, 92, 246, 0.06);
+      }
+    }
+  }
+
+  &__dot {
+    font-size: 26px;
+    color: #8b5cf6;
+    margin-right: 12px;
+    line-height: 1.6;
+  }
+
+  &__text {
+    flex: 1;
+    font-size: 26px;
+    line-height: 1.6;
+    color: #6b7280;
+  }
+
+  &__go {
+    margin-left: 8px;
+    font-size: 32px;
+    color: #8b5cf6;
+  }
+}

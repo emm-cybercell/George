@@ -10,7 +10,7 @@ interface IdleStateProps {
 
 const IdleState = ({ prompts, onPrompt }: IdleStateProps) => {
   return (
-    <View className="idle-state">
+    <View className="idle-state card-animate">
       <Image className="idle-state__mascot" src={mascotImg} mode="aspectFit" />
       <Text className="idle-state__greeting">你好！我是桥智同学 👏</Text>
       <View className="idle-state__prompts">

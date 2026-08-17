@@ -5,8 +5,8 @@ export interface ChatMessage {
   content: string;
 }
 
-/** 请替换为你的真实 DeepSeek API Key（platform.deepseek.com 获取） */
-const DEEPSEEK_API_KEY = "你的真实 DeepSeek API Key";
+/** 请在你的 .env.development / .env.production 中配置 DEEPSEEK_API_KEY（platform.deepseek.com 获取） */
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY ?? "";
 const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
 
 const SYSTEM_PROMPT = `你是"桥智同学"，一位来自 2035 年的"未来创造者探险家"与青少年的 AI 学习同桌。你穿着紫绿相间的连帽衫，开朗、幽默且富有同理心。
@@ -24,26 +24,32 @@ const SYSTEM_PROMPT = `你是"桥智同学"，一位来自 2035 年的"未来创
 export async function fetchDeepSeekReply(
   messages: Array<{ role: "user" | "assistant"; content: string }>,
 ): Promise<string> {
-  const res = await Taro.request<{
-    choices?: Array<{ message?: { content?: string } }>;
-  }>({
-    url: DEEPSEEK_URL,
-    method: "POST",
-    header: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
-    },
-    data: {
-      model: "deepseek-v4-flash",
-      messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
-      temperature: 0.7,
-    },
-  });
+  let res;
+  try {
+    res = await Taro.request<{
+      choices?: Array<{ message?: { content?: string } }>;
+    }>({
+      url: DEEPSEEK_URL,
+      method: "POST",
+      header: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+      },
+      data: {
+        model: "deepseek-v4-flash",
+        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
+        temperature: 0.7,
+      },
+    });
+  } catch (err) {
+    Taro.showToast({ title: "网络开小差了，请稍后再试 🙈", icon: "none" });
+    throw err;
+  }
 
   if (res.statusCode !== 200) {
     const hint =
       res.statusCode === 401
-        ? "API Key 无效或已过期，请检查 src/api/deepseek.ts"
+        ? "API Key 无效或未配置，请检查 .env 文件"
         : `请求失败（${res.statusCode}）`;
     Taro.showToast({ title: hint, icon: "none" });
     throw new Error(hint);

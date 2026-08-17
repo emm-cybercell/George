@@ -5,7 +5,7 @@ import "./index.scss";
 
 const BadgeWall = () => {
   return (
-    <View className="badge-wall">
+    <View className="badge-wall card-animate">
       <Text className="badge-wall__title">🏅 荣誉勋章</Text>
       <ScrollView scrollX className="badge-wall__list">
         {badges.map((badge: ProfileBadge) => (

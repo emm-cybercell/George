@@ -23,27 +23,29 @@ const ChattingState = ({ messages }: ChattingStateProps) => {
         scrollIntoView={lastId}
         scrollWithAnimation
       >
-        {messages.map((m) => (
-          <View
-            key={m.id}
-            id={m.id}
-            className={`chatting-state__row ${
-              m.role === "user"
-                ? "chatting-state__row--user"
-                : "chatting-state__row--assistant"
-            }`}
-          >
+        <View className="chatting-state__content">
+          {messages.map((m) => (
             <View
-              className={`chatting-state__bubble ${
+              key={m.id}
+              id={m.id}
+              className={`chatting-state__row ${
                 m.role === "user"
-                  ? "chatting-state__bubble--user"
-                  : "chatting-state__bubble--assistant"
+                  ? "chatting-state__row--user"
+                  : "chatting-state__row--assistant"
               }`}
             >
-              <Text>{m.content}</Text>
+              <View
+                className={`chatting-state__bubble ${
+                  m.role === "user"
+                    ? "chatting-state__bubble--user"
+                    : "chatting-state__bubble--assistant"
+                }`}
+              >
+                <Text>{m.content}</Text>
+              </View>
             </View>
-          </View>
-        ))}
+          ))}
+        </View>
       </ScrollView>
     </View>
   );

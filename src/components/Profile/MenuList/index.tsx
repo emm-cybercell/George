@@ -13,7 +13,7 @@ const MenuList = () => {
   };
 
   return (
-    <View className="menu-list">
+    <View className="menu-list card-animate">
       {menus.map((item) => (
         <View
           className="menu-list__item"

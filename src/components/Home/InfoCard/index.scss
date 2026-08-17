@@ -3,9 +3,18 @@
   flex-direction: column;
   margin: 0 24px 24px;
   padding: 28px;
-  border-radius: 16px;
+  border-radius: 20px;
   background: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.97);
+    opacity: 0.9;
+  }
 
   &__badge {
     align-self: flex-start;

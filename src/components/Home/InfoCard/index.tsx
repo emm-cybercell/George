@@ -8,6 +8,7 @@ interface InfoCardProps {
   desc?: string;
   icon?: string;
   tags?: string[];
+  onClick?: () => void;
   children?: ReactNode;
 }
 
@@ -17,10 +18,11 @@ const InfoCard = ({
   desc,
   icon,
   tags,
+  onClick,
   children,
 }: InfoCardProps) => {
   return (
-    <View className="info-card">
+    <View className="info-card card-animate" onClick={onClick}>
       {badge ? <Text className="info-card__badge">{badge}</Text> : null}
       {icon ? <Text className="info-card__feature-icon">{icon}</Text> : null}
       <Text className="info-card__title">{title}</Text>

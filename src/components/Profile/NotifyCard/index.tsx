@@ -8,7 +8,7 @@ const NotifyCard = () => {
   };
 
   return (
-    <View className="notify-card" onClick={onTap}>
+    <View className="notify-card card-animate" onClick={onTap}>
       <Text className="notify-card__icon">🔔</Text>
       <View className="notify-card__text">
         <Text className="notify-card__label">消息通知</Text>

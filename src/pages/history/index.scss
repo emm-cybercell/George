@@ -5,12 +5,21 @@
   box-sizing: border-box;
 
   &__header {
-    padding: 24px 32px;
-    padding-top: calc(env(safe-area-inset-top) + 40px) !important;
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background: #8b5cf6;
+    padding-top: calc(env(safe-area-inset-top) + 52px);
+    padding-bottom: 14px;
+    padding-left: 32px;
+    padding-right: 32px;
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
   }
 
   &__header-row {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -23,16 +32,60 @@
     background: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 999px;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.94);
+      opacity: 0.9;
+    }
   }
 
   &__title {
-    font-size: 38px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 36px;
     font-weight: 700;
     color: #fff;
+    white-space: nowrap;
+  }
+
+  &__clear-wrap {
+    margin-right: 95px; /* 完全避开微信原生胶囊，绝不重叠 */
+  }
+
+  &__clear {
+    padding: 10px 20px;
+    font-size: 24px;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 999px;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.94);
+      opacity: 0.9;
+    }
+
+    &--disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
   }
 
   &__list {
-    padding: 24px;
+    /* scroll-view 不支持 padding，padding 迁到 __content */
+  }
+
+  &__content {
+    min-height: 100vh;
+    padding-top: calc(env(safe-area-inset-top) + 115px);
+    padding-bottom: 40px;
+    padding-left: 24px;
+    padding-right: 24px;
     box-sizing: border-box;
   }
 
@@ -47,15 +100,20 @@
   &__session {
     margin-bottom: 20px;
     padding: 24px 28px;
-    border-radius: 16px;
+    border-radius: 20px;
     background: #ffffff;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
   }
 
   &__row {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    cursor: pointer;
+
+    &:active {
+      opacity: 0.8;
+    }
   }
 
   &__info {
@@ -84,6 +142,24 @@
     margin-left: 16px;
     font-size: 36px;
     color: #c0c4cc;
+  }
+
+  &__continue-btn {
+    padding: 8px 18px;
+    margin-left: 16px;
+    font-size: 22px;
+    color: #8b5cf6;
+    background: #f3eeff;
+    border-radius: 999px;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.95);
+      opacity: 0.9;
+    }
   }
 }
 
@@ -126,6 +202,31 @@
       color: #1f2430;
       background: #f3f4f6;
       border-radius: 16px 16px 16px 2px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    margin-top: 12px;
+  }
+
+  &__delete {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 24px;
+    font-size: 24px;
+    color: #ef4444;
+    background: #fef2f2;
+    border-radius: 999px;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.95);
+      opacity: 0.9;
     }
   }
 }

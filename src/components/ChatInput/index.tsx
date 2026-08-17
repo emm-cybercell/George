@@ -5,9 +5,17 @@ interface ChatInputProps {
   value: string;
   onChange: (v: string) => void;
   onSend: () => void;
+  isRecording: boolean;
+  onMicTap: () => void;
 }
 
-const ChatInput = ({ value, onChange, onSend }: ChatInputProps) => {
+const ChatInput = ({
+  value,
+  onChange,
+  onSend,
+  isRecording,
+  onMicTap,
+}: ChatInputProps) => {
   return (
     <View className="chat-input">
       <Input
@@ -19,7 +27,12 @@ const ChatInput = ({ value, onChange, onSend }: ChatInputProps) => {
         confirmType="send"
         onConfirm={onSend}
       />
-      <Text className="chat-input__mic">🎙️</Text>
+      <View
+        className={`chat-input__mic ${isRecording ? "chat-input__mic--recording" : ""}`}
+        onClick={onMicTap}
+      >
+        🎙️
+      </View>
       <View className="chat-input__send" onClick={onSend}>
         ➤
       </View>

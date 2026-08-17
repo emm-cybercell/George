@@ -1,0 +1,161 @@
+.about {
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding-bottom: 40px;
+  box-sizing: border-box;
+
+  &__body {
+    padding-top: 24px;
+  }
+
+  &__section-title {
+    display: block;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2430;
+    margin: 8px 24px 20px;
+  }
+}
+
+.section-card {
+  display: flex;
+  flex-direction: column;
+  margin: 0 24px 24px;
+  padding: 28px;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:active {
+    transform: scale(0.97);
+    opacity: 0.9;
+  }
+
+  &__badge {
+    align-self: flex-start;
+    padding: 6px 16px;
+    font-size: 22px;
+    color: #8b5cf6;
+    background: #f3eeff;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2430;
+    margin-bottom: 12px;
+  }
+
+  &__desc {
+    font-size: 26px;
+    line-height: 1.7;
+    color: #6b7280;
+  }
+}
+
+.pillar-card {
+  display: flex;
+  align-items: center;
+  margin: 0 24px 20px;
+  padding: 28px;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:active {
+    transform: scale(0.97);
+    opacity: 0.9;
+  }
+
+  &__icon {
+    font-size: 56px;
+    margin-right: 20px;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__head {
+    display: flex;
+    align-items: baseline;
+  }
+
+  &__title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2430;
+  }
+
+  &__en {
+    margin-left: 12px;
+    font-size: 22px;
+    color: #9ca3af;
+  }
+
+  &__desc {
+    margin-top: 8px;
+    font-size: 24px;
+    color: #6b7280;
+  }
+}
+
+.rule-card {
+  display: flex;
+  flex-direction: column;
+  margin: 0 24px 20px;
+  padding: 24px 28px;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:active {
+    transform: scale(0.97);
+    opacity: 0.9;
+  }
+
+  &--green {
+    background: #e8fbe8;
+  }
+
+  &--yellow {
+    background: #fff8e1;
+  }
+
+  &--red {
+    background: #fde8e8;
+  }
+
+  &__zone {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2430;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  &__tag {
+    padding: 8px 16px;
+    margin-right: 12px;
+    margin-bottom: 12px;
+    font-size: 22px;
+    color: #4b5563;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 999px;
+  }
+}

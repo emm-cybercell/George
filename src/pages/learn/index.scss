@@ -7,16 +7,26 @@
   box-sizing: border-box;
 
   &__header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     flex-shrink: 0;
-    padding: 24px 32px;
-    padding-top: calc(env(safe-area-inset-top) + 60px) !important;
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    padding: 24px 32px 16px;
+    padding-top: calc(env(safe-area-inset-top) + 68px) !important;
+    background: #8b5cf6;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
   }
 
   &__header-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+
+  &__header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 
   &__header-text {

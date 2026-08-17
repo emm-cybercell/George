@@ -21,7 +21,16 @@
     width: 180px;
     height: 180px;
     margin-right: 20px;
-    border-radius: 16px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &:active {
+      transform: scale(0.97);
+      opacity: 0.9;
+    }
 
     &--purple {
       background: #f3eeff;

@@ -4,7 +4,7 @@ import "./index.scss";
 
 const UserCard = () => {
   return (
-    <View className="user-card">
+    <View className="user-card card-animate">
       <View className="user-card__top">
         <Text className="user-card__avatar">🧑‍🚀</Text>
         <View className="user-card__info">

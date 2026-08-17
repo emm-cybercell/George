@@ -24,6 +24,10 @@ export function getChatSessions(): ChatSession[] {
   return raw.sort((a, b) => b.updatedAt - a.updatedAt);
 }
 
+export function getChatSession(id: string): ChatSession | undefined {
+  return getChatSessions().find((s) => s.id === id);
+}
+
 export function saveChatSession(session: ChatSession): void {
   const list = getChatSessions();
   const idx = list.findIndex((s) => s.id === session.id);
@@ -33,4 +37,13 @@ export function saveChatSession(session: ChatSession): void {
     list.unshift(session);
   }
   Taro.setStorageSync(STORAGE_KEY, list);
+}
+
+export function deleteChatSession(id: string): void {
+  const list = getChatSessions().filter((s) => s.id !== id);
+  Taro.setStorageSync(STORAGE_KEY, list);
+}
+
+export function clearChatSessions(): void {
+  Taro.removeStorageSync(STORAGE_KEY);
 }
