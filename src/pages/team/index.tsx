@@ -9,6 +9,12 @@ const Team = () => {
       <CustomPageHeader title="团队与理念" />
 
       <View className="team__body">
+        <View className="team-hero card-animate">
+          <Text className="team-hero__text">
+            由深圳大学科技工作室孵化，联合一线教育者与 AI 工程师共同打造。
+          </Text>
+        </View>
+
         <View className="quote-card card-animate">
           <Text className="quote-card__mark">"</Text>
           <Text className="quote-card__text">

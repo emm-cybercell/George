@@ -1,5 +1,6 @@
-import { View, Text } from "@tarojs/components";
+import { View, Text, Image } from "@tarojs/components";
 import Taro from "@tarojs/taro";
+import heroImg from "../../../../assets/images/首页.jpg";
 import "./index.scss";
 
 const Hero = () => {
@@ -16,7 +17,7 @@ const Hero = () => {
           ✨ 开始 AI 创作
         </View>
       </View>
-      <Text className="hero__mascot">🤖</Text>
+      <Image className="hero__mascot" src={heroImg} mode="aspectFit" />
     </View>
   );
 };

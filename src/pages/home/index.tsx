@@ -2,7 +2,6 @@ import { View, Text } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import HomeHeader from "@/components/HomeHeader";
 import Hero from "@/components/Home/Hero";
-import InfoCard from "@/components/Home/InfoCard";
 import CustomTabBar from "@/components/CustomTabBar";
 import { features, teamTags, type FeatureItem } from "./data";
 import "./index.scss";
@@ -22,27 +21,38 @@ const Home = () => {
 
       <Hero />
 
-      <InfoCard
-        badge="📖 项目介绍"
-        title="关于桥智同学"
+      <View
+        className="entry-card card-animate"
         onClick={() => goTo("/pages/about/index")}
       >
-        <Text className="home__desc">
-          培养 AI
-          时代产品经理思维：帮助青少年学会定义问题、判断结果、表达自己，成为未来数字世界的主动创造者。
-        </Text>
-      </InfoCard>
+        <View className="entry-card__left">
+          <Text className="entry-card__badge entry-card__badge--purple">
+            📖 项目介绍
+          </Text>
+          <Text className="entry-card__title">关于桥智同学</Text>
+        </View>
+        <Text className="entry-card__arrow">›</Text>
+      </View>
 
-      <InfoCard
-        badge="🏫 团队理念"
-        title="团队与理念"
-        tags={teamTags}
+      <View
+        className="entry-card card-animate"
         onClick={() => goTo("/pages/team/index")}
       >
-        <Text className="home__desc">
-          由深圳大学科技工作室孵化，联合一线教育者与 AI 工程师共同打造。
-        </Text>
-      </InfoCard>
+        <View className="entry-card__left">
+          <Text className="entry-card__badge entry-card__badge--pink">
+            🏫 团队理念
+          </Text>
+          <Text className="entry-card__title">团队与理念</Text>
+          <View className="entry-card__tags">
+            {teamTags.map((t) => (
+              <Text className="entry-card__tag" key={t}>
+                {t}
+              </Text>
+            ))}
+          </View>
+        </View>
+        <Text className="entry-card__arrow">›</Text>
+      </View>
 
       <Text className="home__section-title">⚡ 核心特色</Text>
       <View className="home__feature-grid">
@@ -62,8 +72,15 @@ const Home = () => {
             >
               <Text className="feature-card__icon">{item.icon}</Text>
             </View>
-            <Text className="feature-card__title">{item.title}</Text>
-            <Text className="feature-card__desc">{item.desc}</Text>
+            <View className="feature-card__title-row">
+              <Text className="feature-card__title">{item.title}</Text>
+              <Text
+                className="feature-card__arrow"
+                style={{ color: item.color }}
+              >
+                ›
+              </Text>
+            </View>
           </View>
         ))}
       </View>

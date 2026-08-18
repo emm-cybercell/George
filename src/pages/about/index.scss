@@ -17,6 +17,31 @@
   }
 }
 
+.about-hero {
+  display: flex;
+  flex-direction: column;
+  margin: 0 24px 24px;
+  padding: 36px 28px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
+
+  &__mark {
+    font-size: 56px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1;
+  }
+
+  &__text {
+    margin-top: 8px;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.6;
+    color: #fff;
+  }
+}
+
 .section-card {
   display: flex;
   flex-direction: column;

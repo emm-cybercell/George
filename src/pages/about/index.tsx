@@ -9,6 +9,14 @@ const About = () => {
       <CustomPageHeader title="关于桥智同学" />
 
       <View className="about__body">
+        <View className="about-hero card-animate">
+          <Text className="about-hero__mark">"</Text>
+          <Text className="about-hero__text">
+            培养 AI
+            时代产品经理思维：帮助青少年学会定义问题、判断结果、表达自己，成为未来数字世界的主动创造者。
+          </Text>
+        </View>
+
         <View className="section-card card-animate">
           <Text className="section-card__badge">🌌 世界观</Text>
           <Text className="section-card__title">IP 故事背景</Text>
