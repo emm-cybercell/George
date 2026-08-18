@@ -17,6 +17,23 @@
   }
 }
 
+.team-hero {
+  display: flex;
+  align-items: center;
+  margin: 0 24px 24px;
+  padding: 32px 28px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #ec4899, #f59e0b);
+  box-shadow: 0 8px 24px rgba(236, 72, 153, 0.2);
+
+  &__text {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.6;
+    color: #fff;
+  }
+}
+
 .quote-card {
   display: flex;
   flex-direction: column;

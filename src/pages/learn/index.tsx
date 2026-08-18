@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { View, Text } from "@tarojs/components";
-import Taro, { useDidShow, useLoad, useRouter } from "@tarojs/taro";
+import Taro, { useDidHide, useDidShow, useLoad, useRouter } from "@tarojs/taro";
 import IdleState from "@/components/Learn/IdleState";
 import ThinkingState from "@/components/Learn/ThinkingState";
 import ChattingState from "@/components/Learn/ChattingState";
@@ -18,6 +18,7 @@ import type { ChatState } from "@/types";
 import "./index.scss";
 
 const QUICK_PROMPTS = ["帮我出个谜题", "什么是魔法指令？", "教我写一个小游戏"];
+const BLANK_FLAG = "learn_blank_session";
 
 let idSeed = 0;
 const nextId = () => `msg-${Date.now()}-${++idSeed}`;
@@ -29,10 +30,11 @@ const Learn = () => {
   const [inputText, setInputText] = useState("");
   const sessionIdRef = useRef(`session-${Date.now()}`);
 
-  // 三种进入方式：
-  // 1. ?new=1  -> 开启空白新对话（历史自动保留在 storage）
+  // 进入方式：
+  // 1. ?new=1  -> 开启空白新对话
   // 2. ?sessionId=xxx -> 从历史页"继续对话"加载指定会话
-  // 3. 无参数 -> 恢复最近一次会话
+  // 3. 无参数且上次为空白会话 -> 保持空白，不恢复历史
+  // 4. 无参数且上次有真实对话 -> 恢复最近一次会话
   useLoad(() => {
     if (router.params.new === "1") {
       sessionIdRef.current = `session-${Date.now()}`;
@@ -40,13 +42,34 @@ const Learn = () => {
     }
 
     const sessionId = router.params.sessionId;
-    const target = sessionId ? getChatSession(sessionId) : getChatSessions()[0];
+    if (sessionId) {
+      const target = getChatSession(sessionId);
+      if (target && target.messages.length > 0) {
+        sessionIdRef.current = target.id;
+        setMessages(target.messages);
+        setChatState("chatting");
+      }
+      return;
+    }
 
-    if (target && target.messages.length > 0) {
-      sessionIdRef.current = target.id;
-      setMessages(target.messages);
+    // 无参数：仅当上次退出前已有真实对话内容时才恢复最近会话
+    if (Taro.getStorageSync(BLANK_FLAG)) {
+      Taro.removeStorageSync(BLANK_FLAG);
+      return;
+    }
+    const latest = getChatSessions()[0];
+    if (latest && latest.messages.length > 0) {
+      sessionIdRef.current = latest.id;
+      setMessages(latest.messages);
       setChatState("chatting");
     }
+  });
+
+  // 退出/切换页面时记录本次会话是否有真实内容
+  useDidHide(() => {
+    const sessionExists = !!getChatSession(sessionIdRef.current);
+    const hasContent = messages.length > 0;
+    Taro.setStorageSync(BLANK_FLAG, !sessionExists || !hasContent);
   });
 
   // 页面重新显示时（从历史页返回），若当前会话已被删除则重置为空白新对话

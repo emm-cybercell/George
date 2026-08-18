@@ -5,8 +5,8 @@
   padding: 40px 0;
 
   &__mascot {
-    width: 320px;
-    height: 320px;
+    width: 300px;
+    height: 300px;
   }
 
   &__greeting {
@@ -15,10 +15,16 @@
     color: #1f2430;
   }
 
+  &__section-title {
+    margin-top: 44px;
+    font-size: 26px;
+    color: #6b7280;
+  }
+
   &__prompts {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 40px;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 24px;
   }
 }

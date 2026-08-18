@@ -1,5 +1,5 @@
 import { View, Text, Image, ScrollView } from "@tarojs/components";
-import mascotImg from "../../../../assets/images/桥智同学.jpg";
+import mascotImg from "../../../../assets/images/立绘2.jpg";
 import type { ChatMessage } from "../types";
 import "./index.scss";
 
