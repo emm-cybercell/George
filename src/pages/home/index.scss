@@ -30,7 +30,9 @@
   border-radius: 18px;
   background: #ffffff;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
   cursor: pointer;
 
   &:active {
@@ -103,7 +105,9 @@
   background: #ffffff;
   border: 1.5px solid rgba(243, 244, 246, 0.8);
   overflow: hidden;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
   cursor: pointer;
 
   &:active {

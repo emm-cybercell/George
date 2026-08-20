@@ -21,7 +21,10 @@ const Home = () => {
 
       <Hero />
 
-      <View className="entry-card card-animate" onClick={() => goTo("/pages/about/index")}>
+      <View
+        className="entry-card card-animate"
+        onClick={() => goTo("/pages/about/index")}
+      >
         <View className="entry-card__left">
           <Text className="entry-card__badge entry-card__badge--purple">
             📖 项目介绍
@@ -31,7 +34,10 @@ const Home = () => {
         <Text className="entry-card__arrow">›</Text>
       </View>
 
-      <View className="entry-card card-animate" onClick={() => goTo("/pages/team/index")}>
+      <View
+        className="entry-card card-animate"
+        onClick={() => goTo("/pages/team/index")}
+      >
         <View className="entry-card__left">
           <Text className="entry-card__badge entry-card__badge--pink">
             🏫 团队理念

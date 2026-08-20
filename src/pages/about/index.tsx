@@ -12,7 +12,8 @@ const About = () => {
         <View className="about-hero card-animate">
           <Text className="about-hero__mark">"</Text>
           <Text className="about-hero__text">
-            培养 AI 时代产品经理思维：帮助青少年学会定义问题、判断结果、表达自己，成为未来数字世界的主动创造者。
+            培养 AI
+            时代产品经理思维：帮助青少年学会定义问题、判断结果、表达自己，成为未来数字世界的主动创造者。
           </Text>
         </View>
 
