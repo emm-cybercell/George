@@ -1,6 +1,7 @@
 import { View, Text } from "@tarojs/components";
 import UserCard from "@/components/Profile/UserCard";
 import NotifyCard from "@/components/Profile/NotifyCard";
+import AbilityCard from "@/components/Profile/AbilityCard";
 import BadgeWall from "@/components/Profile/BadgeWall";
 import MenuList from "@/components/Profile/MenuList";
 import CustomTabBar from "@/components/CustomTabBar";
@@ -15,6 +16,7 @@ const Profile = () => {
 
       <View className="profile__body">
         <UserCard />
+        <AbilityCard />
         <NotifyCard />
         <BadgeWall />
         <MenuList />

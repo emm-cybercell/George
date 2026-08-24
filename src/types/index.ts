@@ -25,3 +25,12 @@ export interface UserInfo {
   birthday: string;
   score: number;
 }
+
+/** 培养能力选项 */
+export interface AbilityItem {
+  id: string;
+  name: string;
+  growthIndex: number;
+  description: string;
+  systemGuidance: string; // 注入给 DeepSeek 的专属引导提示词
+}

@@ -155,7 +155,7 @@ const Learn = () => {
           </View>
           <View className="learn__header-text">
             <Text className="learn__title">AI 学习助手</Text>
-            <Text className="learn__subtitle">桥智同学在线为你服务 ✨</Text>
+            <Text className="learn__subtitle">桥智同学与你共同成长探索</Text>
           </View>
         </View>
       </View>

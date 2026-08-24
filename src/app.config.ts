@@ -7,6 +7,7 @@ export default defineAppConfig({
     "pages/about/index",
     "pages/team/index",
     "pages/feature-detail/index",
+    "pages/ability-setting/index",
   ],
   window: {
     backgroundTextStyle: "light",

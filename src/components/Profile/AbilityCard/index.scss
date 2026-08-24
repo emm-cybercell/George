@@ -1,0 +1,53 @@
+.ability-card {
+  display: flex;
+  align-items: center;
+  margin: 0 24px 24px;
+  padding: 26px 28px;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.97);
+    opacity: 0.9;
+  }
+
+  &__icon {
+    font-size: 40px;
+  }
+
+  &__text {
+    flex: 1;
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__label {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1f2430;
+  }
+
+  &__pill {
+    align-self: flex-start;
+    margin-top: 10px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: #e8fbe8;
+  }
+
+  &__pill-text {
+    font-size: 22px;
+    color: #16a34a;
+  }
+
+  &__switch {
+    font-size: 24px;
+    color: #9ca3af;
+  }
+}

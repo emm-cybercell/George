@@ -1,4 +1,9 @@
 import Taro from "@tarojs/taro";
+import {
+  ABILITIES,
+  ABILITY_STORAGE_KEY,
+  DEFAULT_ABILITY_ID,
+} from "@/types/ability";
 
 export interface ChatMessage {
   role: "system" | "user" | "assistant";
@@ -24,6 +29,14 @@ const SYSTEM_PROMPT = `你是"桥智同学"，一位来自 2035 年的"未来创
 export async function fetchDeepSeekReply(
   messages: Array<{ role: "user" | "assistant"; content: string }>,
 ): Promise<string> {
+  // 读取当前培养能力，动态注入 system prompt
+  const abilityId =
+    Taro.getStorageSync(ABILITY_STORAGE_KEY) || DEFAULT_ABILITY_ID;
+  const currentAbility =
+    ABILITIES.find((a) => a.id === abilityId) || ABILITIES[1];
+  const abilityPrompt = `\n【当前重点培养侧重】：请在对话中特别贯彻"${currentAbility.name}"原则：${currentAbility.systemGuidance}`;
+  const systemPrompt = `${SYSTEM_PROMPT}${abilityPrompt}`;
+
   let res;
   try {
     res = await Taro.request<{
@@ -37,7 +50,7 @@ export async function fetchDeepSeekReply(
       },
       data: {
         model: "deepseek-v4-flash",
-        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
+        messages: [{ role: "system", content: systemPrompt }, ...messages],
         temperature: 0.7,
       },
     });
