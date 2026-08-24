@@ -21,7 +21,10 @@ const AbilitySetting = () => {
     const ability = ABILITIES.find((a) => a.id === selectedId);
     if (!ability) return;
     Taro.setStorageSync(ABILITY_STORAGE_KEY, selectedId);
-    Taro.showToast({ title: `已切换为【${ability.name}】引导模式`, icon: "none" });
+    Taro.showToast({
+      title: `已切换为【${ability.name}】引导模式`,
+      icon: "none",
+    });
     setTimeout(() => Taro.navigateBack(), 600);
   };
 

@@ -1,13 +1,16 @@
 import { View, Text } from "@tarojs/components";
 import Taro from "@tarojs/taro";
-import { ABILITIES, ABILITY_STORAGE_KEY, DEFAULT_ABILITY_ID } from "@/types/ability";
+import {
+  ABILITIES,
+  ABILITY_STORAGE_KEY,
+  DEFAULT_ABILITY_ID,
+} from "@/types/ability";
 import "./index.scss";
 
 const AbilityCard = () => {
   const currentId =
     Taro.getStorageSync(ABILITY_STORAGE_KEY) || DEFAULT_ABILITY_ID;
-  const current =
-    ABILITIES.find((a) => a.id === currentId) || ABILITIES[1];
+  const current = ABILITIES.find((a) => a.id === currentId) || ABILITIES[1];
 
   const onTap = () => {
     Taro.navigateTo({ url: "/pages/ability-setting/index" });
