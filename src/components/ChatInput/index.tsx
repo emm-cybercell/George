@@ -1,4 +1,4 @@
-import { View, Text, Input } from "@tarojs/components";
+import { View, Input } from "@tarojs/components";
 import "./index.scss";
 
 interface ChatInputProps {

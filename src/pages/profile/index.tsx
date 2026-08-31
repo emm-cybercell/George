@@ -1,5 +1,5 @@
 import { View, Text } from "@tarojs/components";
-import Taro, { useDidShow } from "@tarojs/taro";
+import { useDidShow } from "@tarojs/taro";
 import UserCard from "@/components/Profile/UserCard";
 import NotifyCard from "@/components/Profile/NotifyCard";
 import AbilityCard from "@/components/Profile/AbilityCard";

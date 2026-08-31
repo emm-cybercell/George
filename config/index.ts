@@ -8,7 +8,7 @@ import prodConfig from "./prod";
 dotenv.config({ path: ".env.development" });
 
 // https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
-export default defineConfig<"webpack5">(async (merge, { command, mode }) => {
+export default defineConfig<"webpack5">(async (merge) => {
   const baseConfig: UserConfigExport<"webpack5"> = {
     projectName: "George",
     date: "2026-8-10",

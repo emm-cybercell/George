@@ -7,4 +7,3 @@ node_modules/
 .swc
 *.local
 .env*
-assets/

@@ -7,6 +7,7 @@
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "noImplicitAny": false,
+    "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "outDir": "lib",
     "noUnusedLocals": true,
@@ -25,6 +26,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["./src", "./types", "./config"],
+  "include": ["./src", "./config"],
   "compileOnSave": false
 }

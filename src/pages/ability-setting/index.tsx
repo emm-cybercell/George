@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
 import Taro from "@tarojs/taro";
-import { syncProfileToCloud } from "@/api/cloud";
+import {
+  fetchCloudUserProfile,
+  getLocalUserProfile,
+  syncProfileToCloud,
+} from "@/api/cloud";
 import {
   ABILITIES,
   ABILITY_STORAGE_KEY,
@@ -10,7 +14,7 @@ import {
 import "./index.scss";
 
 const AbilitySetting = () => {
-  const [selectedId, setSelectedId] = useState(
+  const [selectedId, setSelectedId] = useState<string>(
     Taro.getStorageSync(ABILITY_STORAGE_KEY) || DEFAULT_ABILITY_ID,
   );
 
@@ -18,15 +22,17 @@ const AbilitySetting = () => {
     Taro.navigateBack();
   };
 
-  const onSave = () => {
+  const onSave = async () => {
     const ability = ABILITIES.find((a) => a.id === selectedId);
     if (!ability) return;
     Taro.setStorageSync(ABILITY_STORAGE_KEY, selectedId);
-    // 同步培养方向至云端（失败静默，本地已保存）
+    // 保留云端/本地已有积分等级，仅更新培养方向，避免同步时重置用户成长数据
+    const cloud = await fetchCloudUserProfile();
+    const local = getLocalUserProfile();
     syncProfileToCloud({
       selectedAbilityId: selectedId,
-      score: 0,
-      level: "成长中",
+      score: cloud?.score ?? local.score,
+      level: cloud?.level ?? local.level,
     });
     Taro.showToast({
       title: `已切换为【${ability.name}】引导模式`,

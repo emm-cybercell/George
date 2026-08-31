@@ -9,6 +9,7 @@ import {
 } from "@/api/history";
 import {
   clearCloudChatRecords,
+  deleteCloudChatRecord,
   queryCloudChatRecords,
   type CloudChatRecord,
 } from "@/api/cloud";
@@ -60,13 +61,7 @@ const History = () => {
   const onDelete = async (id: string) => {
     deleteChatSession(id);
     if (useCloud) {
-      // 云端按 _id 删除
-      await Taro.cloud
-        .database()
-        .collection("chat_history")
-        .doc(id)
-        .remove()
-        .catch((err) => console.warn("云端删除失败:", err));
+      await deleteCloudChatRecord(id);
     }
     if (activeId === id) setActiveId("");
     refresh();

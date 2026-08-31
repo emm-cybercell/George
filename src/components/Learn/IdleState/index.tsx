@@ -1,6 +1,6 @@
 import { View, Text, Image } from "@tarojs/components";
 import PromptPill from "@/components/PromptPill";
-import mascotImg from "../../../../assets/images/立绘2.jpg";
+import mascotImg from "@/assets/images/立绘2.jpg";
 import "./index.scss";
 
 interface IdleStateProps {

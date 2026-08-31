@@ -1,6 +1,6 @@
 import { View, Text, Image } from "@tarojs/components";
 import Taro from "@tarojs/taro";
-import heroImg from "../../../../assets/images/首页.jpg";
+import heroImg from "@/assets/images/首页.jpg";
 import "./index.scss";
 
 const Hero = () => {
