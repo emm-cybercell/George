@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
 import Taro from "@tarojs/taro";
+import { syncProfileToCloud } from "@/api/cloud";
 import {
   ABILITIES,
   ABILITY_STORAGE_KEY,
@@ -21,6 +22,12 @@ const AbilitySetting = () => {
     const ability = ABILITIES.find((a) => a.id === selectedId);
     if (!ability) return;
     Taro.setStorageSync(ABILITY_STORAGE_KEY, selectedId);
+    // 同步培养方向至云端（失败静默，本地已保存）
+    syncProfileToCloud({
+      selectedAbilityId: selectedId,
+      score: 0,
+      level: "成长中",
+    });
     Taro.showToast({
       title: `已切换为【${ability.name}】引导模式`,
       icon: "none",

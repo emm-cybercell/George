@@ -7,6 +7,8 @@ import ChattingState from "@/components/Learn/ChattingState";
 import ChatInput from "@/components/ChatInput";
 import CustomTabBar from "@/components/CustomTabBar";
 import { fetchDeepSeekReply } from "@/api/deepseek";
+import { saveChatRecordToCloud } from "@/api/cloud";
+import { ABILITY_STORAGE_KEY, DEFAULT_ABILITY_ID } from "@/types/ability";
 import {
   buildTitle,
   getChatSession,
@@ -191,6 +193,13 @@ const Learn = () => {
       setMessages(withReply);
       setChatState("chatting");
       persist(withReply);
+      // 同步写入云端聊天记录（失败静默，本地已持久化）
+      saveChatRecordToCloud({
+        userQuery: content,
+        aiReply: reply,
+        abilityMode:
+          Taro.getStorageSync(ABILITY_STORAGE_KEY) || DEFAULT_ABILITY_ID,
+      });
     } catch {
       // API 层已 Toast 提示错误原因，这里恢复状态让用户能继续输入
       setChatState(history.length > 0 ? "chatting" : "idle");

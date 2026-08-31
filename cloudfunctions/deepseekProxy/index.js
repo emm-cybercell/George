@@ -4,8 +4,8 @@ const cloud = require("wx-server-sdk");
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const axios = require("axios");
 
-// TODO: 请替换为你的真实 DeepSeek API Key（platform.deepseek.com 获取）
-const DEEPSEEK_API_KEY = "YOUR_DEEPSEEK_API_KEY_HERE";
+// DeepSeek API Key（platform.deepseek.com 获取）
+const DEEPSEEK_API_KEY = "process.env.DEEPSEEK_API_KEY";
 const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
 
 /**
@@ -57,6 +57,11 @@ exports.main = async (event) => {
   const messages = event.messages || [];
 
   try {
+    // 0. 空消息防护
+    if (!messages.length) {
+      return { success: false, error: "没有可发送的消息内容" };
+    }
+
     // 1. 提取最后一条用户提问做安全检测
     const userQuery = [...messages]
       .reverse()
