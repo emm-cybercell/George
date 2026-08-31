@@ -11,6 +11,31 @@ declare module "*.scss";
 declare module "*.sass";
 declare module "*.styl";
 
+/** 微信小程序插件引用 */
+declare function requirePlugin(name: "WechatSI"): WechatSI.WechatSI;
+
+/** 微信同声传译 (WechatSI) 插件类型 */
+declare namespace WechatSI {
+  interface RecognitionResult {
+    result: string;
+    tempFilePath: string;
+  }
+
+  interface RecordRecognitionManager {
+    /** 注意：WechatSI 回调为赋值式注册 */
+    onStart: () => void;
+    onRecognize: (res: { result: string }) => void;
+    onStop: (res: RecognitionResult) => void;
+    onError: (err: { msg: string }) => void;
+    start(options: { duration?: number; lang?: string }): void;
+    stop(): void;
+  }
+
+  interface WechatSI {
+    getRecordRecognitionManager(): RecordRecognitionManager;
+  }
+}
+
 declare namespace NodeJS {
   interface ProcessEnv {
     /** NODE 内置环境变量, 会影响到最终构建生成产物 */

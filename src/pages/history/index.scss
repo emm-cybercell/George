@@ -11,7 +11,7 @@
     right: 0;
     z-index: 999;
     background: #8b5cf6;
-    padding-top: calc(env(safe-area-inset-top) + 52px);
+    padding-top: calc(env(safe-area-inset-top) + 68px);
     padding-bottom: 14px;
     padding-left: 32px;
     padding-right: 32px;
@@ -23,6 +23,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+
+  &__left-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 1;
   }
 
   &__back {
@@ -51,16 +58,12 @@
     white-space: nowrap;
   }
 
-  &__clear-wrap {
-    margin-right: 95px; /* 完全避开微信原生胶囊，绝不重叠 */
-  }
-
   &__clear {
     padding: 10px 20px;
     font-size: 24px;
-    color: #fff;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    font-weight: 600;
+    color: #ef4444;
+    background: #ffffff;
     border-radius: 999px;
     transition: transform 0.2s ease;
     cursor: pointer;
@@ -82,7 +85,7 @@
 
   &__content {
     min-height: 100vh;
-    padding-top: calc(env(safe-area-inset-top) + 115px);
+    padding-top: calc(env(safe-area-inset-top) + 131px);
     padding-bottom: 40px;
     padding-left: 24px;
     padding-right: 24px;

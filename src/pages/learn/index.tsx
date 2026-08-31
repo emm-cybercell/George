@@ -28,14 +28,26 @@ const Learn = () => {
   const [chatState, setChatState] = useState<ChatState>("idle");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
   const sessionIdRef = useRef(`session-${Date.now()}`);
+  const rmRef = useRef<WechatSI.RecordRecognitionManager | null>(null);
 
   // 进入方式：
+  // 0. 初始化语音识别管理器
   // 1. ?new=1  -> 开启空白新对话
   // 2. ?sessionId=xxx -> 从历史页"继续对话"加载指定会话
   // 3. 无参数且上次为空白会话 -> 保持空白，不恢复历史
   // 4. 无参数且上次有真实对话 -> 恢复最近一次会话
   useLoad(() => {
+    try {
+      initRecorder();
+    } catch {
+      Taro.showToast({
+        title: "语音识别未开通，请先在后台添加插件",
+        icon: "none",
+      });
+    }
+
     if (router.params.new === "1") {
       sessionIdRef.current = `session-${Date.now()}`;
       return;
@@ -65,11 +77,14 @@ const Learn = () => {
     }
   });
 
-  // 退出/切换页面时记录本次会话是否有真实内容
+  // 退出/切换页面时记录本次会话是否有真实内容，并停止录音
   useDidHide(() => {
     const sessionExists = !!getChatSession(sessionIdRef.current);
     const hasContent = messages.length > 0;
     Taro.setStorageSync(BLANK_FLAG, !sessionExists || !hasContent);
+    if (isRecording && rmRef.current) {
+      rmRef.current.stop();
+    }
   });
 
   // 页面重新显示时（从历史页返回），若当前会话已被删除则重置为空白新对话
@@ -94,9 +109,54 @@ const Learn = () => {
     }
   });
 
+  // 初始化语音识别管理器（WechatSI 同声传译插件）
+  // 注意：该插件回调采用"赋值式"注册（manager.onStart = fn），不能用方法调用式
+  const initRecorder = () => {
+    const rm = requirePlugin("WechatSI").getRecordRecognitionManager();
+    rmRef.current = rm;
+
+    rm.onStart = () => {
+      setIsRecording(true);
+      Taro.showToast({ title: "桥智同学正在倾听中...", icon: "none" });
+    };
+
+    rm.onRecognize = (res) => {
+      if (res.result) {
+        setInputText(res.result);
+      }
+    };
+
+    rm.onStop = (res) => {
+      setInputText(res.result);
+      setIsRecording(false);
+      if (res.result) {
+        Taro.showToast({ title: "已听清，点击发送即可", icon: "none" });
+      } else {
+        Taro.showToast({ title: "没听清，再说一次吧", icon: "none" });
+      }
+    };
+
+    rm.onError = (err) => {
+      setIsRecording(false);
+      console.log("WechatSI onError:", JSON.stringify(err));
+      Taro.showToast({
+        title: `录音失败：${err?.msg || "请检查麦克风权限"}`,
+        icon: "none",
+      });
+    };
+  };
+
   const toggleRecord = () => {
-    // ponytail: 语音识别插件暂未接入，点击给出提示
-    Taro.showToast({ title: "语音功能暂未开通，先用文字输入吧", icon: "none" });
+    const rm = rmRef.current;
+    if (!rm) {
+      Taro.showToast({ title: "语音识别暂不可用", icon: "none" });
+      return;
+    }
+    if (isRecording) {
+      rm.stop();
+      return;
+    }
+    rm.start({ duration: 30000, lang: "zh_CN" });
   };
 
   const persist = (list: ChatMessage[]) => {
@@ -172,7 +232,7 @@ const Learn = () => {
         value={inputText}
         onChange={setInputText}
         onSend={() => send()}
-        isRecording={false}
+        isRecording={isRecording}
         onMicTap={toggleRecord}
       />
 

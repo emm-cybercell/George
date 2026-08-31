@@ -1,4 +1,5 @@
 {
+  "cloudfunctionRoot": "cloudfunctions/",
   "miniprogramRoot": "dist/",
   "projectname": "桥智同学",
   "description": "青少年 AI 创意助手小程序",

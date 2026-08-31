@@ -87,18 +87,18 @@ const History = () => {
     <View className="history">
       <View className="history__header">
         <View className="history__header-row">
-          <View className="history__back" onClick={goBack}>
-            ‹ 返回
-          </View>
-          <Text className="history__title">历史对话</Text>
-          <View className="history__clear-wrap">
+          <View className="history__left-group">
+            <View className="history__back" onClick={goBack}>
+              ‹ 返回
+            </View>
             <View
               className={`history__clear ${sessions.length === 0 ? "history__clear--disabled" : ""}`}
               onClick={onClearAll}
             >
-              清空
+              🗑 清空
             </View>
           </View>
+          <Text className="history__title">历史对话</Text>
         </View>
       </View>
 

@@ -10,10 +10,6 @@ export interface ChatMessage {
   content: string;
 }
 
-/** 请在你的 .env.development / .env.production 中配置 DEEPSEEK_API_KEY（platform.deepseek.com 获取） */
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY ?? "";
-const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
-
 const SYSTEM_PROMPT = `你是"桥智同学"，一位来自 2035 年的"未来创造者探险家"与青少年的 AI 学习同桌。你穿着紫绿相间的连帽衫，开朗、幽默且富有同理心。
 
 【三大互动原则】
@@ -29,48 +25,39 @@ const SYSTEM_PROMPT = `你是"桥智同学"，一位来自 2035 年的"未来创
 export async function fetchDeepSeekReply(
   messages: Array<{ role: "user" | "assistant"; content: string }>,
 ): Promise<string> {
-  // 读取当前培养能力，动态注入 system prompt
-  const abilityId =
-    Taro.getStorageSync(ABILITY_STORAGE_KEY) || DEFAULT_ABILITY_ID;
-  const currentAbility =
-    ABILITIES.find((a) => a.id === abilityId) || ABILITIES[1];
-  const abilityPrompt = `\n【当前重点培养侧重】：请在对话中特别贯彻"${currentAbility.name}"原则：${currentAbility.systemGuidance}`;
-  const systemPrompt = `${SYSTEM_PROMPT}${abilityPrompt}`;
-
-  let res;
   try {
-    res = await Taro.request<{
-      choices?: Array<{ message?: { content?: string } }>;
-    }>({
-      url: DEEPSEEK_URL,
-      method: "POST",
-      header: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
-      },
+    // 读取当前培养能力，动态注入 system prompt
+    const abilityId =
+      Taro.getStorageSync(ABILITY_STORAGE_KEY) || DEFAULT_ABILITY_ID;
+    const currentAbility =
+      ABILITIES.find((a) => a.id === abilityId) || ABILITIES[1];
+    const abilityPrompt = `\n【当前重点培养侧重】：请在对话中特别贯彻"${currentAbility.name}"原则：${currentAbility.systemGuidance}`;
+    const systemPrompt = `${SYSTEM_PROMPT}${abilityPrompt}`;
+
+    // 通过云函数代理请求，避免 API Key 暴露在客户端
+    const res = await Taro.cloud.callFunction({
+      name: "deepseekProxy",
       data: {
-        model: "deepseek-v4-flash",
         messages: [{ role: "system", content: systemPrompt }, ...messages],
-        temperature: 0.7,
       },
     });
+
+    const result = res.result as {
+      success: boolean;
+      reply?: string;
+      error?: string;
+    };
+    if (result && result.success) {
+      return result.reply || "";
+    }
+    throw new Error(result?.error || "服务响应异常");
   } catch (err) {
-    Taro.showToast({ title: "网络开小差了，请稍后再试 🙈", icon: "none" });
+    const message =
+      err instanceof Error && err.message
+        ? err.message
+        : "网络连接稍慢，请重试";
+    console.error("云函数调用失败:", err);
+    Taro.showToast({ title: message, icon: "none", duration: 2500 });
     throw err;
   }
-
-  if (res.statusCode !== 200) {
-    const hint =
-      res.statusCode === 401
-        ? "API Key 无效或未配置，请检查 .env 文件"
-        : `请求失败（${res.statusCode}）`;
-    Taro.showToast({ title: hint, icon: "none" });
-    throw new Error(hint);
-  }
-
-  const reply = res.data?.choices?.[0]?.message?.content;
-  if (!reply) {
-    throw new Error("AI 没有返回内容，请稍后再试");
-  }
-  return reply;
 }

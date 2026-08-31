@@ -1,0 +1,10 @@
+{
+  "name": "deepseekProxy",
+  "version": "1.0.0",
+  "description": "DeepSeek API 代理与微信文本合规审核",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "axios": "^1.6.0"
+  }
+}
