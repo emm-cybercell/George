@@ -1,0 +1,109 @@
+.work-card {
+  position: relative;
+  width: calc(50% - 10px);
+  margin-bottom: 20px;
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+
+  &:active {
+    transform: scale(0.97);
+    opacity: 0.95;
+  }
+
+  &__cover {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: #f3f4f6;
+  }
+
+  &__actions {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 999px;
+    backdrop-filter: blur(4px);
+  }
+
+  &__action-delete {
+    font-size: 28px;
+    padding: 4px 8px;
+    border-radius: 50%;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.9);
+      opacity: 0.85;
+    }
+  }
+
+  &__action-share {
+    margin: 0;
+    padding: 4px 8px;
+    font-size: 28px;
+    line-height: 1;
+    background: transparent;
+    border: none;
+
+    &::after {
+      border: none;
+    }
+  }
+
+  &__body {
+    padding: 20px 20px 24px;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  &__title {
+    flex: 1;
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2430;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__badge {
+    flex-shrink: 0;
+    padding: 4px 12px;
+    font-size: 20px;
+    color: #8b5cf6;
+    background: #f3eeff;
+    border-radius: 999px;
+  }
+
+  &__content {
+    display: block;
+    margin-top: 12px;
+    font-size: 22px;
+    line-height: 1.5;
+    color: #6b7280;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+}

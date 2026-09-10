@@ -1,12 +1,26 @@
 .badge-wall {
   margin: 0 24px 24px;
 
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 8px 0 16px;
+  }
+
   &__title {
     display: block;
     font-size: 30px;
     font-weight: 700;
     color: #1f2430;
-    margin: 8px 0 16px;
+  }
+
+  &__progress {
+    font-size: 22px;
+    color: #8b5cf6;
+    background: #f3eeff;
+    padding: 6px 16px;
+    border-radius: 999px;
   }
 
   &__list {
@@ -42,10 +56,26 @@
       color: #22c55e;
     }
 
+    &--gold {
+      background: #fff7e6;
+      color: #f59e0b;
+    }
+
+    &--glow {
+      box-shadow:
+        0 0 20px rgba(139, 92, 246, 0.35),
+        0 8px 24px rgba(149, 157, 165, 0.08);
+    }
+
     &--locked {
       background: #f9fafb;
       color: #9ca3af;
       border: 2px dashed #d1d5db;
+
+      .badge-wall__icon {
+        filter: grayscale(1);
+        opacity: 0.7;
+      }
     }
   }
 
@@ -57,5 +87,14 @@
     margin-top: 12px;
     font-size: 24px;
     font-weight: 600;
+  }
+
+  &__desc {
+    margin-top: 6px;
+    font-size: 18px;
+    color: #9ca3af;
+    text-align: center;
+    line-height: 1.4;
+    padding: 0 12px;
   }
 }

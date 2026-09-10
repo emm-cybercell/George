@@ -7,6 +7,8 @@ interface ChatInputProps {
   onSend: () => void;
   isRecording: boolean;
   onMicTap: () => void;
+  /** 点击 + 拓展工具箱 */
+  onPlusTap: () => void;
 }
 
 const ChatInput = ({
@@ -15,9 +17,13 @@ const ChatInput = ({
   onSend,
   isRecording,
   onMicTap,
+  onPlusTap,
 }: ChatInputProps) => {
   return (
     <View className="chat-input">
+      <View className="chat-input__plus" onClick={onPlusTap}>
+        ＋
+      </View>
       <Input
         className="chat-input__field"
         placeholder="和桥智同桌聊点什么..."

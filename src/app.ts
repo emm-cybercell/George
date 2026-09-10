@@ -1,5 +1,6 @@
 import { PropsWithChildren, useEffect } from "react";
 import Taro from "@tarojs/taro";
+import { getOrInitUserAccount } from "@/api/user";
 
 import "./app.scss";
 
@@ -15,6 +16,8 @@ function App({ children }: PropsWithChildren) {
           env: CLOUD_ENV,
           traceUser: true,
         });
+        // 启动静默初始化：确保当前用户云端档案就位（失败静默，本地兜底）
+        getOrInitUserAccount();
       }
     }
   }, []);

@@ -1,4 +1,5 @@
 import { View, Text, Image, ScrollView } from "@tarojs/components";
+import Taro from "@tarojs/taro";
 import mascotImg from "@/assets/images/立绘2.jpg";
 import type { ChatMessage } from "../types";
 import "./index.scss";
@@ -6,6 +7,26 @@ import "./index.scss";
 interface ChattingStateProps {
   messages: ChatMessage[];
 }
+
+/** 图片消息气泡：点击放大预览 */
+const renderBubbleContent = (m: ChatMessage) => {
+  if (m.mediaUrl) {
+    return (
+      <Image
+        className="chatting-state__media"
+        src={m.mediaUrl}
+        mode="aspectFill"
+        onClick={() =>
+          Taro.previewImage({
+            urls: [m.mediaUrl as string],
+            current: m.mediaUrl as string,
+          })
+        }
+      />
+    );
+  }
+  return <Text>{m.content}</Text>;
+};
 
 const ChattingState = ({ messages }: ChattingStateProps) => {
   const lastId = messages.length ? messages[messages.length - 1].id : "";
@@ -41,7 +62,7 @@ const ChattingState = ({ messages }: ChattingStateProps) => {
                     : "chatting-state__bubble--assistant"
                 }`}
               >
-                <Text>{m.content}</Text>
+                {renderBubbleContent(m)}
               </View>
             </View>
           ))}

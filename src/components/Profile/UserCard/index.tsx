@@ -1,23 +1,65 @@
-import { View, Text } from "@tarojs/components";
-import { userInfo } from "@/pages/profile/data";
-import { getLocalUserProfile } from "@/api/cloud";
+import { View, Text, Image } from "@tarojs/components";
 import "./index.scss";
 
-const UserCard = () => {
-  const profile = getLocalUserProfile();
+interface UserCardProps {
+  nickName: string;
+  grade: string;
+  points: number;
+  level: number;
+  avatarUrl?: string;
+  streakDays: number;
+  checkedInToday: boolean;
+  onEdit: () => void;
+  onCheckIn: () => void;
+}
+
+const UserCard = ({
+  nickName,
+  grade,
+  points,
+  level,
+  avatarUrl,
+  streakDays,
+  checkedInToday,
+  onEdit,
+  onCheckIn,
+}: UserCardProps) => {
   const stats = [
     { icon: "🎂", value: "10月12日", name: "生日" },
-    { icon: "📚", value: "五年级", name: "学龄" },
-    { icon: "⭐", value: String(profile.score), name: "积分" },
+    { icon: "📚", value: grade, name: "学龄" },
+    { icon: "⭐", value: String(points), name: "积分" },
   ];
 
   return (
     <View className="user-card card-animate">
       <View className="user-card__top">
-        <Text className="user-card__avatar">🧑‍🚀</Text>
+        {avatarUrl ? (
+          <Image
+            className="user-card__avatar-img"
+            src={avatarUrl}
+            mode="aspectFill"
+          />
+        ) : (
+          <Text className="user-card__avatar">🧑‍🚀</Text>
+        )}
         <View className="user-card__info">
-          <Text className="user-card__name">{userInfo.nickname}</Text>
-          <Text className="user-card__level">{profile.level}</Text>
+          <Text className="user-card__name">{nickName}</Text>
+          <Text className="user-card__level">LV.{level} 学习达人</Text>
+        </View>
+        <View className="user-card__edit" onClick={onEdit}>
+          ✏️ 编辑档案
+        </View>
+      </View>
+
+      <View className="user-card__checkin">
+        <Text className="user-card__streak">🔥 已连续探索 {streakDays} 天</Text>
+        <View
+          className={`user-card__checkin-btn ${
+            checkedInToday ? "user-card__checkin-btn--done" : ""
+          }`}
+          onClick={checkedInToday ? undefined : onCheckIn}
+        >
+          {checkedInToday ? "已打卡 ✓" : "今日打卡"}
         </View>
       </View>
 

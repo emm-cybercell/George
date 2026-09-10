@@ -1,0 +1,109 @@
+.media-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  &__mask {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  &__card {
+    position: relative;
+    width: 100%;
+    padding: 36px 32px 40px;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 40px);
+    box-sizing: border-box;
+    background: #ffffff;
+    border-radius: 32px 32px 0 0;
+    animation: media-up 0.25s ease;
+  }
+
+  &__title {
+    display: block;
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2430;
+    margin-bottom: 8px;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    padding: 26px 20px;
+    margin-top: 8px;
+    background: #f8f9fa;
+    border-radius: 20px;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.97);
+      opacity: 0.9;
+    }
+  }
+
+  &__icon {
+    font-size: 48px;
+  }
+
+  &__text {
+    flex: 1;
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__label {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2430;
+  }
+
+  &__sub {
+    margin-top: 6px;
+    font-size: 22px;
+    color: #9ca3af;
+  }
+
+  &__arrow {
+    font-size: 32px;
+    color: #c0c4cc;
+  }
+
+  &__cancel {
+    margin-top: 24px;
+    padding: 24px 0;
+    font-size: 30px;
+    font-weight: 600;
+    text-align: center;
+    color: #6b7280;
+    background: #f3f4f6;
+    border-radius: 999px;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.95);
+      opacity: 0.9;
+    }
+  }
+}
+
+@keyframes media-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

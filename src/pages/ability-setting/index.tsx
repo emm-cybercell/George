@@ -2,10 +2,10 @@ import { useState } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import {
-  fetchCloudUserProfile,
-  getLocalUserProfile,
-  syncProfileToCloud,
-} from "@/api/cloud";
+  checkAbilitySwitchBadge,
+  getOrInitUserAccount,
+  updateUserGrowth,
+} from "@/api/user";
 import {
   ABILITIES,
   ABILITY_STORAGE_KEY,
@@ -26,19 +26,22 @@ const AbilitySetting = () => {
     const ability = ABILITIES.find((a) => a.id === selectedId);
     if (!ability) return;
     Taro.setStorageSync(ABILITY_STORAGE_KEY, selectedId);
-    // 保留云端/本地已有积分等级，仅更新培养方向，避免同步时重置用户成长数据
-    const cloud = await fetchCloudUserProfile();
-    const local = getLocalUserProfile();
-    syncProfileToCloud({
-      selectedAbilityId: selectedId,
-      score: cloud?.score ?? local.score,
-      level: cloud?.level ?? local.level,
+    // 仅更新培养方向，保留现有积分等级，避免同步时重置用户成长数据
+    const account = await getOrInitUserAccount();
+    updateUserGrowth({
+      currentAbility: selectedId,
+      points: account.growth.points,
+      level: account.growth.level,
     });
+    // 记录已体验的培养方向，体验 >=2 种解锁 multi_talent 勋章
+    const badgeResult = await checkAbilitySwitchBadge(selectedId);
     Taro.showToast({
-      title: `已切换为【${ability.name}】引导模式`,
+      title: badgeResult.newlyUnlockedBadges.length
+        ? `已切换为【${ability.name}】🏅 解锁新勋章！`
+        : `已切换为【${ability.name}】引导模式`,
       icon: "none",
     });
-    setTimeout(() => Taro.navigateBack(), 600);
+    setTimeout(() => Taro.navigateBack(), 500);
   };
 
   return (

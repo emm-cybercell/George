@@ -4,6 +4,7 @@ export default defineAppConfig({
     "pages/learn/index",
     "pages/profile/index",
     "pages/history/index",
+    "pages/portfolio/index",
     "pages/about/index",
     "pages/team/index",
     "pages/feature-detail/index",

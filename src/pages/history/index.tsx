@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
-import Taro from "@tarojs/taro";
+import Taro, { useDidShow } from "@tarojs/taro";
 import {
   clearChatSessions,
   deleteChatSession,
@@ -12,61 +12,52 @@ import {
   deleteCloudChatRecord,
   queryCloudChatRecords,
   type CloudChatRecord,
-} from "@/api/cloud";
-import type { ChatMessage } from "@/components/Learn/types";
+} from "@/api/cloudChat";
+import HistoryCard, { formatTime, titleOf } from "@/components/HistoryCard";
 import "./index.scss";
-
-const formatTime = (ts: number) => {
-  const d = new Date(ts);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getMonth() + 1}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-};
-
-/** 云端记录标题：取问题截断 */
-const titleOf = (q: string) => (q.length > 12 ? `${q.slice(0, 12)}…` : q);
 
 const History = () => {
   const [cloudRecords, setCloudRecords] = useState<CloudChatRecord[]>([]);
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeId, setActiveId] = useState("");
   const [useCloud, setUseCloud] = useState(false);
+  const [loading, setLoading] = useState(true);
 
+  // 页面展示时云优先拉取真实记录，云端无记录降级本地会话
   const refresh = async () => {
-    // 云优先：云端有记录则渲染云端真实对话
+    setLoading(true);
     const cloud = await queryCloudChatRecords();
     if (cloud.length > 0) {
       setCloudRecords(cloud);
       setSessions([]);
       setUseCloud(true);
-      return;
+    } else {
+      setCloudRecords([]);
+      setSessions(getChatSessions());
+      setUseCloud(false);
     }
-    // 云端不可用/无记录：降级本地会话
-    setCloudRecords([]);
-    setSessions(getChatSessions());
-    setUseCloud(false);
+    setLoading(false);
   };
 
-  useEffect(() => {
-    refresh();
-  }, []);
+  useDidShow(refresh);
 
-  const goBack = () => {
-    Taro.navigateBack();
-  };
+  const goBack = () => Taro.navigateBack();
 
-  const toggle = (id: string) => {
-    setActiveId((prev) => (prev === id ? "" : id));
-  };
+  const toggle = (id: string) => setActiveId((prev) => (prev === id ? "" : id));
 
   const onDelete = async (id: string) => {
     deleteChatSession(id);
-    if (useCloud) {
-      await deleteCloudChatRecord(id);
-    }
+    if (useCloud) await deleteCloudChatRecord(id);
     if (activeId === id) setActiveId("");
     refresh();
   };
 
+  // 打开对话：携带 historyId 跳转学习页恢复（云端记录直读，本地会话降级复用）
+  const onOpen = (id: string) => {
+    Taro.redirectTo({ url: `/pages/learn/index?historyId=${id}` });
+  };
+
+  // 本地会话快速续聊
   const onContinue = (id: string) => {
     Taro.redirectTo({ url: `/pages/learn/index?sessionId=${id}` });
   };
@@ -74,68 +65,26 @@ const History = () => {
   const onClearAll = () => {
     Taro.showModal({
       title: "清空历史",
-      content: "确定删除全部历史对话吗？此操作不可恢复。",
+      content: "确定要清空所有历史对话吗？",
       confirmColor: "#8B5CF6",
       success: async (res) => {
-        if (res.confirm) {
-          clearChatSessions();
-          if (useCloud) {
-            await clearCloudChatRecords();
-          }
-          setActiveId("");
-          refresh();
-        }
+        if (!res.confirm) return;
+        clearChatSessions();
+        if (useCloud) await clearCloudChatRecords();
+        setActiveId("");
+        setSessions([]);
+        setCloudRecords([]);
+        setUseCloud(false);
+        Taro.showToast({ title: "已清空", icon: "success" });
       },
     });
   };
 
-  const renderMessages = (list: ChatMessage[]) =>
-    list.map((m) => (
-      <View
-        key={m.id}
-        className={`history-detail__row ${
-          m.role === "user"
-            ? "history-detail__row--user"
-            : "history-detail__row--ai"
-        }`}
-      >
-        <View
-          className={`history-detail__bubble ${
-            m.role === "user"
-              ? "history-detail__bubble--user"
-              : "history-detail__bubble--ai"
-          }`}
-        >
-          <Text>{m.content}</Text>
-        </View>
-      </View>
-    ));
-
-  const renderCloudDetail = (r: CloudChatRecord) => (
-    <View className="history-detail">
-      <View className="history-detail__row history-detail__row--user">
-        <View className="history-detail__bubble history-detail__bubble--user">
-          <Text>{r.userQuery}</Text>
-        </View>
-      </View>
-      <View className="history-detail__row history-detail__row--ai">
-        <View className="history-detail__bubble history-detail__bubble--ai">
-          <Text>{r.aiReply}</Text>
-        </View>
-      </View>
-      <View className="history-detail__actions">
-        <View
-          className="history-detail__delete"
-          onClick={() => onDelete(r._id as string)}
-        >
-          🗑 删除该对话
-        </View>
-      </View>
-    </View>
-  );
-
-  const isEmpty = useCloud ? cloudRecords.length === 0 : sessions.length === 0;
-
+  const isEmpty = cloudRecords.length === 0 && sessions.length === 0;
+  const rowsOf = (r: CloudChatRecord) => [
+    { role: "user" as const, content: r.userQuery },
+    { role: "assistant" as const, content: r.aiReply },
+  ];
   return (
     <View className="history">
       <View className="history__header">
@@ -157,72 +106,49 @@ const History = () => {
 
       <ScrollView scrollY className="history__list">
         <View className="history__content">
-          {isEmpty && (
+          {loading ? (
+            <View className="history__skeleton">
+              {[0, 1, 2].map((i) => (
+                <View key={i} className="history__skeleton-card" />
+              ))}
+            </View>
+          ) : isEmpty ? (
             <Text className="history__empty">
               还没有对话记录，去学习页聊聊吧 ✨
             </Text>
+          ) : useCloud ? (
+            cloudRecords.map((r) => (
+              <HistoryCard
+                key={r._id}
+                title={titleOf(r.userQuery)}
+                timeText={formatTime(r.timestamp)}
+                rows={rowsOf(r)}
+                showContinue={false}
+                expanded={activeId === r._id}
+                onOpen={() => onOpen(r._id as string)}
+                onToggle={() => toggle(r._id as string)}
+                onDelete={() => onDelete(r._id as string)}
+              />
+            ))
+          ) : (
+            sessions.map((s) => (
+              <HistoryCard
+                key={s.id}
+                title={s.title}
+                timeText={formatTime(s.updatedAt)}
+                rows={s.messages.map((m) => ({
+                  role: m.role,
+                  content: m.content,
+                }))}
+                showContinue
+                expanded={activeId === s.id}
+                onOpen={() => onOpen(s.id)}
+                onToggle={() => toggle(s.id)}
+                onContinue={() => onContinue(s.id)}
+                onDelete={() => onDelete(s.id)}
+              />
+            ))
           )}
-
-          {useCloud
-            ? cloudRecords.map((r) => (
-                <View key={r._id} className="history__session">
-                  <View
-                    className="history__row"
-                    onClick={() => toggle(r._id as string)}
-                  >
-                    <View className="history__info">
-                      <Text className="history__label">
-                        {titleOf(r.userQuery)}
-                      </Text>
-                      <Text className="history__time">
-                        {formatTime(r.createTime)}
-                      </Text>
-                    </View>
-                    <Text className="history__arrow">
-                      {activeId === r._id ? "▾" : "›"}
-                    </Text>
-                  </View>
-                  {activeId === r._id && renderCloudDetail(r)}
-                </View>
-              ))
-            : sessions.map((s) => (
-                <View key={s.id} className="history__session">
-                  <View className="history__row" onClick={() => toggle(s.id)}>
-                    <View className="history__info">
-                      <Text className="history__label">{s.title}</Text>
-                      <Text className="history__time">
-                        {formatTime(s.updatedAt)}
-                      </Text>
-                    </View>
-                    <View
-                      className="history__continue-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onContinue(s.id);
-                      }}
-                    >
-                      💬 继续
-                    </View>
-                    <Text className="history__arrow">
-                      {activeId === s.id ? "▾" : "›"}
-                    </Text>
-                  </View>
-
-                  {activeId === s.id && (
-                    <View className="history-detail">
-                      {renderMessages(s.messages)}
-                      <View className="history-detail__actions">
-                        <View
-                          className="history-detail__delete"
-                          onClick={() => onDelete(s.id)}
-                        >
-                          🗑 删除该对话
-                        </View>
-                      </View>
-                    </View>
-                  )}
-                </View>
-              ))}
         </View>
       </ScrollView>
     </View>

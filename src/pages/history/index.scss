@@ -232,4 +232,46 @@
       opacity: 0.9;
     }
   }
+
+  &__open {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 24px;
+    margin-right: 16px;
+    font-size: 24px;
+    color: #8b5cf6;
+    background: #f3eeff;
+    border-radius: 999px;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.95);
+      opacity: 0.9;
+    }
+  }
+}
+
+.history__skeleton {
+  padding-top: 8px;
+
+  &-card {
+    height: 116px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    background: linear-gradient(90deg, #eef0f3 25%, #f7f8fa 50%, #eef0f3 75%);
+    background-size: 400% 100%;
+    animation: skeleton-wave 1.4s ease infinite;
+  }
+}
+
+@keyframes skeleton-wave {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
 }

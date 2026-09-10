@@ -67,4 +67,42 @@
     padding: 0 32px;
     box-sizing: border-box;
   }
+
+  &__award {
+    position: fixed;
+    left: 50%;
+    bottom: calc(env(safe-area-inset-bottom) + var(--tabbar-h) + 190px);
+    transform: translateX(-50%);
+    z-index: 990;
+    padding: 14px 32px;
+    background: rgba(139, 92, 246, 0.94);
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.35);
+    animation: award-float 1.8s ease forwards;
+    pointer-events: none;
+
+    &-text {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+  }
+}
+
+@keyframes award-float {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 16px);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -24px);
+  }
 }

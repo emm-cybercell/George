@@ -10,6 +10,29 @@
   border-top: 1px solid #f0f0f0;
   z-index: 200;
 
+  &__plus {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin-right: 12px;
+    font-size: 36px;
+    font-weight: 600;
+    color: #8b5cf6;
+    background: #f3eeff;
+    border-radius: 20px;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.92);
+      opacity: 0.85;
+    }
+  }
+
   &__field {
     flex: 1;
     height: 64px;
