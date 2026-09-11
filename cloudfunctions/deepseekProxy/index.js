@@ -4,8 +4,8 @@ const cloud = require("wx-server-sdk");
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const axios = require("axios");
 
-// DeepSeek API Key（platform.deepseek.com 获取）
-const DEEPSEEK_API_KEY = "process.env.DEEPSEEK_API_KEY";
+// DeepSeek API Key：在云开发控制台为 deepseekProxy 云函数配置 DEEPSEEK_API_KEY 环境变量（platform.deepseek.com 获取）
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY ?? "";
 const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
 
 /**
