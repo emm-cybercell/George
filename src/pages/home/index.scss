@@ -1,212 +1,368 @@
-.home {
+.home-page {
   min-height: 100vh;
-  background: #f8f9fa;
   padding-bottom: 140px;
   box-sizing: border-box;
-
-  &__section-title {
-    display: block;
-    font-size: 32px;
-    font-weight: 700;
-    color: #1f2430;
-    margin: 8px 24px 20px;
-  }
-
-  &__feature-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    padding: 0 24px;
-  }
+  background-color: #f8fafc;
 }
 
-/* 横向通栏卡片（关于 / 团队） */
-.entry-card {
+/* ① 极简吸顶 Header（右侧操作区避开微信原生胶囊） */
+.home-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 0 24px 20px;
-  padding: 28px;
-  border-radius: 18px;
-  background: #ffffff;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
+  /* 整个顶栏内容下移到微信胶囊（约 76px 高）之下，按钮不与胶囊重叠 */
+  padding-top: calc(env(safe-area-inset-top) + 160px) !important;
+  padding-bottom: 12px;
+  padding-left: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &__avatar {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: #f1f5f9;
+    }
+
+    &__text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    &__title {
+      font-size: 34px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.2;
+    }
+
+    &__pill {
+      align-self: flex-start;
+      margin-top: 6px;
+      padding: 4px 14px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #475569;
+      background: #f1f5f9;
+      border-radius: 999px;
+    }
+  }
+
+  /* 关键：右侧操作组完全落在微信胶囊左侧（胶囊宽约 87px + 安全余量） */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-right: 20px;
+
+    &__icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 68px;
+      height: 68px;
+      font-size: 32px;
+      background: #f8fafc;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: 50%;
+      transition: transform 0.2s ease;
+
+      &:active {
+        transform: scale(0.92);
+      }
+    }
+  }
+}
+
+/* ② Hero 灵感欢迎横幅 */
+.hero-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16px 16px 0;
+  padding: 28px 28px;
+  border-radius: 24px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: linear-gradient(135deg, #e0f2fe 0%, #ede9fe 55%, #ecfeff 100%);
+  box-shadow:
+    0 12px 32px -12px rgba(59, 130, 246, 0.25),
+    0 10px 30px -10px rgba(15, 23, 42, 0.05);
+  transition: transform 0.2s ease;
   cursor: pointer;
 
   &:active {
     transform: scale(0.98);
   }
 
-  &__left {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    flex: 1;
-  }
-
-  &__badge {
-    padding: 6px 16px;
-    font-size: 22px;
-    border-radius: 999px;
-    margin-bottom: 12px;
-
-    &--purple {
-      color: #8b5cf6;
-      background: #f3eeff;
-    }
-
-    &--pink {
-      color: #ec4899;
-      background: #fce7f3;
-    }
-  }
-
-  &__title {
-    font-size: 34px;
-    font-weight: 700;
-    color: #111827;
-    line-height: 1.3;
-  }
-
-  &__tags {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 12px;
-  }
-
-  &__tag {
-    padding: 6px 14px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    font-size: 20px;
-    color: #6b7280;
-    background: #f3f4f6;
-    border-radius: 999px;
-  }
-
-  &__arrow {
-    margin-left: 16px;
-    font-size: 44px;
-    font-weight: 300;
-    color: #9ca3af;
-  }
-}
-
-/* 2x2 极简矩阵（核心特色） */
-.feature-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 18px 16px;
-  border-radius: 20px;
-  background: #ffffff;
-  border: 1.5px solid rgba(243, 244, 246, 0.8);
-  overflow: hidden;
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
-  cursor: pointer;
-
-  &:active {
-    transform: scale(0.96);
-  }
-
-  &__bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    border-radius: 0 0 8px 8px;
-  }
-
-  &__badge {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 64px;
-    height: 64px;
-    border-radius: 18px;
-  }
-
-  &__icon {
-    font-size: 34px;
-  }
-
-  &__title-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 12px;
-  }
-
-  &__title {
-    font-size: 32px;
-    font-weight: 700;
-    color: #111827;
-    line-height: 1.3;
-    flex: 1;
-  }
-
-  &__arrow {
-    margin-left: 8px;
-    font-size: 36px;
-    font-weight: 600;
-  }
-}
-
-.hero {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 24px;
-  padding: 40px 32px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.18);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-
-  &:active {
-    transform: scale(0.97);
-    opacity: 0.9;
-  }
-
   &__text {
     display: flex;
     flex-direction: column;
     flex: 1;
+    min-width: 0;
   }
 
   &__title {
-    font-size: 36px;
-    font-weight: 700;
-    color: #fff;
+    font-size: 34px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.3;
   }
 
   &__subtitle {
-    margin-top: 12px;
-    font-size: 26px;
-    color: rgba(255, 255, 255, 0.9);
+    margin-top: 10px;
+    font-size: 24px;
+    color: #475569;
+    line-height: 1.5;
   }
 
   &__btn {
-    margin-top: 24px;
     align-self: flex-start;
-    padding: 16px 28px;
-    font-size: 26px;
-    color: #fff;
-    background: #22c55e;
+    margin-top: 20px;
+    padding: 14px 28px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
+    background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
     border-radius: 999px;
-    font-weight: 600;
+    box-shadow: 0 8px 20px -6px rgba(59, 130, 246, 0.45);
+    transition: transform 0.2s ease;
+
+    &:active {
+      transform: scale(0.95);
+    }
   }
 
   &__mascot {
-    font-size: 120px;
-    margin-left: 16px;
+    width: 168px;
+    height: 200px;
+    margin-left: 4px;
+    flex-shrink: 0;
+  }
+}
+
+/* ③ Bento Grid 核心栅格 */
+.bento-section {
+  margin-top: 16px;
+
+  .bento-top-row {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 12px;
+    padding: 0 16px;
+  }
+
+  .bento-card-lab {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 210px;
+    padding: 22px 18px;
+    background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+    border-radius: 22px;
+    box-shadow: 0 12px 28px -10px rgba(59, 130, 246, 0.45);
+    transition: transform 0.2s ease;
+
+    &:active {
+      transform: scale(0.97);
+    }
+
+    &__glow {
+      align-self: flex-start;
+      padding: 8px 18px;
+      font-size: 22px;
+      font-weight: 700;
+      color: #0e7490;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 999px;
+      box-shadow: 0 0 24px rgba(255, 255, 255, 0.8);
+    }
+
+    &__title {
+      margin-top: 6px;
+      font-size: 34px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    &__sub {
+      font-size: 24px;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.4;
+    }
+
+    &__btn {
+      align-self: flex-start;
+      margin-top: auto;
+      padding: 12px 24px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #0284c7;
+      background: #ffffff;
+      border-radius: 999px;
+      transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+
+      &:active {
+        transform: scale(0.95);
+        opacity: 0.9;
+      }
+    }
+  }
+
+  .bento-right-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .bento-card-sub {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-height: 98px;
+    padding: 16px;
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+    transition: transform 0.2s ease;
+    position: relative;
+
+    &:active {
+      transform: scale(0.97);
+    }
+
+    &__icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      font-size: 36px;
+      border-radius: 20px;
+      flex-shrink: 0;
+
+      &--blue {
+        background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+      }
+
+      &--green {
+        background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%);
+      }
+    }
+
+    &__text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    &__title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.3;
+    }
+
+    &__desc {
+      margin-top: 4px;
+      font-size: 22px;
+      color: #94a3b8;
+    }
+
+    &__new {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      padding: 4px 12px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #2563eb;
+      background: #dbeafe;
+      border-radius: 999px;
+    }
+  }
+
+  .bento-card-diary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 108px;
+    margin: 12px 16px 0;
+    padding: 16px 20px;
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+    transition: transform 0.2s ease;
+
+    &:active {
+      transform: scale(0.98);
+    }
+
+    &__left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    &__icon {
+      font-size: 36px;
+    }
+
+    &__text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    &__title {
+      font-size: 30px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    &__desc {
+      margin-top: 4px;
+      font-size: 22px;
+      color: #94a3b8;
+    }
+
+    &__badges {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    &__streak {
+      padding: 8px 18px;
+      font-size: 22px;
+      font-weight: 700;
+      color: #7c3aed;
+      background: #f3e8ff;
+      border-radius: 999px;
+    }
+
+    &__level {
+      padding: 6px 16px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #d97706;
+      background: #fef3c7;
+      border-radius: 999px;
+    }
   }
 }

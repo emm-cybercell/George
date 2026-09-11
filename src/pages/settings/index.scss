@@ -1,0 +1,146 @@
+.settings {
+  min-height: 100vh;
+  background: #f8fafc;
+  padding-bottom: 80px;
+  box-sizing: border-box;
+
+  &__header {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+    padding-top: calc(env(safe-area-inset-top) + 150px) !important;
+    padding-bottom: 14px;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  &__header-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__back {
+    z-index: 1;
+    padding: 10px 20px;
+    font-size: 24px;
+    color: #0f172a;
+    background: #f1f5f9;
+    border-radius: 999px;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.94);
+      opacity: 0.9;
+    }
+  }
+
+  &__title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 34px;
+    font-weight: 800;
+    color: #0f172a;
+    white-space: nowrap;
+  }
+
+  &__body {
+    padding: 24px 24px 40px;
+  }
+}
+
+/* iOS 扁平分组卡片 */
+.settings-group {
+  margin-bottom: 32px;
+
+  &__title {
+    display: block;
+    padding: 0 8px 14px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #94a3b8;
+  }
+
+  &__card {
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+  }
+}
+
+.settings-cell {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 100px;
+  padding: 0 24px;
+  transition: background 0.2s ease;
+
+  &:active {
+    background: #f8fafc;
+  }
+
+  & + & {
+    border-top: 1px solid rgba(226, 232, 240, 0.6);
+  }
+
+  &__icon {
+    font-size: 36px;
+  }
+
+  &__text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: 28px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  &__sub {
+    margin-top: 6px;
+    font-size: 22px;
+    color: #94a3b8;
+  }
+
+  &__arrow {
+    font-size: 32px;
+    color: #cbd5e1;
+  }
+
+  &__version {
+    font-size: 22px;
+    color: #94a3b8;
+  }
+}
+
+.settings__reset {
+  margin-top: 24px;
+  padding: 28px 0;
+  font-size: 28px;
+  font-weight: 600;
+  text-align: center;
+  color: #ef4444;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+}

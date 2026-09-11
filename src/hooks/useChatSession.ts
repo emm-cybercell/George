@@ -25,6 +25,8 @@ export interface LearnRouteParams {
   new?: string;
   historyId?: string;
   sessionId?: string;
+  /** 首页灵感直达：携带问题直接发起提问 */
+  prompt?: string;
 }
 /** 学习页会话状态机：三状态、本地备份、云端写入、按路由参数恢复会话 */
 export function useChatSession(
@@ -76,11 +78,20 @@ export function useChatSession(
       .catch((err) => console.warn("历史会话恢复失败:", err));
   };
 
-  /** 恢复会话：优先级 new=1 > historyId > sessionId > 空白标记不恢复 > 最近会话 */
+  /** 恢复会话：优先级 new=1 > prompt 直达 > historyId > sessionId > 空白标记不恢复 > 最近会话 */
   const restore = (params: LearnRouteParams) => {
     if (params.new === "1") {
       sessionIdRef.current = `session-${Date.now()}`;
       return;
+    }
+    if (params.prompt) {
+      // 首页灵感直达：开新会话并直接发起提问
+      const text = decodeURIComponent(params.prompt);
+      if (text.trim()) {
+        sessionIdRef.current = `session-${Date.now()}`;
+        send(text);
+        return;
+      }
     }
     if (params.historyId) {
       restoreFromHistory(params.historyId);

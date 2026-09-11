@@ -4,7 +4,7 @@ import "./index.scss";
 
 const NotifyCard = () => {
   const onTap = () => {
-    Taro.showToast({ title: "暂无新通知", icon: "none" });
+    Taro.navigateTo({ url: "/pages/notifications/index" });
   };
 
   return (

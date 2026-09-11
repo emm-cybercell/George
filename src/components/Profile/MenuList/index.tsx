@@ -9,6 +9,8 @@ const MenuList = () => {
       Taro.navigateTo({ url: "/pages/history/index" });
     } else if (label === "我的作品集") {
       Taro.navigateTo({ url: "/pages/portfolio/index" });
+    } else if (label === "系统设置") {
+      Taro.navigateTo({ url: "/pages/settings/index" });
     } else {
       Taro.showToast({ title: "功能开发中，敬请期待", icon: "none" });
     }

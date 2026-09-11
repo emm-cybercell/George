@@ -5,6 +5,8 @@ export default defineAppConfig({
     "pages/profile/index",
     "pages/history/index",
     "pages/portfolio/index",
+    "pages/notifications/index",
+    "pages/settings/index",
     "pages/about/index",
     "pages/team/index",
     "pages/feature-detail/index",
