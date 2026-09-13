@@ -15,7 +15,7 @@ export function fileToBase64(filePath: string): Promise<string> {
     Taro.getFileSystemManager().readFile({
       filePath,
       encoding: "base64",
-      success: (res) => resolve(res.data),
+      success: (res) => resolve(String(res.data)),
       fail: reject,
     });
   });

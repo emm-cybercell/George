@@ -7,13 +7,23 @@
 
 ## ✨ 功能特性
 
-| 页面   | 路由                  | 说明                                                                   |
-| ------ | --------------------- | ---------------------------------------------------------------------- |
-| 首页   | `pages/home/index`    | 默认入口，项目宣传页（Hero 欢迎卡片 · 项目介绍 · 核心特色）            |
-| 学习页 | `pages/learn/index`   | AI 动态对话页，IP 形象三状态（待机 / 思考中 / 对话中），底部悬浮输入栏 |
-| 我的页 | `pages/profile/index` | 个人中心（用户信息卡 · 荣誉勋章墙 · 菜单列表）                         |
+页面路由以 `src/app.config.ts` 为准：
 
-AI 对话由 DeepSeek API（`deepseek-chat`）驱动，内置"桥智同学"人设 System Prompt：平等对话、启发探索、鼓励创作，并严格遵循"AI 作业红黄绿原则"，拒绝直接代写作业。
+| 页面     | 路由                          | 说明                                                                   |
+| -------- | ----------------------------- | ---------------------------------------------------------------------- |
+| 首页     | `pages/home/index`            | 默认入口，项目宣传页（Hero 欢迎卡片 · 项目介绍 · 核心特色）            |
+| 学习页   | `pages/learn/index`           | AI 动态对话页，IP 形象三状态（待机 / 思考中 / 对话中），底部悬浮输入栏 |
+| 我的页   | `pages/profile/index`         | 个人中心（用户信息卡 · 荣誉勋章墙 · 菜单列表）                         |
+| 历史记录 | `pages/history/index`         | 对话历史回顾                                                           |
+| 作品集   | `pages/portfolio/index`       | 我的创作作品集                                                         |
+| 通知     | `pages/notifications/index`   | 消息通知中心                                                           |
+| 设置     | `pages/settings/index`        | 全局设置（语音朗读 · 触感反馈）                                        |
+| 关于     | `pages/about/index`           | 项目理念（创造 / 判断 / 表达三大支柱 · 作业红黄绿原则）                |
+| 团队     | `pages/team/index`            | 导师团队介绍                                                           |
+| 功能详情 | `pages/feature-detail/index`  | 特色功能详解（桥智观察站等）                                           |
+| 能力设置 | `pages/ability-setting/index` | 当前重点培养的 AI 能力设置                                             |
+
+AI 对话由云函数 `deepseekProxy` 代理驱动，内置"桥智同学"人设 System Prompt：平等对话、启发探索、鼓励创作，并严格遵循"AI 作业红黄绿原则"，拒绝直接代写作业。
 
 ## 🛠 技术栈
 
@@ -21,22 +31,25 @@ AI 对话由 DeepSeek API（`deepseek-chat`）驱动，内置"桥智同学"人�
 - **语言**：TypeScript（严禁 `any`，类型定义统一放 `src/types/`）
 - **样式**：Sass (SCSS)
 - **UI 组件库**：`@nutui/nutui-react-taro`
-- **AI 服务**：DeepSeek Chat Completions API
+- **AI 服务**：微信云开发 AI（`wxai`）为主，云函数 `deepseekProxy` 多模型代理（智谱 GLM / 阿里云百炼 / DeepSeek 可选）
 - **工程规范**：ESLint + Stylelint + Commitlint（Conventional Commits）+ Husky
 
 ## 📁 目录结构
 
 ```
-├── config/              # Taro 构建配置（dev / prod）
+├── config/              # Taro 构建配置（dev / prod / 环境变量注入）
+├── cloudfunctions/      # 微信云函数（deepseekProxy 多模型代理）
 ├── docs/                # 产品与开发文档（PRD、人设 Prompt）
 │   ├── PRD_MVP.md       # UI 与功能需求文档（设计规范、页面拆解）
-│   └── PERSONA_PROMPT.md# DeepSeek 系统人设与 API 开发规范
+│   └── PERSONA_PROMPT.md# AI 系统人设与 API 开发规范
 └── src/
-    ├── api/             # 网络请求层（DeepSeek API 封装）
+    ├── api/             # 网络请求层（云函数 / DeepSeek 封装）
+    ├── assets/          # 静态资源（图片等）
     ├── components/      # 可复用组件（每文件 ≤150 行，超限拆子组件）
     ├── hooks/           # 复杂状态逻辑（自定义 Hooks）
     ├── pages/           # 页面（只做组件拼装）
-    └── types/           # 全局类型定义
+    ├── types/           # 全局类型定义
+    └── utils/           # 通用工具（设置 · TTS 语音）
 ```
 
 ## 🚀 快速开始
