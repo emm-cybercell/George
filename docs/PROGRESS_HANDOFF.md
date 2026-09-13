@@ -1,7 +1,8 @@
 # 桥智同学 · 项目交接与进度档案
 
-> 更新时间：2026-08-31
-> 用途：为下一个 Agent 窗口提供无缝接管所需的项目全景、当前进度与下一步计划。
+> 更新时间：2026-09-12
+> 用途：为下一个 Agent（zcode）提供无缝接管所需的项目全景、当前进度、工程习惯与下一步计划。
+> 请 zcode 先读本档案 + `docs/PRD_MVP.md` + `.github/copilot-instructions.md`，再动手。
 
 ---
 
@@ -10,128 +11,144 @@
 **定位**：面向 8-14 岁青少年的 AI 学习小程序「桥智同学」——培养 AI 时代产品经理思维（定义问题 / 判断结果 / 表达自己）。
 
 **技术栈**：
-- **框架**：Taro 4.x + React + TypeScript（`build:weapp` 目标微信小程序）
+
+- **框架**：Taro 4.x + React + TypeScript（`npm run build:weapp` 目标微信小程序）
 - **样式**：SCSS（Sass），CSS 变量全局 Token
-- **后端**：微信云开发（云函数 + 云数据库）+ DeepSeek API（`deepseek-v4-flash` 模型）
-- **UI 组件库**：`@nutui/nutui-react-taro`（已装，按需引入配置于 babel，当前页面以自研组件为主）
-
-**环境**：Node 24、Windows、微信开发者工具（appid `wx5ecd4a2c24d8e309`）
-
----
-
-## 2. 已完成模块与关键修复
-
-### 2.1 首页（`src/pages/home/`）
-- 顶部吸顶 HomeHeader（灵动岛避让 `safe-area-inset-top + 68px`）
-- Hero 引导卡（跳学习页）
-- 「关于桥智同学」「团队与理念」横向通栏卡（竖版无小字，仅徽章+标题+箭头）
-- **核心特色：2×2 极简矩阵**（4 大模块，仅图标+粗体标题+主题色条）：
-  1. 🔍 桥智观察站（蓝 `#2563EB`）→ `feature-detail?type=observation`
-  2. 🧪 桥智实验室（青 `#06B6D4`）→ `?type=lab`
-  3. 💬 桥智问未来（绿 `#16A34A`）→ `?type=ask-future`
-  4. 📓 桥智成长日记（紫 `#7C3AED`）→ `?type=diary`
-
-### 2.2 学习页（`src/pages/learn/`）
-- 三状态交互：`idle`（立绘+快捷提问）/ `thinking`（思考中动效）/ `chatting`（对话流）
-- 自适应消息气泡（用户右紫、AI 左白）、`scrollIntoView` 平滑置底
-- 顶栏：`＋ 新对话` / `📜 历史` 按钮
-- **会话恢复机制**：`BLANK_FLAG` 区分"空白新会话"与"有内容会话"，避免误加载
-- 语音转文字（WechatSI 插件 0.3.10，赋值式回调注册）：实时识别回填输入框
-- 错误处理：API 层统一 Toast（网络/401/状态码）
-
-### 2.3 我的页（`src/pages/profile/`）
-- 用户卡（档案数据）+ 培养方向入口卡（绿色胶囊显示当前能力）+ 通知卡 + 勋章墙 + 菜单
-- 培养方向入口：`pages/ability-setting`
-
-### 2.4 二级页面
-- `about`：关于桥智（IP 世界观 / 三大教学支柱 / AI 作业红黄绿原则），顶部金句引言
-- `team`：团队与理念（孵化背景 / 导师阵容 / 核心主张）
-- `feature-detail`：4 大核心特色动态详情页（按 `type` 渲染，slogan + 行动按钮跳学习页）
-- `ability-setting`：培养方向设置页（6 项能力单选 + 吸底保存，`current_ability` 本地存储）
-- `history`：历史对话（本地会话 + 云端记录双源渲染，搜索清空/删除按钮）
-
-### 2.5 样式避让与质感（全站）
-- **灵动岛/刘海超安全边距**：统一 `padding-top: calc(env(safe-area-inset-top) + 68px) !important`
-- **顶栏吸顶固定**：`position: sticky/fixed; top: 0; z-index: 999-1000`
-- **底部 TabBar 防重叠**：CSS 变量 `--tabbar-h: 100px` 统一 TabBar/输入栏/页面留白
-- 卡片质感：20px 圆角、软阴影、按压 `scale(0.97)` 反馈、`fadeInUp` 渐显动画
-
-### 2.6 后端与云函数
-- **云函数 `deepseekProxy`**（`cloudfunctions/`，已部署）：
-  - DeepSeek API 代理（`deepseek-v4-flash`，API Key 存云函数端）
-  - 微信内容安全审核 `security.msgSecCheck`（用户提问 + AI 回答双向校验）
-  - 前端 `fetchDeepSeekReply` 已改为 `Taro.cloud.callFunction('deepseekProxy')`
-- **云初始化**：`src/app.ts` 中 `Taro.cloud.init({ env: 'cloud1-d3g4mujv731fe8756', traceUser: true })`
-
-### 2.7 关键修复记录
-- API Key 曾硬编码客户端 → 改云函数代理
-- `process is not defined`（env 注入）→ config `defineConstants` 编译期替换
-- WechatSI 回调为**赋值式**注册（`rm.onStart = fn`），非方法调用
-- 引号嵌套导致 SCSS/JS 语法错误 → 统一中文弯引号
-- Taro 页面模块同名类型导入冲突 → 重命名
+- **后端**：微信云开发（云函数 `deepseekProxy` + 云数据库）
+- **大模型**：**腾讯云开发 AI 能力**（混元 `hy4-preview`/`hy3` 生文；`HY-Image-*` 混元生图），云函数端走 **wx-server-sdk ≥4.0.1 的 `cloud.ai()`**（`createModel('cloudbase').generateText` / `createImageModel('hunyuan-image').generateImage`）。⚠️ 旧 `cloud.openapi.ai.callOpenAI` 已下线（报 -604100 API not found），勿再使用
+- **UI 组件库**：`@nutui/nutui-react-taro`（已装，当前以自研组件为主）
+- **环境**：Node 24、Windows、微信开发者工具（appid `wx5ecd4a2c24d8e309`，云环境 `cloud1-d3g4mujv731fe8756`）
 
 ---
 
-## 3. 当前正在进行的任务：接入微信云数据库
+## 2. 工程习惯与硬性规范（务必遵守）
 
-**目标**：对话记录（`chat_history`）与用户档案（`users`）云端持久化，跨端同步。
-
-已完成的代码（`src/api/cloud.ts` 封装，全部 try-catch 静默降级本地缓存）：
-- `saveChatRecordToCloud` / `queryCloudChatRecords` / `clearCloudChatRecords`（chat_history 增查清）
-- `syncProfileToCloud` / `fetchCloudUserProfile` / `mergeAbilityFromCloud` / `get/setLocalUserProfile`（users 档案）
-- 学习页：回复成功后云端写入对话
-- 历史页：云优先渲染，本地会话兜底；清空/删除双写
-- 设置页：保存培养方向同步云端
-- 我的页：`useDidShow` 云优先拉档案合并本地
-
-**⚠️ 待完成/待验证**：
-1. **云数据库集合创建与权限配置**（关键阻塞）：
-   - 云开发控制台创建 `chat_history`、`users` 集合
-   - 权限建议：仅创建者可读写（依赖云数据库自动 `_openid` 隔离）
-2. 真机验证云端读写与审核链路；弱网降级行为
-3. （可选）`users` 集合按 `_openid` 的更新策略（当前 add 最新档案 + orderBy updateTime 取最新）
+1. **单文件 ≤150 行**：任何 `.ts`/`.tsx` 超 150 行必须拆分为 `src/components/` 子组件或 `src/hooks/`。⚠️ IDE 若开启保存时格式化会把紧凑代码展开回退超行，改完超行需手动压回（或与用户确认关闭"保存时格式化"）。
+2. **TypeScript 强类型**：严禁 `any`，所有 Props/State/API 返回在 `src/types/` 定义。
+3. **逻辑与 UI 分离**：页面只拼组件，网络请求在 `src/api/`，复杂状态在 `src/hooks/`。
+4. **灵动岛避让**：**新增页面顶栏一律 `padding-top: calc(env(safe-area-inset-top) + 150px) !important;`**（用户明确要求，见 `/memories/顶栏避让规范.md`）。现有页面不同数值保持不动（home/learn 160px、portfolio 150/160px、CustomPageHeader 68px）。
+5. **云能力降级**：所有云操作 try-catch 静默降级本地，绝不让界面白屏。
+6. **`@/` 别名** → `src/`；资源统一在 `src/assets/images/`。
 
 ---
 
-## 4. 关键文件与配置清单
+## 3. 目录结构（当前最新）
 
-| 文件 | 职责 |
-|---|---|
-| `project.config.json` | 小程序配置：appid、`miniprogramRoot: dist/`、`cloudfunctionRoot: cloudfunctions/`、压缩开关 |
-| `src/app.config.ts` | 路由注册（8 页面）、WechatSI 插件 0.3.10、`permission.scope.record`、`navigationStyle: custom` |
-| `src/app.ts` | 入口组件，云初始化（env `cloud1-d3g4mujv731fe8756`） |
-| `src/app.scss` | 全局 Token（主题色/卡片圆角/`--tabbar-h`）、`fadeInUp` 动画、`.btn-new-chat` |
-| `config/index.ts` | Taro 构建配置、`defineConstants` 注入 env |
-| `.env.development` | DeepSeek API Key |
-| `src/api/deepseek.ts` | 云函数调用封装（system prompt + 培养方向动态注入） |
-| `src/api/cloud.ts` | 云数据库封装（chat_history / users + 本地缓存） |
-| `src/api/history.ts` | 本地会话存储（save/get/delete/clear） |
-| `src/types/index.ts` | 全局类型（TabKey/ChatState/PromptItem/BadgeItem/UserInfo/AbilityItem） |
-| `src/types/ability.ts` | 6 项培养能力预设（含 systemGuidance） |
-| `src/types/global.d.ts` | 图片模块声明、WechatSI/requirePlugin 类型 |
-| `src/pages/home/` | 首页（极简卡片矩阵 + 跳转） |
-| `src/pages/learn/` | 学习页（三状态对话、录音、会话恢复） |
-| `src/pages/profile/` | 我的页（档案/培养方向/勋章/菜单） |
-| `src/pages/history/` | 历史对话（本地+云端双源） |
-| `src/pages/about/` | 关于桥智详情页 |
-| `src/pages/team/` | 团队与理念详情页 |
-| `src/pages/feature-detail/` | 4 大核心特色动态详情页 |
-| `src/pages/ability-setting/` | 培养方向设置页 |
-| `src/components/` | 公共组件（CustomTabBar/HomeHeader/CustomPageHeader/Hero/InfoCard/PromptPill/ChatInput/Learn/*/Profile/*/RecordingOverlay 已删） |
-| `cloudfunctions/deepseekProxy/` | 云函数（DeepSeek 代理 + msgSecCheck 审核） |
-| `assets/images/` | 立绘（立绘2.jpg 学习页主形象）、思考.jpg、首页.jpg、桥智同学.jpg |
-| `tests/deepseekProxy.spec.js` | 云函数本地 mock 测试（`node tests/deepseekProxy.spec.js`） |
+- `src/`：唯一前端工作区（`pages` 11 页 / `components` / `hooks` / `api` / `types` / `utils` / `assets`）
+- `cloudfunctions/deepseekProxy/`：云函数（`index.js` + `config.js` + `llmClient.js` + `core/agentRunner.js` + `tools/index.js`）
+- `docs/`：PRD、交接档案、参考资料
+- `tests/`：云函数本地测试（`gatewaySmoke.js` / `probeChannels.js` 等）
+- 已删除死代码：`HomeHeader`、`Home/Hero`、`Home/InfoCard`、`home/data.ts`、根目录 `assets/`、根目录 `types/`、冗余 `cloud.ts`/`cloudUser.ts`
 
 ---
 
-## 5. 常用命令与注意
+## 4. 已完成模块
+
+### 4.1 首页（Bento Grid 全新重构）
+
+- 简约清新科技风：`#F8FAFC` 冷灰底、毛玻璃吸顶 Header、卡片 22px 圆角 + 细边框 + 软阴影
+- Header 右侧操作区 `margin-right: 108px` 避让微信胶囊
+- Hero 横幅 + **非对称 Bento 卡**（实验室大卡/观察站/问未来/成长日记）+ **💡今日灵感探索卡**（随机脑洞问题直达学习页 `?prompt=`）+ 底部双栏功能卡
+- 组件：`Home/InspirationCard`、`Home/FooterCards`
+
+### 4.2 学习页（核心对话 + 多媒体 + 生图）
+
+- 三状态（idle/thinking/chatting）、消息气泡、`scrollIntoView` 置底
+- **会话恢复**：`?new=1` / `?historyId=`（云端单条）/ `?sessionId=`（本地）/ `?prompt=`（首页灵感直达自动提问）
+- 语音转文字（WechatSI 插件，**赋值式回调注册** `onStart=fn` 不能用方法调用）
+- **TTS 语音朗读**（`utils/tts.ts`）：合成防重入锁 + 播放/暂停状态机；音色固定为微信插件男声，智谱童声需充值
+- **多媒体上传**：`+` 按钮 → `MediaPanel`（拍照/相册/文件）→ `works.ts` 云上传
+- **AI 生图**：header"🎨 生图"按钮 → `ImageGenPanel`（输入描述 + 选择生图模型）→ 图片消息插入对话
+- 积分飘字/升级/勋章激励反馈（`onDidReply` 回调）
+
+### 4.3 用户体系与激励（云端持久化）
+
+- `api/user.ts` + `api/rewards.ts`：`getOrInitUserAccount` 自动建档、`updateUserProfile`、`handleDailyCheckIn`（+20/连续天数/streak_3）、`awardChatPoints`（+10/等级/勋章）、`checkAbilitySwitchBadge`
+- `types/`：`FullUserAccount`、`BADGE_DEFINITIONS` 勋章图鉴、`CreativeWork` 作品模型
+- 我的页：真实用户卡 + 打卡按钮 + 勋章墙（解锁发光/未解锁蒙层）+ 编辑档案弹层
+
+### 4.4 作品集
+
+- `pages/portfolio` + `Portfolio/WorkCard`：Tab 分类筛选 + 4:3 瀑布流 + 封面预览 + 悬浮添加作品
+
+### 4.5 二级页
+
+- 消息通知中心（Tab 筛选/已读态/空态）、系统设置（TTS/震动开关/清缓存/隐私/重置）、历史对话（云端+本地双源）、培养方向设置、about/team/feature-detail
+
+### 4.6 云函数（多模型网关 + Agent）
+
+- **多模型网关**：`config.js` 默认配置 + `system_configs`（`_id: llm_active`）动态热更
+- **ReAct Agent**：`core/agentRunner.js` 3 轮 Function Calling 循环 + `tools/index.js`（`award_growth_points` / `save_creative_portfolio`）+ `llmClient.js`（OpenAI/Anthropic/wxai 协议）
+- **生图分支**：`index.js` 的 `event.type === 'image'`
+
+---
+
+## 5. ⚠️ 模型配置现状（用户最新要求，重要）
+
+**当前生效（默认激活）：腾讯混元 via `cloud.openapi.ai.callOpenAI`（`protocol: 'wxai'`）**
+
+| 用途         | 模型                                                               | 说明                                                       |
+| ------------ | ------------------------------------------------------------------ | ---------------------------------------------------------- |
+| 生文（对话） | `hy3`（成长计划免费包唯一可用）/ `hy4-preview`（需资源点套餐）      | 2026-09-13 实测：hy3 正常，hy4-preview 挂起至超时（未开通） |
+| 生图         | `HY-Image-3.0-Plus-4090-Tob-v1.0` / `HY-Image-v3.0-I2I-ToB-v1.0.1` | 前端 `api/image.ts` 的 `IMAGE_MODELS` 可切换               |
+
+**⚠️ hy4-preview 超时结论**：小程序成长计划赠送 AI 资源包**仅含 hy3**（官方升级指南 https://docs.cloudbase.net/ai/ai-inspire-plan-upgrade ）；DeepSeek/Kimi/GLM/hy4 等更多模型需在 套餐管理 切换**资源点套餐**。可选模型以控制台 AI+ → 模型管理 列表为准。云函数已加 25s 快速超时 + 超时提示，避免占满 30s 云函数时长。
+
+**模型切换能力（已实现，2026-09-12）：**
+
+- 对话模型：学习页「+」面板 → 「🤖 切换对话模型」在 `hy4-preview` / `hy3` 间切换，选择持久化本地（`src/api/deepseek.ts` 的 `CHAT_MODELS` / `getChatModel`），云函数 `index.js` 白名单校验
+- 生图模型：学习页「+」面板 → 「🎨 AI 生图」→ `ImageGenPanel` 内选 `HY-Image-*` 双模型；云函数 `IMAGE_MODELS` 白名单
+- 页头仅保留「＋新对话 / 📜 历史」横排（模型与生图入口已收进「+」面板）
+
+**⚠️ 部署排障记录（2026-09-12）**：对话报 `LLM 请求失败 [deepseek]: api key invalid`，根因是云数据库 `system_configs` 文档 `llm_active` 的 `activeProvider` 残留 `"deepseek"`，覆盖了代码默认 `wxai`。修复：控制台把该文档 `activeProvider` 改为 `"wxai"`（或删除该文档走代码默认）。云函数需「上传并部署：云端安装依赖」+ 超时 30s+。
+后续报 `errCode: -604100 API not found`：**根因是 `cloud.openapi.ai.callOpenAI` 接口已整体下线**，非权限声明问题。已按官方文档迁移到 wx-server-sdk ≥4.0.1 的 `cloud.ai()`（生文 `createModel('cloudbase').generateText` + `registerFunctionTool` 自动工具循环；生图 `createImageModel('hunyuan-image').generateImage`），`package.json` 的 wx-server-sdk 已升 `^4.0.1`。**部署必须选「上传并部署：云端安装依赖」**（拉新 SDK），并保持超时 30s+。另 `config.js` 的 DB 覆盖已收敛为白名单字段（activeProvider/model/temperature/max_tokens），apiKey/baseURL 不再可被文档劫持。
+
+**历史遗留**：智谱 GLM key、阿里云百炼 key 仍在 `config.js` 作为可选供应商（`glm`/`aliyun`/`aliyunAnthropic`），但都已欠费/无权限，**不要切回为默认**。用户给过的高权限云开发 JWT 实测无法直连 HTTP 调模型（仅管理面 key），不要用。
+
+---
+
+## 6. 云数据库集合
+
+| 集合                       | 用途                       | 权限                            |
+| -------------------------- | -------------------------- | ------------------------------- |
+| `chat_history`             | 对话记录                   | 仅创建者可读写（\_openid 隔离） |
+| `users`                    | 用户档案（profile/growth） | 仅创建者可读写                  |
+| `creative_works` / `works` | 作品集                     | 仅创建者可读写                  |
+| `system_configs`           | `_id: llm_active` 模型热更 | 管理端                          |
+| `notifications`            | 通知（可选）               | 仅创建者可读写                  |
+
+---
+
+## 7. 当前阻塞点 / 待办
+
+1. **模型切换能力**：确认 `hy4-preview`↔`hy3`、生图双模型切换已实现（见第 5 节）。
+2. **云开发控制台**：需开通**资源点套餐** + 生文/生图模型，否则 `callOpenAI` 报错。
+3. **TTS 音色**：当前微信插件男声固定；智谱童声需充值（`cogtts` 的 `tongtong`）。
+4. **云函数超时**：控制台需将 `deepseekProxy` 超时设到 30s+（默认 3s 必超时）。
+5. **TTS/响应慢**：`playTextVoice` 在回复后合成 1-2s；若要更快需流式改造。
+
+---
+
+## 8. 常用命令
 
 ```bash
-npm run build:weapp   # 微信小程序生产构建
-npm run dev:weapp     # 开发 watch 模式
-node tests/deepseekProxy.spec.js  # 云函数本地测试
+npm run build:weapp     # 微信小程序生产构建
+npm run dev:weapp       # 开发 watch
+npx tsc --noEmit -p tsconfig.json  # TS 全量类型检查
+node tests/gatewaySmoke.js  # 云函数链路冒烟（需真实模型可用）
+node --check cloudfunctions/deepseekProxy/index.js  # 云函数语法检查
 ```
 
-- 微信开发者工具中重新编译会覆盖 `dist/`；
-- 云函数改动后需在工具中「上传并部署：云端安装依赖」；
-- 开发者工具出现旧构建缓存问题时"清缓存→清除全部"。
+- 云函数改动后在开发者工具「上传并部署：云端安装依赖」（选"更新"避免 ResourceInUse）
+- 云函数超时在控制台单独调（`config.json` 无 timeout 字段）
+- 改动云函数后建议先 `node --check` 再部署
+
+---
+
+## 9. 关键配置值速查
+
+- 云环境 ID：`cloud1-d3g4mujv731fe8756`
+- 微信 appid：`wx5ecd4a2c24d8e309`
+- 腾讯混元生文模型：`hy4-preview` / `hy3`
+- 腾讯混元生图模型：`HY-Image-3.0-Plus-4090-Tob-v1.0` / `HY-Image-v3.0-I2I-ToB-v1.0.1`
+- WechatSI 插件：`0.3.10`（provider `wx069ba97219f66d99`）

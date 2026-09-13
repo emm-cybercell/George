@@ -1,36 +1,30 @@
 import { useState } from "react";
 import { View, Text, Switch } from "@tarojs/components";
 import Taro from "@tarojs/taro";
+import {
+  getAppSettings,
+  setAppSetting,
+  vibrateIfEnabled,
+  type AppSettings,
+} from "@/utils/settings";
 import "./index.scss";
 
-const TTS_KEY = "settings_tts";
-const VIBE_KEY = "settings_vibe";
 /** 清理缓存时保留的关键数据 */
-const KEEP_KEYS = ["user_account", "current_ability", TTS_KEY, VIBE_KEY];
+const KEEP_KEYS = ["user_account", "current_ability", "app_settings"];
 const APP_VERSION = "v1.0.2 (2035 Release)";
 
 const Settings = () => {
-  const [tts, setTts] = useState<boolean>(!!Taro.getStorageSync(TTS_KEY));
-  const [vibe, setVibe] = useState<boolean>(
-    Taro.getStorageSync(VIBE_KEY) === ""
-      ? true
-      : !!Taro.getStorageSync(VIBE_KEY),
-  );
+  const [settings, setSettings] = useState<AppSettings>(getAppSettings);
   const [cacheKB, setCacheKB] = useState<number>(
     Taro.getStorageInfoSync().currentSize || 0,
   );
 
-  const onTtsChange = (value: boolean) => {
-    setTts(value);
-    Taro.setStorageSync(TTS_KEY, value);
-  };
+  const onTtsChange = (value: boolean) =>
+    setSettings(setAppSetting({ voiceAutoPlay: value }));
 
   const onVibeChange = (value: boolean) => {
-    setVibe(value);
-    Taro.setStorageSync(VIBE_KEY, value);
-    if (value) {
-      Taro.vibrateShort({ type: "light" });
-    }
+    setSettings(setAppSetting({ hapticFeedback: value }));
+    if (value) vibrateIfEnabled();
   };
 
   // 清理缓存：保留用户档案与偏好设置
@@ -63,8 +57,9 @@ const Settings = () => {
       success: (res) => {
         if (!res.confirm) return;
         Taro.clearStorageSync();
-        setTts(false);
-        setVibe(true);
+        setSettings(
+          setAppSetting({ voiceAutoPlay: false, hapticFeedback: true }),
+        );
         setCacheKB(0);
         Taro.showToast({ title: "已重置本地进度", icon: "success" });
       },
@@ -81,7 +76,6 @@ const Settings = () => {
           <Text className="settings__title">设置</Text>
         </View>
       </View>
-
       <View className="settings__body">
         <View className="settings-group">
           <Text className="settings-group__title">交互偏好</Text>
@@ -97,7 +91,7 @@ const Settings = () => {
                 </Text>
               </View>
               <Switch
-                checked={tts}
+                checked={settings.voiceAutoPlay}
                 onChange={(e) => onTtsChange(e.detail.value)}
                 color="#8B5CF6"
               />
@@ -109,14 +103,13 @@ const Settings = () => {
                 <Text className="settings-cell__sub">操作按钮时轻微震动</Text>
               </View>
               <Switch
-                checked={vibe}
+                checked={settings.hapticFeedback}
                 onChange={(e) => onVibeChange(e.detail.value)}
                 color="#8B5CF6"
               />
             </View>
           </View>
         </View>
-
         <View className="settings-group">
           <Text className="settings-group__title">存储与数据</Text>
           <View className="settings-group__card">
@@ -132,7 +125,6 @@ const Settings = () => {
             </View>
           </View>
         </View>
-
         <View className="settings-group">
           <Text className="settings-group__title">关于与合规</Text>
           <View className="settings-group__card">
@@ -154,7 +146,6 @@ const Settings = () => {
             </View>
           </View>
         </View>
-
         <View className="settings__reset" onClick={handleReset}>
           <Text>重置本地学习进度</Text>
         </View>

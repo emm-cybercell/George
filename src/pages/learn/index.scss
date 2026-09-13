@@ -26,22 +26,24 @@
   &__header-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
   }
 
   &__header-text {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    text-align: right;
   }
 
   &__history-btn {
-    padding: 10px 20px;
+    padding: 10px 24px;
     font-size: 24px;
     color: #fff;
     background: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 999px;
+    white-space: nowrap;
   }
 
   &__title {

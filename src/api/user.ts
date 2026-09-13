@@ -42,8 +42,11 @@ export function getLocalUserAccount(): FullUserAccount {
 
 function setLocalUserAccount(account: FullUserAccount): void {
   Taro.setStorageSync(USER_STORAGE_KEY, account);
-  // 培养方向同步到本地 current_ability，供学习页注入引导
-  Taro.setStorageSync(ABILITY_STORAGE_KEY, account.growth.currentAbility);
+  // 培养方向同步到本地 current_ability，供学习页注入引导（云端旧档案可能缺 growth）
+  Taro.setStorageSync(
+    ABILITY_STORAGE_KEY,
+    account.growth?.currentAbility || DEFAULT_ABILITY_ID,
+  );
 }
 
 /** 查询云端最新档案（失败返回 null，不抛错） */
@@ -63,6 +66,15 @@ async function fetchCloudAccount(): Promise<FullUserAccount | null> {
   }
 }
 
+/** 云端记录归一化：旧档案可能缺 profile/growth 字段，用默认值补齐 */
+function normalizeCloudAccount(raw: FullUserAccount): FullUserAccount {
+  return {
+    profile: { ...DEFAULT_USER_PROFILE, ...(raw.profile || {}) },
+    growth: { ...DEFAULT_USER_GROWTH, ...(raw.growth || {}) },
+    updateTime: raw.updateTime || Date.now(),
+  };
+}
+
 /**
  * 获取/初始化当前用户账号：云端存在则返回云端档案并缓存本地；
  * 首次进入（新用户）自动在云端创建默认档案；云端不可用静默降级本地。
@@ -73,8 +85,9 @@ export async function getOrInitUserAccount(): Promise<FullUserAccount> {
   try {
     const found = await fetchCloudAccount();
     if (found) {
-      setLocalUserAccount(found);
-      return found;
+      const safe = normalizeCloudAccount(found);
+      setLocalUserAccount(safe);
+      return safe;
     }
     const seed: FullUserAccount = {
       profile: { ...DEFAULT_USER_PROFILE },
@@ -101,9 +114,18 @@ export async function applyAndSync(
   if (!cloudReady()) return next;
   try {
     const cloud = await fetchCloudAccount();
-    const data = { ...cloud, ...next, updateTime: Date.now() };
-    if (cloud?._id) {
-      await db().collection("users").doc(cloud._id).update({ data });
+    // 客户端 SDK 禁止写 _openid / _id，须从云端记录中剥离后再回写
+    const { _id, _openid, ...cloudRest } = (cloud || {}) as Record<
+      string,
+      unknown
+    >;
+    const data = {
+      ...cloudRest,
+      ...next,
+      updateTime: Date.now(),
+    } as FullUserAccount;
+    if (_id) {
+      await db().collection("users").doc(_id as string).update({ data });
     } else {
       await db().collection("users").add({ data });
     }
@@ -131,6 +153,18 @@ export function updateUserGrowth(
     ...a,
     growth: { ...a.growth, ...growth },
   }));
+}
+
+/** 上传用户头像到云存储，返回永久 fileID；失败抛错交由调用方提示 */
+export async function uploadAvatar(tempFilePath: string): Promise<string> {
+  if (!cloudReady()) {
+    throw new Error("云存储服务不可用，请检查网络后重试");
+  }
+  const res = await Taro.cloud.uploadFile({
+    cloudPath: `avatars/${Date.now()}_avatar.png`,
+    filePath: tempFilePath,
+  });
+  return res.fileID;
 }
 
 // 激励域（签到 / 对话积分 / 勋章解锁）实现在 rewards.ts，统一从此入口导出

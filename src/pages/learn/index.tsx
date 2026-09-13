@@ -6,9 +6,11 @@ import ThinkingState from "@/components/Learn/ThinkingState";
 import ChattingState from "@/components/Learn/ChattingState";
 import ChatInput from "@/components/ChatInput";
 import MediaPanel from "@/components/Learn/MediaPanel";
+import ImageGenPanel from "@/components/Learn/ImageGenPanel";
 import CustomTabBar from "@/components/CustomTabBar";
 import { useRecorder } from "@/hooks/useRecorder";
 import { useChatSession } from "@/hooks/useChatSession";
+import { vibrateIfEnabled } from "@/utils/settings";
 import type { AwardChatResult } from "@/types";
 import "./index.scss";
 
@@ -18,6 +20,7 @@ const Learn = () => {
   const router = useRouter();
   const [inputText, setInputText] = useState("");
   const [mediaOpen, setMediaOpen] = useState(false);
+  const [imageGenOpen, setImageGenOpen] = useState(false);
   const [awardTip, setAwardTip] = useState<AwardChatResult | null>(null);
   const awardTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -46,6 +49,7 @@ const Learn = () => {
     messages,
     send,
     sendMedia,
+    sendImage,
     startNewChat,
     restore,
     flagHiding,
@@ -79,6 +83,7 @@ const Learn = () => {
 
   const handleSend = (text = inputText) => {
     if (!text.trim()) return;
+    vibrateIfEnabled();
     setInputText("");
     send(text);
   };
@@ -89,19 +94,42 @@ const Learn = () => {
     sendMedia(fileID);
   };
 
+  // 生图成功：关闭面板并将生成图作为消息插入对话
+  const handleImageGenerated = (imageUrl: string, promptText: string) => {
+    setImageGenOpen(false);
+    sendImage(imageUrl, promptText);
+  };
+
   const goHistory = () => {
     Taro.navigateTo({ url: "/pages/history/index" });
   };
+
+  // 思考中若已有消息（含刚发出的问题），保留消息列表 + 行内"输入中"指示，
+  // 只有首个问题才展示整屏思考动画，避免大图盖住对话内容
+  const thinking = chatState === "thinking";
+  const showChatting = chatState === "chatting" || (thinking && messages.length > 0);
 
   return (
     <View className="learn">
       <View className="learn__header">
         <View className="learn__header-row">
           <View className="learn__header-actions">
-            <View className="btn-new-chat" onClick={startNewChat}>
+            <View
+              className="btn-new-chat"
+              onClick={() => {
+                vibrateIfEnabled();
+                startNewChat();
+              }}
+            >
               ＋ 新对话
             </View>
-            <View className="learn__history-btn" onClick={goHistory}>
+            <View
+              className="learn__history-btn"
+              onClick={() => {
+                vibrateIfEnabled();
+                goHistory();
+              }}
+            >
               📜 历史
             </View>
           </View>
@@ -116,8 +144,8 @@ const Learn = () => {
         {chatState === "idle" && (
           <IdleState prompts={QUICK_PROMPTS} onPrompt={handleSend} />
         )}
-        {chatState === "thinking" && <ThinkingState />}
-        {chatState === "chatting" && <ChattingState messages={messages} />}
+        {thinking && messages.length === 0 && <ThinkingState />}
+        {showChatting && <ChattingState messages={messages} thinking={thinking} />}
       </View>
 
       {awardTip && (
@@ -141,6 +169,13 @@ const Learn = () => {
         visible={mediaOpen}
         onClose={() => setMediaOpen(false)}
         onUploaded={handleMediaUploaded}
+        onImageGen={() => setImageGenOpen(true)}
+      />
+
+      <ImageGenPanel
+        visible={imageGenOpen}
+        onClose={() => setImageGenOpen(false)}
+        onGenerated={handleImageGenerated}
       />
 
       <CustomTabBar currentTab="learn" />

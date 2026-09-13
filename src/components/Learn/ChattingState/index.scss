@@ -5,17 +5,6 @@
   flex: 1;
   min-height: 0;
 
-  &__avatar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 2;
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    background: #fff;
-  }
-
   &__list {
     flex: 1;
     min-height: 0;
@@ -23,14 +12,61 @@
   }
 
   &__content {
-    padding-top: 116px;
+    padding-top: 20px;
     box-sizing: border-box;
+  }
+
+  /* 微信式消息头像：助手左、用户右 */
+  &__face {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(31, 36, 48, 0.08);
+
+    &--fallback {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ddd6fe;
+    }
+
+    &-text {
+      font-size: 28px;
+      font-weight: 700;
+      color: #8b5cf6;
+    }
+  }
+
+  /* "正在输入"三点气泡动画 */
+  &__bubble--typing {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 68px;
+  }
+
+  &__dot {
+    font-size: 32px;
+    line-height: 1;
+    color: #a78bfa;
+    animation: typing-bounce 1s ease-in-out infinite;
+
+    &:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.3s;
+    }
   }
 
   &__row {
     display: flex;
+    align-items: flex-start;
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 
     &--user {
       justify-content: flex-end;
@@ -38,6 +74,20 @@
 
     &--assistant {
       justify-content: flex-start;
+    }
+  }
+
+  &__speaker {
+    align-self: center;
+    padding: 8px 12px 8px 4px;
+    font-size: 30px;
+    line-height: 1;
+    opacity: 0.8;
+    cursor: pointer;
+
+    &:active {
+      opacity: 1;
+      transform: scale(0.9);
     }
   }
 
@@ -75,6 +125,31 @@
 
     &--user {
       border-radius: 16px;
+    }
+  }
+
+  &__speaker {
+    align-self: flex-end;
+    margin-left: 16px;
+    margin-top: 6px;
+    padding: 10px 14px;
+    font-size: 28px;
+    line-height: 1;
+    background: #f3f4f6;
+    border-radius: 999px;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.92);
+      opacity: 0.9;
+    }
+
+    &--on {
+      background: #f3eeff;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
     }
   }
 }

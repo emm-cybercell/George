@@ -3,6 +3,7 @@ import Taro, { useDidShow } from "@tarojs/taro";
 import { fetchDeepSeekReply } from "@/api/deepseek";
 import { getCloudChatRecord, saveChatRecordToCloud } from "@/api/cloudChat";
 import { awardChatPoints } from "@/api/user";
+import { playTextVoice } from "@/utils/tts";
 import { ABILITY_STORAGE_KEY, DEFAULT_ABILITY_ID } from "@/types/ability";
 import {
   buildTitle,
@@ -146,6 +147,8 @@ export function useChatSession(
       setMessages(withReply);
       setChatState("chatting");
       persist(withReply);
+      // 语音朗读：AI 回复生成后按全局设置自动播报（未开启自动朗读则静默）
+      playTextVoice(reply);
       // 同步写入云端聊天记录（失败静默，本地已持久化备份）
       saveChatRecordToCloud({
         userQuery: content,
@@ -193,11 +196,36 @@ export function useChatSession(
     });
   };
 
+  /** 发送 AI 生图结果：图片 + 用户描述 + AI 引导（生图独立入口用） */
+  const sendImage = (fileID: string, promptText: string) => {
+    const label = promptText.trim().slice(0, 30);
+    const nextMessages: ChatMessage[] = [
+      ...messages,
+      {
+        id: nextId(),
+        role: "user",
+        content: label ? `🎨 生图：${label}` : "🎨 生图",
+        mediaUrl: fileID,
+      },
+      { id: nextId(), role: "assistant", content: IMAGE_GUIDE_REPLY },
+    ];
+    setMessages(nextMessages);
+    setChatState("chatting");
+    persist(nextMessages);
+    saveChatRecordToCloud({
+      userQuery: "🎨 AI 生图",
+      aiReply: IMAGE_GUIDE_REPLY,
+      abilityMode:
+        Taro.getStorageSync(ABILITY_STORAGE_KEY) || DEFAULT_ABILITY_ID,
+    });
+  };
+
   return {
     chatState,
     messages,
     send,
     sendMedia,
+    sendImage,
     startNewChat,
     restore,
     flagHiding,

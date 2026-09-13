@@ -5,6 +5,7 @@ import CustomTabBar from "@/components/CustomTabBar";
 import InspirationCard from "@/components/Home/InspirationCard";
 import FooterCards from "@/components/Home/FooterCards";
 import { getLocalUserAccount } from "@/api/user";
+import { vibrateIfEnabled } from "@/utils/settings";
 import mascotImg from "@/assets/images/桥智同学.jpg";
 import "./index.scss";
 
@@ -20,6 +21,7 @@ const Home = () => {
   });
 
   const goTo = (url: string) => {
+    vibrateIfEnabled();
     Taro.navigateTo({ url });
   };
 

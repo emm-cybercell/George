@@ -22,6 +22,7 @@ const SYSTEM_PROMPT = `你是"桥智同学"，一位来自 2035 年的"未来创
 - 严格遵循"AI 作业红黄绿原则"：鼓励查资料（绿），引导过脑重做（黄），拒绝直接抄答案（红）。
 - 严禁输出任何涉及暴力、色情、灰产或不良价值观的内容。`;
 
+/** 对话模型固定 hy3（成长计划免费包唯一可用生文模型） */
 export async function fetchDeepSeekReply(
   messages: Array<{ role: "user" | "assistant"; content: string }>,
 ): Promise<string> {
@@ -46,11 +47,17 @@ export async function fetchDeepSeekReply(
       success: boolean;
       reply?: string;
       error?: string;
+      errorDetail?: string;
     };
     if (result && result.success) {
       return result.reply || "";
     }
-    throw new Error(result?.error || "服务响应异常");
+    // 携带云端诊断详情，便于在 Toast 中定位云上配置问题
+    throw new Error(
+      result?.error
+        ? `${result.error}${result.errorDetail ? `（${result.errorDetail}）` : ""}`
+        : "服务响应异常",
+    );
   } catch (err) {
     const message =
       err instanceof Error && err.message

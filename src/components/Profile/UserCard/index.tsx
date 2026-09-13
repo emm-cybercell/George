@@ -9,6 +9,8 @@ interface UserCardProps {
   avatarUrl?: string;
   streakDays: number;
   checkedInToday: boolean;
+  /** 未完善资料（游客态）：展示微信快捷登录引导 */
+  isGuest: boolean;
   onEdit: () => void;
   onCheckIn: () => void;
 }
@@ -21,6 +23,7 @@ const UserCard = ({
   avatarUrl,
   streakDays,
   checkedInToday,
+  isGuest,
   onEdit,
   onCheckIn,
 }: UserCardProps) => {
@@ -46,8 +49,13 @@ const UserCard = ({
           <Text className="user-card__name">{nickName}</Text>
           <Text className="user-card__level">LV.{level} 学习达人</Text>
         </View>
-        <View className="user-card__edit" onClick={onEdit}>
-          ✏️ 编辑档案
+        <View
+          className={`user-card__edit ${
+            isGuest ? "user-card__edit--guest" : ""
+          }`}
+          onClick={onEdit}
+        >
+          {isGuest ? "点击微信快捷登录 →" : "✏️ 编辑档案"}
         </View>
       </View>
 

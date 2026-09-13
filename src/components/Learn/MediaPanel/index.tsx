@@ -8,9 +8,11 @@ interface MediaPanelProps {
   onClose: () => void;
   /** 上传成功回调（fileID 为 cloud:// 路径） */
   onUploaded: (fileID: string) => void;
+  /** AI 生图入口回调 */
+  onImageGen: () => void;
 }
 
-interface MediaOption {
+interface UploadOption {
   key: string;
   icon: string;
   label: string;
@@ -20,7 +22,7 @@ interface MediaOption {
   file?: boolean;
 }
 
-const OPTIONS: MediaOption[] = [
+const UPLOAD_OPTIONS: UploadOption[] = [
   {
     key: "camera",
     icon: "📸",
@@ -48,10 +50,34 @@ const OPTIONS: MediaOption[] = [
   },
 ];
 
-const MediaPanel = ({ visible, onClose, onUploaded }: MediaPanelProps) => {
+/** 更多能力入口（AI 生图：文生图 / 图生图） */
+interface ActionEntry {
+  key: string;
+  icon: string;
+  label: string;
+  sub: string;
+  onClick: () => void;
+}
+
+const MediaPanel = ({
+  visible,
+  onClose,
+  onUploaded,
+  onImageGen,
+}: MediaPanelProps) => {
   if (!visible) return null;
 
-  const handlePick = async (opt: MediaOption) => {
+  const actions: ActionEntry[] = [
+    {
+      key: "imagegen",
+      icon: "🎨",
+      label: "AI 生图",
+      sub: "文生图 / 图生图，混元帮你创作",
+      onClick: onImageGen,
+    },
+  ];
+
+  const handlePick = async (opt: UploadOption) => {
     try {
       let tempPath = "";
       if (opt.file) {
@@ -85,7 +111,7 @@ const MediaPanel = ({ visible, onClose, onUploaded }: MediaPanelProps) => {
       <View className="media-panel__mask" onClick={onClose} />
       <View className="media-panel__card">
         <Text className="media-panel__title">上传作品</Text>
-        {OPTIONS.map((opt) => (
+        {UPLOAD_OPTIONS.map((opt) => (
           <View
             key={opt.key}
             className="media-panel__option"
@@ -99,6 +125,26 @@ const MediaPanel = ({ visible, onClose, onUploaded }: MediaPanelProps) => {
             <Text className="media-panel__arrow">›</Text>
           </View>
         ))}
+
+        <Text className="media-panel__title">更多能力</Text>
+        {actions.map((act) => (
+          <View
+            key={act.key}
+            className="media-panel__option"
+            onClick={() => {
+              onClose();
+              act.onClick();
+            }}
+          >
+            <Text className="media-panel__icon">{act.icon}</Text>
+            <View className="media-panel__text">
+              <Text className="media-panel__label">{act.label}</Text>
+              <Text className="media-panel__sub">{act.sub}</Text>
+            </View>
+            <Text className="media-panel__arrow">›</Text>
+          </View>
+        ))}
+
         <View className="media-panel__cancel" onClick={onClose}>
           取消
         </View>

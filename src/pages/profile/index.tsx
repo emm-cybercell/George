@@ -67,12 +67,16 @@ const Profile = () => {
   const handleSaveProfile = async (patch: {
     nickName: string;
     grade: UserGrade;
+    avatarUrl: string;
   }) => {
     const updated = await updateUserProfile(patch);
     setAccount(updated);
     setEditing(false);
     Taro.showToast({ title: "档案已更新 ✨", icon: "none" });
   };
+
+  // 未完善资料（无头像）视为游客态：卡片展示微信快捷登录引导
+  const isGuest = !account?.profile.avatarUrl;
 
   return (
     <View className="profile">
@@ -94,6 +98,7 @@ const Profile = () => {
             avatarUrl={account.profile.avatarUrl || undefined}
             streakDays={account.growth.streakDays || 0}
             checkedInToday={checkedInToday}
+            isGuest={isGuest}
             onEdit={() => setEditing(true)}
             onCheckIn={handleCheckIn}
           />

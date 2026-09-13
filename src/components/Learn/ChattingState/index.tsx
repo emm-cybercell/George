@@ -1,43 +1,24 @@
-import { View, Text, Image, ScrollView } from "@tarojs/components";
-import Taro from "@tarojs/taro";
-import mascotImg from "@/assets/images/立绘2.jpg";
+import { View, Text, ScrollView } from "@tarojs/components";
+import Taro, { useUnload } from "@tarojs/taro";
+import { stopCurrentVoice } from "@/utils/tts";
+import MessageRow from "./MessageRow";
 import type { ChatMessage } from "../types";
 import "./index.scss";
 
 interface ChattingStateProps {
   messages: ChatMessage[];
+  /** AI 正在生成回复：消息列表末尾显示"正在输入"气泡 */
+  thinking?: boolean;
 }
 
-/** 图片消息气泡：点击放大预览 */
-const renderBubbleContent = (m: ChatMessage) => {
-  if (m.mediaUrl) {
-    return (
-      <Image
-        className="chatting-state__media"
-        src={m.mediaUrl}
-        mode="aspectFill"
-        onClick={() =>
-          Taro.previewImage({
-            urls: [m.mediaUrl as string],
-            current: m.mediaUrl as string,
-          })
-        }
-      />
-    );
-  }
-  return <Text>{m.content}</Text>;
-};
-
-const ChattingState = ({ messages }: ChattingStateProps) => {
+const ChattingState = ({ messages, thinking = false }: ChattingStateProps) => {
   const lastId = messages.length ? messages[messages.length - 1].id : "";
+
+  // 离开页面停止语音
+  useUnload(() => stopCurrentVoice());
 
   return (
     <View className="chatting-state">
-      <Image
-        className="chatting-state__avatar"
-        src={mascotImg}
-        mode="aspectFit"
-      />
       <ScrollView
         scrollY
         className="chatting-state__list"
@@ -46,26 +27,17 @@ const ChattingState = ({ messages }: ChattingStateProps) => {
       >
         <View className="chatting-state__content">
           {messages.map((m) => (
-            <View
-              key={m.id}
-              id={m.id}
-              className={`chatting-state__row ${
-                m.role === "user"
-                  ? "chatting-state__row--user"
-                  : "chatting-state__row--assistant"
-              }`}
-            >
-              <View
-                className={`chatting-state__bubble ${
-                  m.role === "user"
-                    ? "chatting-state__bubble--user"
-                    : "chatting-state__bubble--assistant"
-                }`}
-              >
-                {renderBubbleContent(m)}
+            <MessageRow key={m.id} message={m} userAvatar="" />
+          ))}
+          {thinking && (
+            <View className="chatting-state__row chatting-state__row--assistant">
+              <View className="chatting-state__bubble chatting-state__bubble--assistant chatting-state__bubble--typing">
+                <Text className="chatting-state__dot">•</Text>
+                <Text className="chatting-state__dot">•</Text>
+                <Text className="chatting-state__dot">•</Text>
               </View>
             </View>
-          ))}
+          )}
         </View>
       </ScrollView>
     </View>

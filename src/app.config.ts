@@ -18,11 +18,8 @@ export default defineAppConfig({
       provider: "wx069ba97219f66d99",
     },
   },
-  permission: {
-    "scope.record": {
-      desc: "用于语音转文字功能",
-    },
-  },
+  // 录音授权（scope.record）由录音 API 运行时自动请求；
+  // app.json 的 permission 字段仅支持 scope.userLocation，声明会报"无效的 permission"警告
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#8B5CF6",

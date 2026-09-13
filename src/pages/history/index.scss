@@ -85,7 +85,8 @@
 
   &__content {
     min-height: 100vh;
-    padding-top: calc(env(safe-area-inset-top) + 131px);
+    /* 顶栏 fixed 定位，底缘 ≈ 安全区 + 150(顶部内边距) + 54(按钮行高) + 14(底部内边距)，再留 16px 呼吸间距 */
+    padding-top: calc(env(safe-area-inset-top) + 234px);
     padding-bottom: 40px;
     padding-left: 24px;
     padding-right: 24px;

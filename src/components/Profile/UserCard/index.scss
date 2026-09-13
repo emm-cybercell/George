@@ -45,6 +45,12 @@
       transform: scale(0.95);
       opacity: 0.9;
     }
+
+    &--guest {
+      color: #ffffff;
+      background: #76c843;
+      font-weight: 600;
+    }
   }
 
   &__info {
