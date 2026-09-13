@@ -21,7 +21,8 @@ const DEFAULT_CONFIGS = {
     },
     glm: {
       // 智谱 BigModel（GLM-5.3-flash，支持 1M 上下文）
-      apiKey: "f66cc2e761444d32927ae7e8f338e970.lRBTvIWXK2yTp4k3",
+      // 密钥不硬编码：在云开发控制台为 deepseekProxy 配置 GLM_API_KEY 环境变量
+      apiKey: process.env.GLM_API_KEY ?? "",
       baseURL: "https://open.bigmodel.cn/api/paas/v4",
       model: "glm-5.3-flash",
       temperature: 1,
@@ -30,8 +31,8 @@ const DEFAULT_CONFIGS = {
     },
     aliyun: {
       // 阿里云百炼 MaaS（OpenAI 兼容端点）
-      apiKey:
-        "sk-ws-H.PDYYEEX.D98M.MEUCIQDBYAqpCwEr8s_YXKAosjJjGtIa32W4m7eNAUaaipIUhwIgcKD4CbGV_AhQUb8gxo7_4Tsg5GdrCTZPqlgxLpJdHGw",
+      // 密钥不硬编码：在云开发控制台为 deepseekProxy 配置 ALIYUN_API_KEY 环境变量
+      apiKey: process.env.ALIYUN_API_KEY ?? "",
       baseURL:
         "https://llm-mxpx4kx94pkq771r.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
       model: "deepseek-v4-flash-0731", // 精确 id（GET /models 清单确认，全小写）
@@ -40,8 +41,8 @@ const DEFAULT_CONFIGS = {
     },
     aliyunAnthropic: {
       // 阿里云百炼 Anthropic 兼容端点
-      apiKey:
-        "sk-ws-H.PDYYEEX.D98M.MEUCIQDBYAqpCwEr8s_YXKAosjJjGtIa32W4m7eNAUaaipIUhwIgcKD4CbGV_AhQUb8gxo7_4Tsg5GdrCTZPqlgxLpJdHGw",
+      // 密钥不硬编码：在云开发控制台为 deepseekProxy 配置 ALIYUN_API_KEY 环境变量
+      apiKey: process.env.ALIYUN_API_KEY ?? "",
       baseURL:
         "https://llm-mxpx4kx94pkq771r.cn-beijing.maas.aliyuncs.com/apps/anthropic",
       protocol: "anthropic",
