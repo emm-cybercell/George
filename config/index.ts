@@ -1,18 +1,7 @@
 import { defineConfig, type UserConfigExport } from "@tarojs/cli";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
-import dotenv from "dotenv";
-import { existsSync } from "fs";
-import { resolve } from "path";
 import devConfig from "./dev";
 import prodConfig from "./prod";
-
-// 显式加载环境变量（生产构建默认只读 .env.production，会导致 key 注入为空）
-// 文件不存在时静默跳过（ponytail: 避免新克隆者无 .env* 文件导致构建崩溃）
-const envFiles = [".env", ".env.development", ".env.production"];
-for (const file of envFiles) {
-  const path = resolve(process.cwd(), file);
-  if (existsSync(path)) dotenv.config({ path });
-}
 
 // https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
 export default defineConfig<"webpack5">(async (merge) => {
@@ -29,12 +18,6 @@ export default defineConfig<"webpack5">(async (merge) => {
     sourceRoot: "src",
     outputRoot: "dist",
     plugins: ["@tarojs/plugin-generator"],
-    defineConstants: {
-      // 编译期注入环境变量，避免小程序运行时不存在的 process 全局对象
-      "process.env.DEEPSEEK_API_KEY": JSON.stringify(
-        process.env.DEEPSEEK_API_KEY ?? "",
-      ),
-    },
     copy: {
       patterns: [],
       options: {},

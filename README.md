@@ -12,10 +12,10 @@
 | 页面     | 路由                          | 说明                                                                   |
 | -------- | ----------------------------- | ---------------------------------------------------------------------- |
 | 首页     | `pages/home/index`            | 默认入口，项目宣传页（Hero 欢迎卡片 · 项目介绍 · 核心特色）            |
-| 学习页   | `pages/learn/index`           | AI 动态对话页，IP 形象三状态（待机 / 思考中 / 对话中），底部悬浮输入栏 |
+| 学习页   | `pages/learn/index`           | AI 对话页：微信式消息流（各自头像）、语音转文字输入、TTS 朗读回复      |
 | 我的页   | `pages/profile/index`         | 个人中心（用户信息卡 · 荣誉勋章墙 · 菜单列表）                         |
-| 历史记录 | `pages/history/index`         | 对话历史回顾                                                           |
-| 作品集   | `pages/portfolio/index`       | 我的创作作品集                                                         |
+| 历史记录 | `pages/history/index`         | 对话历史回顾（云端 + 本地双源，可恢复续聊）                            |
+| 作品集   | `pages/portfolio/index`       | 我的创作作品集（AI 自动归档优质创作）                                  |
 | 通知     | `pages/notifications/index`   | 消息通知中心                                                           |
 | 设置     | `pages/settings/index`        | 全局设置（语音朗读 · 触感反馈）                                        |
 | 关于     | `pages/about/index`           | 项目理念（创造 / 判断 / 表达三大支柱 · 作业红黄绿原则）                |
@@ -23,30 +23,35 @@
 | 功能详情 | `pages/feature-detail/index`  | 特色功能详解（桥智观察站等）                                           |
 | 能力设置 | `pages/ability-setting/index` | 当前重点培养的 AI 能力设置                                             |
 
-AI 对话由云函数 `deepseekProxy` 代理驱动，内置"桥智同学"人设 System Prompt：平等对话、启发探索、鼓励创作，并严格遵循"AI 作业红黄绿原则"，拒绝直接代写作业。
+核心 AI 能力：
+
+- **AI 对话**：云函数代理调用微信云开发混元模型（`hy3`），内置"桥智同学"人设 System Prompt——平等对话、启发探索、鼓励创作，严格遵循"AI 作业红黄绿原则"，拒绝直接代写作业。
+- **AI 生图**：文生图 / 图生图双模式（混元生图模型），生成结果自动插入对话。
+- **Agent 工具调用**：模型可自主调用云端工具，为高质量提问发放成长积分、将优质创作归档到作品集。
+- **内容安全**：用户提问与 AI 回复均经微信内容安全接口审核。
+- **激励体系**：对话积分、等级成长、勋章解锁，云端持久化。
 
 ## 🛠 技术栈
 
-- **框架**：Taro 4.x（webpack5 + React 18）
-- **语言**：TypeScript（严禁 `any`，类型定义统一放 `src/types/`）
+- **框架**：Taro 4.x（webpack5 + React 18）+ TypeScript
 - **样式**：Sass (SCSS)
-- **UI 组件库**：`@nutui/nutui-react-taro`
-- **AI 服务**：微信云开发 AI（`wxai`）为主，云函数 `deepseekProxy` 多模型代理（智谱 GLM / 阿里云百炼 / DeepSeek 可选）
+- **后端**：微信云开发（云函数 + 云数据库 + 云存储）
+- **AI 能力**：微信云开发 AI（腾讯混元生文 `hy3` / 混元生图），经 `wx-server-sdk` 的 `cloud.ai()` 调用
 - **工程规范**：ESLint + Stylelint + Commitlint（Conventional Commits）+ Husky
 
 ## 📁 目录结构
 
 ```
-├── config/              # Taro 构建配置（dev / prod / 环境变量注入）
-├── cloudfunctions/      # 微信云函数（deepseekProxy 多模型代理）
-├── docs/                # 产品与开发文档（PRD、人设 Prompt）
-│   ├── PRD_MVP.md       # UI 与功能需求文档（设计规范、页面拆解）
-│   └── PERSONA_PROMPT.md# AI 系统人设与 API 开发规范
+├── config/              # Taro 构建配置（dev / prod）
+├── cloudfunctions/      # 微信云函数
+│   └── deepseekProxy/   # AI 网关（生文 / 生图 / Agent 工具 / 内容审核）
+├── docs/                # 产品与开发文档（PRD、人设 Prompt、进度交接）
+├── tests/               # 云函数本地测试
 └── src/
-    ├── api/             # 网络请求层（云函数 / DeepSeek 封装）
-    ├── assets/          # 静态资源（图片等）
-    ├── components/      # 可复用组件（每文件 ≤150 行，超限拆子组件）
-    ├── hooks/           # 复杂状态逻辑（自定义 Hooks）
+    ├── api/             # 网络请求层（云函数 / 云数据库封装）
+    ├── assets/          # 静态资源（图片）
+    ├── components/      # 可复用组件
+    ├── hooks/           # 复杂状态逻辑（对话会话 / 录音）
     ├── pages/           # 页面（只做组件拼装）
     ├── types/           # 全局类型定义
     └── utils/           # 通用工具（设置 · TTS 语音）
@@ -54,7 +59,7 @@ AI 对话由云函数 `deepseekProxy` 代理驱动，内置"桥智同学"人设 
 
 ## 🚀 快速开始
 
-环境要求：Node.js ≥ 18，微信开发者工具，微信云开发（cloudbase）账号。
+环境要求：Node.js ≥ 18，微信开发者工具，已开通云开发环境的微信小程序账号。
 
 ```bash
 # 1. 安装依赖
@@ -69,36 +74,28 @@ npm run build:weapp
 
 用微信开发者工具导入项目根目录，AppID 在 `project.config.json` 中已配置，构建产物输出至 `dist/`。
 
-### ☁️ 云函数部署（AI 对话依赖，必做）
+### ☁️ 云开发配置（AI 功能依赖，必做）
 
-AI 对话通过云函数 `deepseekProxy` 代理，避免 API Key 暴露在客户端。克隆后需先部署：
+1. 微信开发者工具 → 云开发控制台 → 开通云开发环境（`project.config.json` 中已绑定环境 ID）；
+2. 右键 `cloudfunctions/deepseekProxy` → **上传并部署：云端安装依赖**（拉取 `wx-server-sdk 4.x`）；
+3. 云开发控制台 → AI+ → 开通 AI 能力，开通**混元生文（hy3）**与**混元生图**模型；
+4. 云开发控制台 → 云函数 → `deepseekProxy` → 配置：将超时时间调至 **30 秒以上**；
+5. 云数据库创建 `system_configs` 集合（可选，用于模型配置热更；未创建时自动使用代码内置默认配置）。
 
-1. 微信开发者工具 → 云开发控制台 → 开通云开发环境；
-2. 右键 `cloudfunctions/deepseekProxy` → **上传并部署：云端安装依赖**；
-3. 在云函数 `deepseekProxy` 的"配置 → 环境变量"中按需配置密钥（二选一即可，对应 `activeProvider`）：
+> AI 调用无需配置任何 API Key——混元模型走微信云开发内置通道，费用计入云开发资源消耗。小程序成长计划的免费资源包仅含 `hy3` 生文模型；如需更多模型（DeepSeek / Kimi / GLM 等），需在控制台切换资源点套餐。
 
-| 供应商                | 环境变量           | 说明                                         |
-| --------------------- | ------------------ | -------------------------------------------- |
-| 微信云开发 AI（默认） | 无需密钥           | `activeProvider: "wxai"`，走云开发资源点套餐 |
-| 智谱 BigModel         | `GLM_API_KEY`      | 你的智谱 API Key                             |
-| 阿里云百炼            | `ALIYUN_API_KEY`   | 你的阿里云百炼 API Key                       |
-| DeepSeek              | `DEEPSEEK_API_KEY` | 你的 DeepSeek API Key                        |
+### 🧪 云函数本地测试
 
-> 所有密钥只通过环境变量注入，**严禁硬编码进代码**。生产构建所需的 `DEEPSEEK_API_KEY` 由 `config/index.ts` 从本地 `.env*` 文件读取注入，密钥文件不会进入仓库（已在 `.gitignore` 中忽略）。
-
-### ⚙️ 本地环境变量
-
-- `config/index.ts` 会依次读取根目录的 `.env`、`.env.development`、`.env.production`（不存在则静默跳过），用于构建期注入 `process.env.DEEPSEEK_API_KEY`。
-- 克隆后**无需**创建 `.env` 也能成功构建；本地若要调试 DeepSeek 直连，可自建 `.env.development` 填入 `DEEPSEEK_API_KEY="sk-xxx"`（此文件已被 gitignore，不会误提交）。
-
-### 📱 初始化
-
-- 项目依赖云数据库集合：`system_configs`（可热更 `llm_active` 配置）。首次运行时如 AI 无响应，请确认该集合已创建且云函数已部署。
+```bash
+node --test tests/deepseekProxy.spec.js   # 网关全链路（对话 / 生图双模式）
+node tests/gatewaySmoke.js                # 对话链路冒烟
+```
 
 ## 📚 文档
 
 - [产品需求文档（UI 与功能）](docs/PRD_MVP.md) —— 设计规范、页面与组件拆解
-- [DeepSeek 人设 Prompt 与 API 规范](docs/PERSONA_PROMPT.md) —— 系统人设与调用约定
+- [人设 Prompt 与 API 规范](docs/PERSONA_PROMPT.md) —— 系统人设与调用约定
+- [进度交接档案](docs/PROGRESS_HANDOFF.md) —— 架构现状、模型配置与排障记录
 
 ## 🔄 内容更新维护指南
 
