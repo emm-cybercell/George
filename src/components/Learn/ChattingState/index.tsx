@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from "@tarojs/components";
-import Taro, { useUnload } from "@tarojs/taro";
+import { useUnload } from "@tarojs/taro";
 import { stopCurrentVoice } from "@/utils/tts";
 import MessageRow from "./MessageRow";
 import type { ChatMessage } from "../types";

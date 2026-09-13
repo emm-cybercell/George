@@ -7,5 +7,3 @@ node_modules/
 .swc
 *.local
 .env*
-docs/
-src/api/

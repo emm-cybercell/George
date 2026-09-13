@@ -134,9 +134,9 @@ exports.main = async (event) => {
   } catch (err) {
     console.error("deepseekProxy error:", err);
     const detail = String(err?.message || err);
-    // 超时多为所选模型在当前环境未开通/无额度（成长计划免费包仅含 hy3），提示可切换
+    // 超时多为模型在当前环境未开通/无额度（成长计划免费包仅含 hy3）
     const hint = /timeout|timed out|ETIMEDOUT/i.test(detail)
-      ? "（当前模型响应超时，可能是未开通该模型，可在「+ → 切换对话模型」换 hy3）"
+      ? "（模型响应超时，请确认已开通该模型或稍后再试）"
       : "";
     return {
       success: false,

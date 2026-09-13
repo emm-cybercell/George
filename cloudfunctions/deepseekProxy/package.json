@@ -4,7 +4,6 @@
   "description": "多模型 AI 网关（混元生文/生图）与微信内容合规审核",
   "main": "index.js",
   "dependencies": {
-    "wx-server-sdk": "^4.0.1",
-    "axios": "^1.6.0"
+    "wx-server-sdk": "^4.0.1"
   }
 }
