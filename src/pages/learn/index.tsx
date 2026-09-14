@@ -7,20 +7,27 @@ import ChattingState from "@/components/Learn/ChattingState";
 import ChatInput from "@/components/ChatInput";
 import MediaPanel from "@/components/Learn/MediaPanel";
 import ImageGenPanel from "@/components/Learn/ImageGenPanel";
+import MaterialPanel from "@/components/Learn/MaterialPanel";
 import CustomTabBar from "@/components/CustomTabBar";
 import { useRecorder } from "@/hooks/useRecorder";
 import { useChatSession } from "@/hooks/useChatSession";
 import { vibrateIfEnabled } from "@/utils/settings";
+import { isWebSearchEnabled } from "@/components/ChatInput";
 import type { AwardChatResult } from "@/types";
 import "./index.scss";
 
-const QUICK_PROMPTS = ["帮我出个谜题", "什么是魔法指令？", "教我写一个小游戏"];
+const QUICK_PROMPTS = [
+  "给我推荐一个挑战",
+  "帮我出个谜题",
+  "什么是魔法指令？",
+];
 
 const Learn = () => {
   const router = useRouter();
   const [inputText, setInputText] = useState("");
   const [mediaOpen, setMediaOpen] = useState(false);
   const [imageGenOpen, setImageGenOpen] = useState(false);
+  const [materialOpen, setMaterialOpen] = useState(false);
   const [awardTip, setAwardTip] = useState<AwardChatResult | null>(null);
   const awardTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -61,8 +68,8 @@ const Learn = () => {
     stopIfRecording,
   } = useRecorder(setInputText);
 
-  // 进入：初始化语音后按路由参数恢复会话（new=1 空白 / historyId 云端恢复 /
-  // sessionId 本地会话 / 空白标记不恢复 / 最近会话）
+  // 进入：初始化语音后按路由参数恢复会话（new=1 空白 / prompt 预填充输入框 /
+  // historyId 云端恢复 / sessionId 本地会话 / 空白标记不恢复 / 最近会话）
   useLoad(() => {
     try {
       initRecorder();
@@ -72,7 +79,11 @@ const Learn = () => {
         icon: "none",
       });
     }
-    restore(router.params);
+    const pendingText = restore(router.params);
+    if (pendingText) {
+      setInputText(pendingText);
+      Taro.showToast({ title: "已为你填好，点发送即可 ✨", icon: "none" });
+    }
   });
 
   // 退出/切换页面：记录本次会话空白标记，并停止录音
@@ -85,7 +96,7 @@ const Learn = () => {
     if (!text.trim()) return;
     vibrateIfEnabled();
     setInputText("");
-    send(text);
+    send(text, isWebSearchEnabled());
   };
 
   // 媒体上传成功：关闭面板并发送图片消息（AI 自动回复引导文案）
@@ -170,6 +181,12 @@ const Learn = () => {
         onClose={() => setMediaOpen(false)}
         onUploaded={handleMediaUploaded}
         onImageGen={() => setImageGenOpen(true)}
+        onMaterial={() => setMaterialOpen(true)}
+      />
+
+      <MaterialPanel
+        visible={materialOpen}
+        onClose={() => setMaterialOpen(false)}
       />
 
       <ImageGenPanel

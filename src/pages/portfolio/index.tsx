@@ -11,13 +11,14 @@ import {
 import type { CreativeWork } from "@/types";
 import "./index.scss";
 
-type FilterKey = "all" | "drawing" | "photo" | "stories";
+type FilterKey = "all" | "drawing" | "photo" | "stories" | "science";
 
 const FILTERS: { key: FilterKey; label: string }[] = [
   { key: "all", label: "全部" },
   { key: "drawing", label: "🎨 绘本与画作" },
   { key: "photo", label: "📸 手工与实物" },
   { key: "stories", label: "📝 故事灵感" },
+  { key: "science", label: "🔬 科学发现" },
 ];
 
 const Portfolio = () => {
@@ -46,7 +47,6 @@ const Portfolio = () => {
         ? w.category === "story" || w.category === "idea"
         : w.category === filter,
   );
-
   const handleDelete = async (id: string) => {
     await deleteCreativeWork(id);
     setWorks((list) => list.filter((w) => w._id !== id));

@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { fetchDeepSeekReply } from "@/api/deepseek";
 import { getCloudChatRecord, saveChatRecordToCloud } from "@/api/cloudChat";
-import { awardChatPoints } from "@/api/user";
+import { awardChatPoints, countImageGeneration } from "@/api/rewards";
 import { playTextVoice } from "@/utils/tts";
 import { ABILITY_STORAGE_KEY, DEFAULT_ABILITY_ID } from "@/types/ability";
 import {
@@ -79,24 +79,27 @@ export function useChatSession(
       .catch((err) => console.warn("历史会话恢复失败:", err));
   };
 
-  /** 恢复会话：优先级 new=1 > prompt 直达 > historyId > sessionId > 空白标记不恢复 > 最近会话 */
-  const restore = (params: LearnRouteParams) => {
+  /**
+   * 恢复会话：优先级 new=1 > prompt 预填充 > historyId > sessionId > 空白标记不恢复 > 最近会话
+   * @returns prompt 预填充文本（供页面填入输入框，由用户确认发送），其余场景返回 undefined
+   */
+  const restore = (params: LearnRouteParams): string | undefined => {
     if (params.new === "1") {
       sessionIdRef.current = `session-${Date.now()}`;
-      return;
+      return undefined;
     }
     if (params.prompt) {
-      // 首页灵感直达：开新会话并直接发起提问
+      // 首页灵感直达：开新会话并预填充输入框（不自动发送）
       const text = decodeURIComponent(params.prompt);
       if (text.trim()) {
         sessionIdRef.current = `session-${Date.now()}`;
-        send(text);
-        return;
+        return text;
       }
+      return undefined;
     }
     if (params.historyId) {
       restoreFromHistory(params.historyId);
-      return;
+      return undefined;
     }
     if (params.sessionId) {
       const target = getChatSession(params.sessionId);
@@ -105,11 +108,11 @@ export function useChatSession(
         setMessages(target.messages);
         setChatState("chatting");
       }
-      return;
+      return undefined;
     }
     if (Taro.getStorageSync(BLANK_FLAG)) {
       Taro.removeStorageSync(BLANK_FLAG);
-      return;
+      return undefined;
     }
     const latest = getChatSessions()[0];
     if (latest && latest.messages.length > 0) {
@@ -117,6 +120,7 @@ export function useChatSession(
       setMessages(latest.messages);
       setChatState("chatting");
     }
+    return undefined;
   };
 
   // 页面重新显示时，若当前会话已被删除则重置为空白新对话
@@ -124,8 +128,8 @@ export function useChatSession(
     const current = getChatSession(sessionIdRef.current);
     if (!current && messages.length > 0) resetToBlank();
   });
-  /** 发送提问：写入消息流、请求 AI、双份持久化（本地 + 云端） */
-  const send = async (text: string) => {
+  /** 发送提问：写入消息流、请求 AI、双份持久化（本地 + 云端）、画像与激励联动 */
+  const send = async (text: string, webSearch = false) => {
     const content = text.trim();
     if (!content || chatState === "thinking") return;
 
@@ -135,29 +139,55 @@ export function useChatSession(
     ];
     setMessages(history);
     setChatState("thinking");
+    const startedAt = Date.now();
 
     try {
-      const reply = await fetchDeepSeekReply(
+      const result = await fetchDeepSeekReply(
         history.map(({ role, content: c }) => ({ role, content: c })),
+        { webSearch },
       );
+      const responseTime = Date.now() - startedAt;
+      const aiMsgId = nextId();
       const withReply: ChatMessage[] = [
         ...history,
-        { id: nextId(), role: "assistant", content: reply },
+        {
+          id: aiMsgId,
+          role: "assistant",
+          content: result.reply,
+          liked: null,
+          usedKnowledge: result.usedKnowledge,
+          topics: result.topics,
+          responseTime,
+          toolLabels: result.toolLabels,
+          knowledgeHits: result.knowledgeHits,
+        },
       ];
       setMessages(withReply);
       setChatState("chatting");
       persist(withReply);
       // 语音朗读：AI 回复生成后按全局设置自动播报（未开启自动朗读则静默）
-      playTextVoice(reply);
+      playTextVoice(result.reply);
       // 同步写入云端聊天记录（失败静默，本地已持久化备份）
-      saveChatRecordToCloud({
+      const cloudRecordId = await saveChatRecordToCloud({
         userQuery: content,
-        aiReply: reply,
+        aiReply: result.reply,
         abilityMode:
           Taro.getStorageSync(ABILITY_STORAGE_KEY) || DEFAULT_ABILITY_ID,
+        sessionId: sessionIdRef.current,
+        topics: result.topics,
+        responseTime,
+        modelUsed: result.modelUsed,
       });
-      // 激励联动：发积分、算等级、解锁勋章（失败静默，不影响对话）
-      onDidReply?.(await awardChatPoints());
+      // 回填云端 _id 到消息，点赞反馈可回写定位
+      if (cloudRecordId) {
+        setMessages((list) =>
+          list.map((m) =>
+            m.id === aiMsgId ? { ...m, cloudRecordId } : m,
+          ),
+        );
+      }
+      // 激励联动：发积分、算等级、解锁勋章、维护活跃画像（失败静默，不影响对话）
+      onDidReply?.(await awardChatPoints(result.topics));
     } catch {
       // API 层已 Toast 提示错误原因，这里恢复状态让用户能继续输入
       setChatState(history.length > 0 ? "chatting" : "idle");
@@ -207,17 +237,26 @@ export function useChatSession(
         content: label ? `🎨 生图：${label}` : "🎨 生图",
         mediaUrl: fileID,
       },
-      { id: nextId(), role: "assistant", content: IMAGE_GUIDE_REPLY },
+      {
+        id: nextId(),
+        role: "assistant",
+        content: IMAGE_GUIDE_REPLY,
+        mediaUrl: fileID,
+        prompt: promptText.trim(),
+      },
     ];
     setMessages(nextMessages);
     setChatState("chatting");
     persist(nextMessages);
     saveChatRecordToCloud({
-      userQuery: "🎨 AI 生图",
+      userQuery: label ? `🎨 生图：${label}` : "🎨 AI 生图",
       aiReply: IMAGE_GUIDE_REPLY,
       abilityMode:
         Taro.getStorageSync(ABILITY_STORAGE_KEY) || DEFAULT_ABILITY_ID,
+      sessionId: sessionIdRef.current,
     });
+    // 画像统计：累计生图次数
+    countImageGeneration();
   };
 
   return {

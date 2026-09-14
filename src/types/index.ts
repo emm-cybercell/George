@@ -115,6 +115,15 @@ export interface UserGrowth {
   totalChats?: number;
   /** 已体验的培养方向 ID 列表 */
   triedAbilities?: string[];
+  /** 累计 AI 生图次数 */
+  totalImages?: number;
+  /** 活跃日期（YYYY-MM-DD，保留最近 30 天） */
+  activeDays?: string[];
+  /** 最近对话话题标签（保留最近 10 个，智能推荐用） */
+  recentTopics?: string[];
+  /** 首次/最近访问时间戳 */
+  firstVisitTime?: number;
+  lastVisitTime?: number;
 }
 
 /** 完整云端用户账号（users 集合文档结构） */
@@ -148,8 +157,8 @@ export interface CreativeWork {
   _id?: string;
   _openid?: string;
   title: string;
-  /** 作品分类：画作 / 实物照片 / 故事 / 灵感 */
-  category: "drawing" | "photo" | "story" | "idea";
+  /** 作品分类：画作 / 实物照片 / 故事 / 灵感 / 科学 */
+  category: "drawing" | "photo" | "story" | "idea" | "science";
   /** 媒体类型 */
   mediaType: "image" | "text" | "file";
   /** 云存储文件路径（cloud://...） */

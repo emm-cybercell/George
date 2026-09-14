@@ -11,6 +11,68 @@ const { runAgentLoop } = require("./core/agentRunner");
 const T2I_MODEL = "HY-Image-3.0-Plus-4090-Tob-v1.0";
 const I2I_MODEL = "HY-Image-v3.0-I2I-ToB-v1.0.1";
 
+/** 个人材料单用户上限 */
+const MATERIAL_LIMIT = 50;
+
+/**
+ * 个人学习资料入库：上限校验 → 写 knowledge_base（openid 隔离）
+ * @returns {{success, error?, materialId?}}
+ */
+async function ingestMaterial({ title, text }, openid, db) {
+  const cleanTitle = String(title || "").trim().slice(0, 30) || "我的学习资料";
+  const cleanText = String(text || "").trim().slice(0, 3000);
+  if (!cleanText) {
+    return { success: false, error: "资料内容为空" };
+  }
+  try {
+    const col = db.collection("knowledge_base");
+    const countRes = await col.where({ openid, source: "user" }).count();
+    if ((countRes.total || 0) >= MATERIAL_LIMIT) {
+      return {
+        success: false,
+        error: `个人资料库已满（${MATERIAL_LIMIT} 条），请先删除部分内容`,
+      };
+    }
+    const addRes = await col.add({
+      data: {
+        type: "material",
+        question: cleanTitle,
+        answer: cleanText,
+        tags: [],
+        abilityIds: [],
+        difficulty: 1,
+        source: "user",
+        openid,
+        usageCount: 0,
+        lastUsedAt: 0,
+      },
+    });
+    return { success: true, materialId: addRes._id };
+  } catch (err) {
+    console.error("ingestMaterial error:", err);
+    return { success: false, error: String(err.message || err) };
+  }
+}
+
+/** 拍照识字：微信 OCR 识别图片印刷体文字 */
+async function ocrPrintedText(fileID) {
+  try {
+    const res = await cloud.openapi.ocr.printedText({
+      type: "photo",
+      imgUrl: fileID,
+    });
+    const lines = (res.items || []).map((it) => it.text || "");
+    return { success: lines.length > 0, text: lines.join("\n") };
+  } catch (err) {
+    console.error("ocr.printedText error:", err);
+    return {
+      success: false,
+      error: "识别失败，请改用粘贴文本方式",
+      detail: String(err?.message || err).slice(0, 120),
+    };
+  }
+}
+
 /** 生图：经 cloud.ai() 混元生图模型，按模式分发 t2i / i2i */
 async function generateImage({ prompt, mode, imageBase64 }) {
   const content = String(prompt || "").trim();
@@ -66,6 +128,54 @@ async function checkText(content, openid) {
 
 exports.main = async (event) => {
   const { OPENID } = cloud.getWXContext();
+  const db = cloud.database();
+
+  // 个人学习资料入库：event.type === 'ingest'
+  if (event.type === "ingest") {
+    const userQuery = `${event.title || ""}${event.text || ""}`.slice(0, 200);
+    if (!(await checkText(userQuery, OPENID))) {
+      return { success: false, error: "资料内容包含不适宜词汇，请修改后重试" };
+    }
+    const res = await ingestMaterial(
+      { title: event.title, text: event.text },
+      OPENID,
+      db,
+    );
+    return res;
+  }
+
+  // 拍照识字：event.type === 'ocr'
+  if (event.type === "ocr") {
+    if (!event.fileID) {
+      return { success: false, error: "缺少图片" };
+    }
+    const res = await ocrPrintedText(event.fileID);
+    return { success: res.success, text: res.text || "", error: res.error || "" };
+  }
+
+  // 知识库随机抽题（首页灵感池）：event.type === 'kb_random'
+  if (event.type === "kb_random") {
+    const n = Math.min(Math.max(Number(event.count) || 2, 1), 5);
+    const type = ["quiz", "mission"].includes(event.docType)
+      ? event.docType
+      : "quiz";
+    try {
+      const res = await db
+        .collection("knowledge_base")
+        .where({ type })
+        .aggregate()
+        .sample({ size: n })
+        .end();
+      const items = (res.list || []).map((d) => ({
+        question: d.question,
+        tags: d.tags || [],
+      }));
+      return { success: items.length > 0, items };
+    } catch (err) {
+      console.error("kb_random error:", err);
+      return { success: false, items: [] };
+    }
+  }
 
   // 生图独立请求：event.type === 'image'（mode: t2i 文生图 / i2i 图生图）
   if (event.type === "image") {
@@ -109,8 +219,8 @@ exports.main = async (event) => {
     // 3. 委派给 ReAct Agent 循环（Function Calling 自主决策）
     const { reply, executedTools } = await runAgentLoop({
       messages,
-      config: activeConfig,
-      db: cloud.database(),
+      config: { ...activeConfig, webSearch: !!event.webSearch },
+      db,
       openid: OPENID,
       cloud,
     });

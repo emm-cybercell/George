@@ -31,6 +31,11 @@
       transform: scale(0.92);
       opacity: 0.85;
     }
+
+    &--web {
+      background: #ecfdf5;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
+    }
   }
 
   &__field {

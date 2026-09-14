@@ -74,6 +74,8 @@ async function runAgentLoop({ messages, config, db, openid, cloud }) {
         tools: fnTools,
         maxSteps: MAX_LOOPS,
         temperature: config.temperature ?? 0.7,
+        // 联网搜索：SDK 透传（若当前 SDK 版本不支持该字段会被忽略，仍有提示词兜底）
+        ...(config.webSearch ? { enableWebSearch: true } : {}),
         options: { timeout: ATTEMPT_TIMEOUT_MS },
       }),
       ATTEMPT_TIMEOUT_MS,

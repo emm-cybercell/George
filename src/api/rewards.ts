@@ -53,16 +53,29 @@ export async function handleDailyCheckIn(): Promise<CheckInResult> {
   };
 }
 
-/** 对话激励：+10 积分、累计对话 +1、等级重算、解锁 first_chat/dialogue_5 */
-export async function awardChatPoints(): Promise<AwardChatResult> {
+/** 对话激励：+10 积分、累计对话 +1、等级重算、解锁 first_chat/dialogue_5；顺带维护活跃画像 */
+export async function awardChatPoints(topics: string[] = []): Promise<AwardChatResult> {
   const newly: string[] = [];
   let isLevelUp = false;
   let newLevel = 1;
   await applyAndSync((a) => {
+    const today = todayStr();
+    // 活跃天数：封顶保留最近 30 天
+    const activeDays = a.growth.activeDays || [];
+    const nextActiveDays = activeDays.includes(today)
+      ? activeDays
+      : [...activeDays, today].slice(-30);
+    // 最近话题：去重后封顶 10 个
+    const merged = [...topics, ...(a.growth.recentTopics || [])];
+    const recentTopics = [...new Set(merged)].slice(0, 10);
     const growth = {
       ...a.growth,
       points: a.growth.points + 10,
       totalChats: (a.growth.totalChats || 0) + 1,
+      activeDays: nextActiveDays,
+      recentTopics,
+      firstVisitTime: a.growth.firstVisitTime || Date.now(),
+      lastVisitTime: Date.now(),
     };
     newLevel = Math.floor(growth.points / 100) + 1;
     if (newLevel > (a.growth.level || 1)) {
@@ -74,6 +87,14 @@ export async function awardChatPoints(): Promise<AwardChatResult> {
     return { ...a, growth };
   });
   return { pointsGained: 10, isLevelUp, newLevel, newlyUnlockedBadges: newly };
+}
+
+/** 生图激励：累计生图次数 +1（不计积分，纯画像统计） */
+export async function countImageGeneration(): Promise<void> {
+  await applyAndSync((a) => ({
+    ...a,
+    growth: { ...a.growth, totalImages: (a.growth.totalImages || 0) + 1 },
+  }));
 }
 
 /** 培养方向切换联动：体验 >=2 种解锁 multi_talent */

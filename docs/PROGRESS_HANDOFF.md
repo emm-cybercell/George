@@ -54,14 +54,18 @@
 ### 4.2 学习页（核心对话 + 多媒体 + 生图）
 
 - 三状态（idle/thinking/chatting）、微信式消息行（`ChattingState/MessageRow.tsx`：助手/用户各自头像 + 气泡，语音按钮随行）、`scrollIntoView` 置底
-- **会话恢复**：`?new=1` / `?historyId=`（云端单条）/ `?sessionId=`（本地）/ `?prompt=`（首页灵感直达自动提问）
+- **会话恢复**：`?new=1` / `?historyId=`（云端单条）/ `?sessionId=`（本地）/ `?prompt=`（首页灵感直达，**预填充输入框由用户确认发送**，restore 返回文本）/ 空白标记 / 最近会话
 - 语音转文字（WechatSI 插件，**赋值式回调注册** `onStart=fn` 不能用方法调用）
 - **TTS 语音朗读**（`utils/tts.ts`）：合成防重入锁 + 播放/暂停状态机；音色固定为微信插件男声，智谱童声需充值
-- **多媒体上传**：`+` 按钮 → `MediaPanel`（拍照/相册/文件 + AI 生图入口）→ `works.ts` 云上传
-- **AI 生图**：`+` 面板 → 「🎨 AI 生图」→ `ImageGenPanel`（**文生图 / 图生图双模式**，i2i 选参考图）→ 图片消息插入对话
-- 思考态：首条消息等待显示紧凑思考动画（120px），已有对话时在消息流末尾显示"正在输入"三点气泡，不遮挡内容
+- **多媒体上传**：`+` 按钮 → `MediaPanel`（max-height 80vh 内滚，5 项：拍照/相册/文件/AI 生图/上传学习资料）
+- **AI 生图**：`+` 面板 → 「🎨 AI 生图」→ `ImageGenPanel`（文生图 / 图生图双模式）→ 图片消息插入对话，**⭐ 一键收藏入作品集**（CollectBtn，prompt 作标题）
+- **个人资料库**（2026-09-14）：`+` 面板 → 「📚 上传学习资料」→ `MaterialPanel`（拍照识字 OCR `ocr.printedText` / 粘贴文本）→ 云函数 `type:'ingest'` 审核入库 knowledge_base（`type:"material", source:"user", openid` 隔离，单用户 50 条上限，面板内可删）；Agent 检索自动合并个人材料（`retrieval.js` 公共库实例缓存 + 个人库按 openid 缓存）
+- **思考可视化**：思考中气泡阶段文案轮换（理解问题→检索知识库→整理思路，2.5s）；回复后气泡下显示工具标签（📚 知识检索/🎯 个性化推荐/🌟 探索积分/📁 作品归档/📝 学习小结）+「参考 N 条」+ 👍👎
+- **联网搜索**：`+` 按钮**长按**切换（storage `web_search_enabled`），开启时透传 `webSearch:true` → 云函数 `enableWebSearch` 传给 generateText（SDK 不支持时自动忽略，提示词兜底声明）
+- **个性化注入**（deepseek.ts）：system prompt 动态拼接年级画像（`【用户画像】：X 年级学生`）+ 培养侧重（ability.systemGuidance）
 - 页头：「＋新对话 / 📜 历史」居左横排，标题文字居右同高
 - 积分飘字/升级/勋章激励反馈（`onDidReply` 回调）
+- **首页灵感卡**：云端 `kb_random` 随机抽 quiz（aggregate sample），失败回退本地池（`api/knowledge.ts` pickFromKB/pickLocal）
 
 ### 4.3 用户体系与激励（云端持久化）
 
@@ -77,11 +81,16 @@
 
 - 消息通知中心（Tab 筛选/已读态/空态）、系统设置（TTS/震动开关/清缓存/隐私/重置）、历史对话（云端+本地双源）、培养方向设置、about/team/feature-detail
 
-### 4.6 云函数（多模型网关 + Agent）
+### 4.6 云函数（Agent 网关 + RAG 检索，2026-09-14 Agent 化改造完成）
 
-- **多模型网关**：`config.js` 默认配置 + `system_configs`（`_id: llm_active`）动态热更
-- **ReAct Agent**：`core/agentRunner.js` 3 轮 Function Calling 循环 + `tools/index.js`（`award_growth_points` / `save_creative_portfolio`）+ `llmClient.js`（OpenAI/Anthropic/wxai 协议）
-- **生图分支**：`index.js` 的 `event.type === 'image'`
+- **Agent 骨架**：`config.js`（模型配置 + system_configs 热更，model 写死 hy3）+ `core/agentRunner.js`（generateText + registerFunctionTool 自动工具循环，单次尝试 20s 硬超时 + 429 退避重试，总预算 41s）
+- **工具集（5 个）**：`tools/definitions.js`（JSON Schema）+ `tools/executors/`（growth.js 加分 / portfolio.js 归档→creative_works / knowledge.js 检索+推荐+小结）
+- **RAG 检索**：`core/retrievalCore.js`（纯函数：中文 bigram TF-IDF 余弦 + tag 加权，可单测）+ `core/retrieval.js`（knowledge_base 全量 5min TTL 缓存壳 + usageCount 召回统计 + `system_configs(kb_tuning)` 调优热更）
+- **知识库**：集合 `knowledge_base`（type: quiz/faq/prompt/mission × question/answer/tags/abilityIds/difficulty/usageCount），种子 166 条在 `seeds/*.jsonl`（JSON Lines，控制台可导入）
+- **学习小结**：集合 `learning_digests`（summarize_session 工具归档），历史页顶部展示最新一条
+- **生图分支**：`index.js` 的 `event.type === 'image'`（t2i / i2i 双模式）
+
+**召回调优指南**：调优参数 `{topK, threshold, tagBoost}` 存 `system_configs` 文档 `_id: kb_tuning`（无文档走代码默认 3/0.15/1.5）。调优看三个信号：① `knowledge_base.usageCount` 分布（长期 0 命中的种子改写 question 锚点）；② chat_history 里 search_knowledge 结果的 score 均值（偏低降 threshold 至 0.12，误命中升高至 0.18）；③ 👍 反馈与命中关联。改完可调 `invalidateCache` 或等 5 分钟缓存过期。
 
 ---
 
@@ -115,13 +124,15 @@
 
 ## 6. 云数据库集合
 
-| 集合                       | 用途                       | 权限                            |
-| -------------------------- | -------------------------- | ------------------------------- |
-| `chat_history`             | 对话记录                   | 仅创建者可读写（\_openid 隔离） |
-| `users`                    | 用户档案（profile/growth） | 仅创建者可读写                  |
-| `creative_works` / `works` | 作品集                     | 仅创建者可读写                  |
-| `system_configs`           | `_id: llm_active` 模型热更 | 管理端                          |
-| `notifications`            | 通知（可选）               | 仅创建者可读写                  |
+| 集合                        | 用途                                        | 权限                            |
+| --------------------------- | ------------------------------------------- | ------------------------------- |
+| `chat_history`              | 对话记录（含 sessionId/topics/responseTime/feedback） | 仅创建者可读写（\_openid 隔离） |
+| `users`                     | 用户档案（profile/growth/学习画像）         | 仅创建者可读写                  |
+| `creative_works`            | 作品集（Agent 归档已统一写此集合）          | 仅创建者可读写                  |
+| `knowledge_base`            | RAG 知识库（166 条种子，quiz/faq/prompt/mission） | 所有用户可读，仅管理端可写 |
+| `learning_digests`          | Agent 学习小结归档                          | 仅创建者可读写                  |
+| `system_configs`            | `llm_active` 模型热更 / `kb_tuning` 检索调优 | 管理端                          |
+| `notifications`             | 通知（可选）                                | 仅创建者可读写                  |
 
 ---
 

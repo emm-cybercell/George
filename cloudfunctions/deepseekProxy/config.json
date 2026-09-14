@@ -1,5 +1,5 @@
 {
   "permissions": {
-    "openapi": ["security.msgSecCheck"]
+    "openapi": ["security.msgSecCheck", "ocr.printedText"]
   }
 }

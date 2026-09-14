@@ -8,15 +8,40 @@ import MessageRow from "./MessageRow";
 import type { ChatMessage } from "../types";
 import "./index.scss";
 
+/** 思考阶段文案（模拟 DeepSeek 折叠块的过程展示） */
+const THINKING_STAGES = [
+  "正在理解你的问题…",
+  "正在检索知识库…",
+  "正在整理思路…",
+];
+
 interface ChattingStateProps {
   messages: ChatMessage[];
   /** AI 正在生成回复：消息列表末尾显示"正在输入"气泡（头像换思考态） */
   thinking?: boolean;
 }
 
+/** 思考阶段文案轮换（2.5s 一档） */
+const useThinkingStage = (thinking: boolean): string => {
+  const [stage, setStage] = useState(0);
+  useEffect(() => {
+    if (!thinking) {
+      setStage(0);
+      return;
+    }
+    const timer = setInterval(
+      () => setStage((s) => (s + 1) % THINKING_STAGES.length),
+      2500,
+    );
+    return () => clearInterval(timer);
+  }, [thinking]);
+  return THINKING_STAGES[stage];
+};
+
 const ChattingState = ({ messages, thinking = false }: ChattingStateProps) => {
   const lastId = messages.length ? messages[messages.length - 1].id : "";
   const [userAvatar, setUserAvatar] = useState("");
+  const stageText = useThinkingStage(thinking);
 
   // 与「我的」页同源：读取用户档案头像（云端优先，本地缓存兜底）
   useEffect(() => {
@@ -54,9 +79,12 @@ const ChattingState = ({ messages, thinking = false }: ChattingStateProps) => {
                 mode="aspectFit"
               />
               <View className="chatting-state__bubble chatting-state__bubble--assistant chatting-state__bubble--typing">
-                <Text className="chatting-state__dot">•</Text>
-                <Text className="chatting-state__dot">•</Text>
-                <Text className="chatting-state__dot">•</Text>
+                <Text className="chatting-state__stage">{stageText}</Text>
+                <View className="chatting-state__dots">
+                  <Text className="chatting-state__dot">•</Text>
+                  <Text className="chatting-state__dot">•</Text>
+                  <Text className="chatting-state__dot">•</Text>
+                </View>
               </View>
             </View>
           )}

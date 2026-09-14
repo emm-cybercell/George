@@ -15,12 +15,28 @@
   &__card {
     position: relative;
     width: 100%;
-    padding: 36px 32px 40px;
-    padding-bottom: calc(env(safe-area-inset-bottom) + 40px);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    padding: 36px 32px 0;
     box-sizing: border-box;
     background: #ffffff;
     border-radius: 32px 32px 0 0;
     animation: media-up 0.25s ease;
+  }
+
+  &__scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    /* 底部预留 ChatInput+TabBar 视觉余量 */
+    padding-bottom: 24px;
+  }
+
+  &__divider {
+    height: 1px;
+    margin: 16px 4px;
+    background: #eef0f4;
   }
 
   &__title {
@@ -30,12 +46,13 @@
     font-weight: 700;
     color: #1f2430;
     margin-bottom: 8px;
+    flex-shrink: 0;
   }
 
   &__option {
     display: flex;
     align-items: center;
-    padding: 26px 20px;
+    padding: 22px 20px;
     margin-top: 8px;
     background: #f8f9fa;
     border-radius: 20px;
@@ -79,7 +96,8 @@
   }
 
   &__cancel {
-    margin-top: 24px;
+    flex-shrink: 0;
+    margin: 16px 0 calc(env(safe-area-inset-bottom) + 24px);
     padding: 24px 0;
     font-size: 30px;
     font-weight: 600;

@@ -9,6 +9,7 @@ export const CATEGORY_LABEL: Record<CreativeWork["category"], string> = {
   photo: "实物照片",
   story: "故事",
   idea: "灵感",
+  science: "科学发现",
 };
 
 interface WorkCardProps {

@@ -42,16 +42,28 @@
     }
   }
 
-  /* "正在输入"三点气泡动画 */
+  /* "正在输入"阶段文案 + 三点气泡动画 */
   &__bubble--typing {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     min-height: 68px;
   }
 
+  &__stage {
+    font-size: 24px;
+    color: #8b5cf6;
+    white-space: nowrap;
+  }
+
+  &__dots {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
   &__dot {
-    font-size: 32px;
+    font-size: 28px;
     line-height: 1;
     color: #a78bfa;
     animation: typing-bounce 1s ease-in-out infinite;
@@ -115,6 +127,64 @@
       background: #fff;
       border-radius: 16px 16px 16px 2px;
     }
+  }
+
+  /* 反馈按钮组（AI 消息下方） */
+  &__col {
+    display: flex;
+    flex-direction: column;
+    max-width: 75%;
+  }
+
+  &__feedback {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+    margin-left: 16px;
+  }
+
+  /* 工具执行标签 */
+  &__fb-tag {
+    padding: 2px 12px;
+    font-size: 20px;
+    color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.08);
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  &__fb-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 4px;
+  }
+
+  &__fb-btn {
+    font-size: 26px;
+    line-height: 1;
+    opacity: 0.55;
+    transition: transform 0.15s ease;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.85);
+    }
+
+    &--on,
+    &--down {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+  }
+
+  &__fb-kb {
+    font-size: 20px;
+    line-height: 1.2;
+    color: #6b7280;
+    white-space: nowrap;
   }
 
   &__media {

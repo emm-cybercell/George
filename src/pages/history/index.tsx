@@ -13,6 +13,7 @@ import {
   queryCloudChatRecords,
   type CloudChatRecord,
 } from "@/api/cloudChat";
+import { getLatestDigest, type LearningDigest } from "@/api/digest";
 import HistoryCard, { formatTime, titleOf } from "@/components/HistoryCard";
 import "./index.scss";
 
@@ -22,6 +23,7 @@ const History = () => {
   const [activeId, setActiveId] = useState("");
   const [useCloud, setUseCloud] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [digest, setDigest] = useState<LearningDigest | null>(null);
 
   // 页面展示时云优先拉取真实记录，云端无记录降级本地会话
   const refresh = async () => {
@@ -39,7 +41,10 @@ const History = () => {
     setLoading(false);
   };
 
-  useDidShow(refresh);
+  useDidShow(() => {
+    refresh();
+    getLatestDigest().then(setDigest);
+  });
 
   const goBack = () => Taro.navigateBack();
 
@@ -106,6 +111,21 @@ const History = () => {
 
       <ScrollView scrollY className="history__list">
         <View className="history__content">
+          {digest && (
+            <View className="history__digest">
+              <Text className="history__digest-title">🌱 最近学习小结</Text>
+              <Text className="history__digest-text">{digest.summary}</Text>
+              {digest.topics.length > 0 && (
+                <View className="history__digest-tags">
+                  {digest.topics.map((t) => (
+                    <Text key={t} className="history__digest-tag">
+                      #{t}
+                    </Text>
+                  ))}
+                </View>
+              )}
+            </View>
+          )}
           {loading ? (
             <View className="history__skeleton">
               {[0, 1, 2].map((i) => (

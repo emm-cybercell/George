@@ -1,0 +1,22 @@
+{"type":"mission","question":"每日挑战：发现身边的 3 个圆","answer":"今天留意你身边的圆形物品：碗、钟表、车轮……拍下来或画下来，想一想为什么它们要做成圆的？（提示：滚动省力、受力均匀）","tags":["观察","每日挑战"],"abilityIds":["logic"],"difficulty":1}
+{"type":"mission","question":"每日挑战：给家人讲一个今天的'新发现'","answer":"晚饭时用 1 分钟，给家人讲一件今天学到的新东西。要求：让对方听懂，还可以加一个提问结尾。教会别人才是真学会。","tags":["表达","每日挑战"],"abilityIds":["expression"],"difficulty":1}
+{"type":"mission","question":"每日挑战：把今天的坏心情画成一只小怪兽","answer":"用颜色和形状画出今天的心情：生气的红色尖刺？开心的黄色泡泡？画完给它起个名字，然后想想怎么'驯服'它。","tags":["情绪","美术","每日挑战"],"abilityIds":["art","expression"],"difficulty":1}
+{"type":"mission","question":"每日挑战：发明一个新词并解释它","answer":"比如'作业膨胀'（作业越写越多的现象）、'口头学霸'（说得头头是道但不动笔）。编一个你自己的词，说清它的意思和使用场景。","tags":["创意","语文","每日挑战"],"abilityIds":["creative","expression"],"difficulty":1}
+{"type":"mission","question":"每日挑战：10 个关于'水'的问题","answer":"拿一张纸，5 分钟内写下关于水的 10 个问题，多离谱都行：水会累吗？为什么游泳不像走路累？写完挑一个最感兴趣的去找答案。会提问比会答题更厉害！","tags":["提问","科学","每日挑战"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"mission","question":"周末挑战：搭建一张能承重 5 本书的纸桌","answer":"只用 A4 纸和胶带，做一张'桌子'，能稳稳撑住 5 本书。秘诀：把纸卷成纸筒做桌腿，三角形结构最稳。做完记录：你的桌子用了几张纸？","tags":["工程","手工","周末挑战"],"abilityIds":["logic","art"],"difficulty":2}
+{"type":"mission","question":"周末挑战：观察一种小动物 15 分钟","answer":"选蚂蚁、麻雀或你家猫狗，安静观察 15 分钟并记录：它先做什么后做什么？遇到'意外'怎么反应？你发现了什么它'没说出口'的规律？","tags":["观察","动物","周末挑战"],"abilityIds":["logic"],"difficulty":1}
+{"type":"mission","question":"周末挑战：给旧玩具拍一部 6 格照片故事","answer":"用手机给旧玩具拍 6 张照片，组成一个有开头结尾的故事：每张照片配一句旁白。主题自选：冒险、走失、友情……这就是你的第一部'定格动画分镜'。","tags":["摄影","故事","周末挑战"],"abilityIds":["creative","expression"],"difficulty":2}
+{"type":"mission","question":"周末挑战：家庭调查报告","answer":"采访 3 位家人：'你小时候最流行的游戏是什么？'记录下来对比今天的游戏，说说变化和不变的东西。历史就藏在家人记忆里。","tags":["调查","表达","周末挑战"],"abilityIds":["expression","logic"],"difficulty":1}
+{"type":"mission","question":"周末挑战：植物生长慢直播","answer":"泡一颗绿豆，每天固定时间拍照记录发芽过程，连续 7 天。最后把照片连起来看，写一句'植物教会我的事'。","tags":["植物","观察","周末挑战"],"abilityIds":["logic","art"],"difficulty":1}
+{"type":"mission","question":"勇气任务：主动教同学一道题","answer":"本周找一个你擅长的题讲给同学听：先问'你卡在哪一步'，再一步步引导而不是直接给答案。讲完总结：哪里讲清楚了，哪里没讲明白？","tags":["表达","助人","勇气任务"],"abilityIds":["expression","logic"],"difficulty":1}
+{"type":"mission","question":"勇气任务：向大人提一个改进建议","answer":"观察家里或学校一个'不方便的设计'（书包太重？课桌椅高度？），想一个改进方案，礼貌地向大人说明：问题+建议+理由。被采纳与否都是成功。","tags":["表达","设计思维","勇气任务"],"abilityIds":["expression","creative"],"difficulty":2}
+{"type":"mission","question":"勇气任务：尝试一件没做过的小事","answer":"第一次举手发言、第一次主动问好、第一次尝试新运动……完成一件'想做但没敢做'的小事，记录下做之前的担心和做完后的真实感受。","tags":["勇气","成长","勇气任务"],"abilityIds":["expression"],"difficulty":1}
+{"type":"mission","question":"创作任务：画一张'我的能力雷达图'","answer":"给自己五项能力打分（1-5 分）：观察、提问、表达、动手、坚持。画成五边形雷达图，选出最想提升的一项，写下本周的一个小行动。","tags":["自我认知","美术","创作任务"],"abilityIds":["expression","art"],"difficulty":1}
+{"type":"mission","question":"创作任务：给 2035 年的自己设计一张名片","answer":"名片上要有：未来职业、超能力、一句座右铭。大胆想象——2035 年的'AI 训练师''火星建筑师'可能都存在！画出来并保存好。","tags":["想象","职业","创作任务"],"abilityIds":["creative"],"difficulty":1}
+{"type":"mission","question":"创作任务：把一篇课文改编成漫画分镜","answer":"选语文课本里一个故事（如司马光），拆成 4-6 格漫画：每格画什么、配什么台词。改编时想想：画面怎么比文字更有冲击力？","tags":["美术","改编","创作任务"],"abilityIds":["art","creative"],"difficulty":2}
+{"type":"mission","question":"思维任务：找出一个'约定俗成但其实可以改进'的规则","answer":"比如'作业必须用黑色笔'？'值日生只扫地？'找出一条你质疑的规则，写出：现状→为什么这样→更好的方案。敢于质疑是创造者的起点。","tags":["思辨","创造","思维任务"],"abilityIds":["logic","creative"],"difficulty":2}
+{"type":"mission","question":"思维任务：用 20 元预算策划一次家庭活动","answer":"周末家庭活动，预算 20 元。列出方案：材料、流程、预期效果，像项目经理一样做计划。做完复盘：实际花费和效果 vs 计划差在哪？","tags":["决策","规划","思维任务"],"abilityIds":["logic"],"difficulty":2}
+{"type":"mission","question":"思维任务：连续 3 天记录同一个问题","answer":"选一个好奇的问题（为什么天空会变色？），连续 3 天观察并写下新发现。你会发现：观察时间越长，看到的层次越多。","tags":["观察","坚持","思维任务"],"abilityIds":["logic"],"difficulty":1}
+{"type":"mission","question":"合作任务：和家人玩'你画我猜'知识版","answer":"你画一个知识点（光合作用、月相、质数……），家人猜。规则：不能写字只能画。玩完互换角色。把知识画出来需要真正的理解！","tags":["合作","复习","合作任务"],"abilityIds":["art","expression"],"difficulty":1}
+{"type":"mission","question":"合作任务：家庭辩论赛 5 分钟","answer":"选一个轻松辩题（'暑假先玩还是先写作业'），正反方各 2 分钟陈述+1 分钟自由辩论。要求：只攻击观点不攻击人，最后互相说一个对方讲得好的点。","tags":["思辨","表达","合作任务"],"abilityIds":["expression","logic"],"difficulty":2}
+{"type":"mission","question":"任务：用 AI 生图验证你的想象","answer":"先在纸上画下你想象中的一个场景（比如未来教室），再想一段 prompt 让 AI 生成同样场景，对比两张图：AI 漏掉了什么？你多想了什么？写 3 句对比感受。","tags":["AI","对比","创作任务"],"abilityIds":["creative","logic"],"difficulty":2}

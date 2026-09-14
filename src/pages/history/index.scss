@@ -101,6 +101,44 @@
     color: #9ca3af;
   }
 
+  &__digest {
+    margin-bottom: 20px;
+    padding: 24px 28px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #f3eeff, #ecfdf5);
+    box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
+  }
+
+  &__digest-title {
+    display: block;
+    font-size: 26px;
+    font-weight: 700;
+    color: #8b5cf6;
+  }
+
+  &__digest-text {
+    display: block;
+    margin-top: 10px;
+    font-size: 24px;
+    line-height: 1.6;
+    color: #1f2430;
+  }
+
+  &__digest-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  &__digest-tag {
+    padding: 4px 14px;
+    font-size: 20px;
+    color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.1);
+    border-radius: 999px;
+  }
+
   &__session {
     margin-bottom: 20px;
     padding: 24px 28px;

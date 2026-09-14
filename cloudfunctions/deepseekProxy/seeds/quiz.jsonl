@@ -1,0 +1,54 @@
+{"type":"quiz","question":"什么东西越洗越脏？","answer":"提示：想想洗衣服的时候，什么东西把脏都'吃'进去了？——是水！洗的东西干净了，水却变脏了。","tags":["脑筋急转弯","生活"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"quiz","question":"什么门永远关不上？","answer":"提示：它不是真的门，但天天在你脚下。——球门！足球飞进去它也关不上。","tags":["脑筋急转弯","运动"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"quiz","question":"小明的妈妈有三个孩子，老大叫大毛，老二叫二毛，老三叫什么？","answer":"再读一遍题目：'小明的妈妈'——所以老三当然叫小明呀！这类题考的是抓关键词。","tags":["脑筋急转弯","逻辑"],"abilityIds":["logic"],"difficulty":1}
+{"type":"quiz","question":"什么东西早上四条腿，中午两条腿，晚上三条腿？","answer":"这是著名的斯芬克斯之谜！答案是人：婴儿爬行（四条腿），成人走路（两条腿），老人拄拐杖（三条腿）。","tags":["谜题","经典"],"abilityIds":["logic"],"difficulty":2}
+{"type":"quiz","question":"一根蜡烛燃烧完要 1 小时，现在有 2 根蜡烛，怎样量出 1 个半小时？","answer":"思路：先同时点 2 根，1 小时后第一根烧完，这时马上把第二根吹灭——等它剩下的部分再烧完，就是半小时。加起来正好 1 个半小时！","tags":["谜题","数学","思维"],"abilityIds":["logic"],"difficulty":3}
+{"type":"quiz","question":"为什么北极熊不吃企鹅？","answer":"提示：打开地图看看它们各住在哪儿——北极熊在北极，企鹅大多住在南极，根本见不到面！","tags":["科学","脑筋急转弯"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"quiz","question":"什么车没有轮子却能走？","answer":"答案不唯一哦！象棋里的'车'走直线不用轮子，风车转动也没有轮子。你能想出更多吗？","tags":["脑筋急转弯","发散"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"quiz","question":"1 只鸡 2 条腿，那 3 只半鸡几条腿？","answer":"陷阱题！世界上没有半只鸡——如果一定要算，7 条腿。但更好的回答是质疑题目本身：半只鸡不存在！","tags":["数学","逻辑"],"abilityIds":["logic"],"difficulty":2}
+{"type":"quiz","question":"什么东西打破了大家反而高兴？","answer":"世界纪录！运动员打破纪录，全场都欢呼。还有打破了沉默、打破了僵局，也是好事。","tags":["脑筋急转弯","发散"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"quiz","question":"树上有 10 只鸟，猎人开枪打下 1 只，树上还剩几只？","answer":"经典陷阱题！枪声一响其他鸟全吓飞了——一只不剩。不过勇敢的回答是：如果用的是无声枪呢？敢于质疑前提就是好思维！","tags":["脑筋急转弯","逻辑"],"abilityIds":["logic"],"difficulty":1}
+{"type":"quiz","question":"怎样把一张纸变成最能装东西的容器？","answer":"动手挑战：把纸折成盒子！先对折出十字线，四个角向中心折，展开后沿折痕立起侧壁。这就是折纸数学的魅力。","tags":["创意","手工"],"abilityIds":["art","creative"],"difficulty":2}
+{"type":"quiz","question":"如果你能发明一种新口味冰淇淋，它会是什么味道？为什么？","answer":"没有标准答案！想想你最难忘的味道：外婆的桂花糕？雨后的青草味？把它变成冰淇淋描述出来，就是一次产品经理思维练习。","tags":["创意","想象"],"abilityIds":["creative","divergent"],"difficulty":1}
+{"type":"quiz","question":"3 只猫 3 分钟抓 3 只老鼠，9 只猫抓 9 只老鼠要几分钟？","answer":"还是 3 分钟！3 只猫 3 分钟抓 3 只，说明 1 只猫 3 分钟能抓 1 只。9 只猫一起上，3 分钟抓 9 只。别掉进乘法陷阱哦。","tags":["数学","逻辑"],"abilityIds":["logic"],"difficulty":2}
+{"type":"quiz","question":"什么东西有头无脚，有眼无眉，无嘴却会说话？","answer":"谜底是文字！比如'回'字，或我们写的每个汉字——有笔画'头'没有脚，字里可以有'目'却没有眉毛，还能向我们讲故事。","tags":["谜题","语文"],"abilityIds":["divergent"],"difficulty":2}
+{"type":"quiz","question":"给你 4 条连续相加等于 20 的不同数，怎么找最快？","answer":"思路：4 个不同数平均是 5，试 2+4+6+8=20！从中间数入手是这类题的诀窍。","tags":["数学","数字游戏"],"abilityIds":["logic"],"difficulty":2}
+{"type":"quiz","question":"为什么镜子里的字是反的，但人不是倒立的？","answer":"好问题！其实镜子既没把字'反转'也没把人'倒立'，它是把前后颠倒了——你伸右手，镜中人对着你的那边抬手，看起来就像左右互换了。这是光的反射玩的游戏。","tags":["科学","物理"],"abilityIds":["logic","divergent"],"difficulty":3}
+{"type":"quiz","question":"用 6 根火柴棒怎样摆出 4 个三角形？","answer":"提示：不用被压在桌面上一动不动——把火柴搭成立体金字塔（三棱锥），正好 4 个面，每个面都是三角形！跳出平面思维就赢了。","tags":["谜题","空间思维"],"abilityIds":["logic","creative"],"difficulty":3}
+{"type":"quiz","question":"什么东西越热它爬得越高？","answer":"温度计里的水银（或酒精）柱！热胀冷缩让它上升。你还能想到别的答案吗？比如放风筝要挑有风的日子？","tags":["脑筋急转弯","科学"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"quiz","question":"设计一个提醒同学按时交作业的方法，越有趣越好","answer":"开放挑战！比如'作业闹钟同桌暗号'、'全班倒计时接力歌'。关键点：方法要让对方乐意接受，而不是被逼着做。","tags":["创意","挑战"],"abilityIds":["creative"],"difficulty":2}
+{"type":"quiz","question":"一张纸最多能对折几次？为什么？","answer":"普通 A4 纸大概对折 6~7 次就到极限了——每折一次厚度翻倍、面积减半，很快纸就'硬'得折不动。不信你试试，然后想想 2 的 7 次方是多少！","tags":["科学","数学","实验"],"abilityIds":["logic"],"difficulty":2}
+{"type":"quiz","question":"什么东西天气越热它越开心？","answer":"风扇、空调、冰棍都在夏天最受欢迎！如果从'热胀冷缩'角度答温度计也算对。这题考的是多角度联想。","tags":["脑筋急转弯","发散"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"quiz","question":"时钟 3 点整时，时针和分针的夹角是多少度？","answer":"钟面一圈 360 度，分成 12 大格，每格 30 度。3 点整分针指 12、时针指 3，相差 3 格——90 度，正好是个直角！","tags":["数学","角度"],"abilityIds":["logic"],"difficulty":2}
+{"type":"quiz","question":"如果动物们要开运动会，你觉得哪个项目谁会是冠军？说说理由","answer":"开放想象题！猎豹短跑、大象举重、跳蚤跳高（它跳过自己身高 100 多倍！）……重要的是你的理由要说得通。","tags":["创意","想象","动物"],"abilityIds":["creative","divergent"],"difficulty":1}
+{"type":"quiz","question":"有 9 个外观一样的小球，其中 1 个稍重。用天平最少称几次能找出它？","answer":"只要 2 次！9 个球分 3 组各 3 个，第一次称两组找出重的在哪组，第二次再从那组里 3 选 1。'三分法'是找次品的神器。","tags":["数学","逻辑","经典"],"abilityIds":["logic"],"difficulty":3}
+{"type":"quiz","question":"什么东西属于你，但别人用得比你多？","answer":"你的名字！爸爸妈妈天天喊，同学天天叫，是不是别人用得更多？","tags":["脑筋急转弯"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"quiz","question":"怎样让一艘锡纸小船装最多的硬币？","answer":"动手实验：把锡纸折成船，边缘折高一点防进水，底部宽而平更稳。试试和球形比，谁装的硬币多？这就是'浮力与形状'的奥秘。","tags":["科学","实验","手工"],"abilityIds":["logic","art"],"difficulty":2}
+{"type":"quiz","question":"什么字人人都会读错？","answer":"'错'字！这个字人人都'读错'——因为它就叫'错'呀。","tags":["脑筋急转弯","语文"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"quiz","question":"1=5，2=15，3=215，4=3215，那 5=?","answer":"回到开头：1=5，所以 5=1！前面都是烟雾弹，答案是题目第一句给的。审题能力满分题！","tags":["数学","逻辑"],"abilityIds":["logic"],"difficulty":2}
+{"type":"quiz","question":"给未来的你写一条 20 字内的留言，会写什么？","answer":"开放挑战！可以是'记得 10 岁时你想当科学家的样子'，也可以是一句暗号。写好封存，长大打开——这就是时间胶囊。","tags":["创意","表达"],"abilityIds":["expression"],"difficulty":1}
+{"type":"quiz","question":"什么东西看得见摸不着？","answer":"影子、倒影、烟雾、风……还有 Wi-Fi 信号和广播声！科学上很多东西'可见不可触'，你能分类整理出 3 组吗？","tags":["脑筋急转弯","发散"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"quiz","question":"一个正方形剪掉一个角，还剩几个角？","answer":"答案不唯一！沿两边剪剩 5 个角，沿对角线剪剩 3 个角，过顶点剪剩 4 个角。能把三种情况都想到，才是真正的满分。","tags":["数学","空间思维"],"abilityIds":["logic","creative"],"difficulty":2}
+{"type":"quiz","question":"小明家到学校 500 米，他走了 200 米发现作业没带，返回去取再走到学校，一共走了多少米？","answer":"画个线段图：走 200 + 返回 200 + 全程 500 = 900 米。画图是把文字变数学的法宝！","tags":["数学","应用题"],"abilityIds":["logic"],"difficulty":2}
+{"type":"quiz","question":"如果让你给教室重新设计一个角落，你会设计什么？","answer":"开放创意题！'发现角'（放大镜+标本盒）、'静音太空舱'（发呆充电）、'交换玩具驿站'……说出你的设计和它解决的问题。","tags":["创意","设计思维"],"abilityIds":["creative"],"difficulty":2}
+{"type":"quiz","question":"什么东西有牙齿却不能吃东西？","answer":"梳子、锯子、拉链、齿轮都有'牙齿'！汉语里'齿'字的用法可真奇妙。","tags":["脑筋急转弯"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"quiz","question":"有个人从 10 楼跳下却没受伤，为什么？","answer":"他可能是往'楼下'的游泳池跳水，也可能在拍电影吊着威亚，或者他跳的是楼梯！敢跳出'往下跳=坠落'的思维定势就对了。","tags":["脑筋急转弯","发散"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"quiz","question":"把'太阳、月亮、灯'分成两类，你有几种分法？","answer":"至少 3 种：天然与人造、发光与反光、白天与夜晚出现。分类的标准不同，答案就不同——这叫'多标准分类'。","tags":["逻辑","分类"],"abilityIds":["logic"],"difficulty":2}
+{"type":"quiz","question":"为什么冰块会浮在水面上？","answer":"因为冰的密度比液态水小——水结冰时分子排成六边形骨架，中间空隙变大，同样多的水体积膨胀了约 9%。这个特性救了湖里的鱼：冰盖在上面，下面还是水。","tags":["科学","物理"],"abilityIds":["logic"],"difficulty":2}
+{"type":"quiz","question":"用'云、书包、恐龙'三个词编一个小故事","answer":"开放创作！比如：恐龙背着书包踩着云朵去上学……轮到你了，3 句话讲完它，注意有开头有结尾。","tags":["创意","表达"],"abilityIds":["expression","creative"],"difficulty":1}
+{"type":"quiz","question":"一列火车每小时行 120 千米，从 A 城到 B 城用了 2.5 小时，两城相距多远？","answer":"路程 = 速度 × 时间 = 120 × 2.5 = 300 千米。记住这个公式三兄弟：路程、速度、时间，知道两个就能求第三个。","tags":["数学","应用题"],"abilityIds":["logic"],"difficulty":1}
+{"type":"quiz","question":"什么东西早上长四条腿……不对，换你出一道类似的谜题考考家长！","answer":"出题挑战：模仿经典谜题自己编一个！出题比做题更锻炼思维——你得先知道答案的逻辑，才能把线索埋好。","tags":["创意","挑战"],"abilityIds":["creative"],"difficulty":2}
+{"type":"quiz","question":"蚂蚁从桌子边摔下去为什么没事？","answer":"物理小知识：物体下落受空气阻力，体重越轻阻力影响越明显。蚂蚁太轻了，落地速度慢得像飘下来，摔不伤。这就是'平方-立方定律'的神奇之处。","tags":["科学","物理"],"abilityIds":["logic"],"difficulty":2}
+{"type":"quiz","question":"如果你是校长，只有 100 元预算改善学校，你花在哪？","answer":"开放决策题！图书馆新书？操场粉笔涂鸦区？班级绿植？说出你的分配和理由——权衡取舍就是产品思维的第一课。","tags":["创意","决策"],"abilityIds":["creative","logic"],"difficulty":2}
+{"type":"quiz","question":"什么东西倒立以后会增加一半？","answer":"数字 6！倒过来变成 9，正好多了一半（3）。还有'士'倒过来是'干'。换个角度看世界，答案就变了。","tags":["脑筋急转弯","文字"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"quiz","question":"为什么扶电梯的扶手和台阶速度几乎一样？快一点或慢一点会怎样？","answer":"如果扶手慢，人会不自觉往后仰；快了则往前栽。工程师让两者速度严格同步，我们才能站稳——不起眼的设计里全是科学。","tags":["科学","工程"],"abilityIds":["logic"],"difficulty":3}
+{"type":"quiz","question":"24 点挑战：用 3、8、8、8 算出 24（每个数用一次）","answer":"思路：8 ÷ (3 − 8÷8) = 8 ÷ 2 = 4？不对哦。正确解：8 ÷ (3 − 8 ÷ 8) 试试看，或从 3×8=24 出发，用 8÷8 制造 1 再想办法。坚持 5 分钟再对答案！","tags":["数学","24点"],"abilityIds":["logic"],"difficulty":3}
+{"type":"quiz","question":"如果手机消失了 24 小时，你的生活会变成什么样？写 3 条","answer":"开放思辨题！正面：早点睡觉、多陪家人；麻烦：查不了资料、联系不上同学。能同时看到好处和坏处，就是批判性思维。","tags":["思辨","表达"],"abilityIds":["expression","logic"],"difficulty":2}
+{"type":"quiz","question":"什么伞不能挡雨？","answer":"降落伞、保护伞、太阳伞（主要遮阳）……汉语里带'伞'的词真不少！","tags":["脑筋急转弯"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"quiz","question":"有 7 个苹果要分给 8 个小朋友，每人都要有，怎么办？","answer":"思路一：榨成苹果汁平分；思路二：再买一个；思路三：其中一个小朋友正在减肥不要苹果（开玩笑的）——你的方案是什么？分配问题没有唯一答案。","tags":["数学","开放"],"abilityIds":["logic","creative"],"difficulty":2}
+{"type":"quiz","question":"为什么彩虹是弯的？","answer":"彩虹其实是圆形的！太阳光在水滴里折射反射后，以 42 度角射向你眼睛，所有符合角度的水滴连成一个圆——地面挡住了下半部分，所以只看到弧。坐飞机时有机会看到整圆彩虹哦。","tags":["科学","光学"],"abilityIds":["logic"],"difficulty":3}
+{"type":"quiz","question":"给'坚持'设计一个看得见的形象，你会怎么画？","answer":"开放创作！攀岩的人、破土的笋、不停走的小秒针……把抽象词变成具象图，这个能力叫'视觉化表达'。","tags":["创意","美术"],"abilityIds":["art"],"difficulty":2}
+{"type":"quiz","question":"哥哥 4 年后的年龄与弟弟 3 年前的年龄之和是 20，弟弟今年几岁？（哥哥比弟弟大 4 岁）","answer":"设弟弟今年 x，哥哥 x+4。方程：(x+4+4) + (x−3) = 20 → 2x+5=20 → x=7.5？检查发现题目设计成整岁更合理——试试自己改条件再解，体会方程的力量！","tags":["数学","方程"],"abilityIds":["logic"],"difficulty":3}
+{"type":"quiz","question":"发明一个世界上还没有的节日，它叫什么、怎么过？","answer":"开放创意！' backwards 日'（反着走路、倒着说话）、'感谢陌生人日'……给节日起名+定一个仪式，就是完整的创意产品。","tags":["创意","想象"],"abilityIds":["creative"],"difficulty":1}
+{"type":"quiz","question":"什么水永远用不完？","answer":"泪水（喜剧演员最爱）、口水（话痨专属）——科学答案：海水和循环水！地球上的水在蒸发-降雨间循环了几十亿年。","tags":["脑筋急转弯","科学"],"abilityIds":["divergent"],"difficulty":1}
+{"type":"quiz","question":"一只蚂蚁发现食物后，怎么告诉同伴食物在哪？","answer":"蚂蚁分泌信息素留下'气味小路'，同伴顺着气味走并加强它——这是没有语言的'通信系统'。科学家受它启发发明了'蚁群算法'解决快递路线问题！","tags":["科学","生物"],"abilityIds":["logic"],"difficulty":2}
