@@ -94,7 +94,9 @@
 | 生文（对话） | `hy3`（固定，成长计划免费包唯一可用）   | 2026-09-13 起移除 hy4-preview 与模型切换功能（用户要求）     |
 | 生图         | 文生图 `HY-Image-3.0-Plus-4090-Tob-v1.0` / 图生图 `HY-Image-v3.0-I2I-ToB-v1.0.1` | ImageGenPanel 双模式切换；i2i 垫图 base64 直传（不占云存储） |
 
-**⚠️ hy4-preview 超时结论**：小程序成长计划赠送 AI 资源包**仅含 hy3**（官方升级指南 https://docs.cloudbase.net/ai/ai-inspire-plan-upgrade ）；DeepSeek/Kimi/GLM/hy4 等更多模型需在 套餐管理 切换**资源点套餐**。可选模型以控制台 AI+ → 模型管理 列表为准。云函数已加 25s 快速超时 + 超时提示，避免占满 30s 云函数时长。
+**⚠️ hy4-preview 超时结论**：小程序成长计划赠送 AI 资源包**仅含 hy3**（官方升级指南 https://docs.cloudbase.net/ai/ai-inspire-plan-upgrade ）；DeepSeek/Kimi/GLM/hy4 等更多模型需在 套餐管理 切换**资源点套餐**。可选模型以控制台 AI+ → 模型管理 列表为准。
+
+**⚠️ 云函数超时规范（2026-09-13）**：官方推荐生文云函数超时 **60s+**（默认 20s 太短）。`agentRunner.js` 内部做了预算感知控制：单次尝试硬超时 20s（Promise.race 兜底，防 SDK options.timeout 不生效），429 限流退避 1.2s 重试一次，总预算 ≈41s < 60s 函数上限。**控制台超时必须设 60s**，设 30s 会在重试过程中被 -504003 杀掉。
 
 **2026-09-13 大清理**：删除未引用图片 8 张（约 2.6MB）、`tests/probeModels.js`/`probeChannels.js`（阿里云探测脚本）、`src/api/bigmodel.ts`（智谱旧封装）、`.env*`、`llmClient.js`（第三方 HTTP 适配层）、axios 依赖；`config.js` 收敛为 wxai 单供应商。AI 能力只保留微信云开发官方通道，**勿再加回第三方供应商**。
 
@@ -128,7 +130,7 @@
 1. **模型切换能力**：确认 `hy4-preview`↔`hy3`、生图双模型切换已实现（见第 5 节）。
 2. **云开发控制台**：需开通**资源点套餐** + 生文/生图模型，否则 `callOpenAI` 报错。
 3. **TTS 音色**：当前微信插件男声固定；智谱童声需充值（`cogtts` 的 `tongtong`）。
-4. **云函数超时**：控制台需将 `deepseekProxy` 超时设到 30s+（默认 3s 必超时）。
+4. **云函数超时**：控制台需将 `deepseekProxy` 超时设到 **60s**（默认 3s 必超时；30s 会在限流重试时被 -504003 杀掉）。
 5. **TTS/响应慢**：`playTextVoice` 在回复后合成 1-2s；若要更快需流式改造。
 
 ---

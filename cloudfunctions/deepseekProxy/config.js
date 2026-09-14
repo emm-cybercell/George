@@ -27,17 +27,13 @@ const DEFAULT_CONFIGS = {
 
 /**
  * 获取最终生效的 LLM 配置：云数据库优先，失败静默回退默认值
- * 仅允许 DB 覆盖白名单字段（activeProvider/model/temperature/max_tokens），
- * 防止文档残留的 apiKey/baseURL 把请求劫持到失效供应商（2026-09-12 排障结论）
+ * 仅允许 DB 覆盖 activeProvider/temperature/max_tokens；
+ * model 不允许覆盖（防止文档残留值把请求劫持到未开通模型导致挂起超时，
+ * 2026-09-13 排障结论：生文模型统一写死 hy3）
  * @param {*} db 云数据库实例（cloud.database()）
  * @returns {{ activeProvider: string, baseURL: string, apiKey: string, model: string, temperature: number, max_tokens: number }}
  */
-const OVERRIDABLE_KEYS = [
-  "activeProvider",
-  "model",
-  "temperature",
-  "max_tokens",
-];
+const OVERRIDABLE_KEYS = ["activeProvider", "temperature", "max_tokens"];
 
 async function getActiveLLMConfig(db) {
   try {

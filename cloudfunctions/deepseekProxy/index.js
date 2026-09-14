@@ -134,10 +134,12 @@ exports.main = async (event) => {
   } catch (err) {
     console.error("deepseekProxy error:", err);
     const detail = String(err?.message || err);
-    // 超时多为模型在当前环境未开通/无额度（成长计划免费包仅含 hy3）
+    // 超时=模型未开通/无额度；429=免费套餐 QPS 限流（已自动重试一次）
     const hint = /timeout|timed out|ETIMEDOUT/i.test(detail)
       ? "（模型响应超时，请确认已开通该模型或稍后再试）"
-      : "";
+      : /\b429\b|rate.?limit/i.test(detail)
+        ? "（提问太频繁啦，休息几秒再试试 ✨）"
+        : "";
     return {
       success: false,
       error: `服务繁忙，请稍后再试${hint}`,

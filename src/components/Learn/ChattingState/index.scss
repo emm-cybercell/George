@@ -16,14 +16,17 @@
     box-sizing: border-box;
   }
 
-  /* 微信式消息头像：助手左、用户右 */
+  /* 微信式消息头像：助手左、用户右（aspectFit 完整显示，底色遮留白） */
   &__face {
     flex-shrink: 0;
     width: 72px;
     height: 72px;
     border-radius: 12px;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(31, 36, 48, 0.08);
+    background: #f3eeff;
+
+    &--thinking {
+      animation: face-pulse 1.2s ease-in-out infinite;
+    }
 
     &--fallback {
       display: flex;
@@ -163,5 +166,17 @@
   50% {
     opacity: 1;
     transform: translateY(-6px);
+  }
+}
+
+@keyframes face-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(0.94);
   }
 }

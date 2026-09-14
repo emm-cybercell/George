@@ -2,11 +2,7 @@ import { View, Text, Image } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useEffect, useState } from "react";
 import mascotImg from "@/assets/images/立绘2.jpg";
-import {
-  getVoiceState,
-  onVoiceChange,
-  toggleTextVoice,
-} from "@/utils/tts";
+import { getVoiceState, onVoiceChange, toggleTextVoice } from "@/utils/tts";
 import type { VoiceStatus } from "@/utils/tts";
 import type { ChatMessage } from "../types";
 
@@ -41,7 +37,7 @@ const VoiceBtn = ({ msgId, text }: { msgId: string; text: string }) => {
 
 interface MessageRowProps {
   message: ChatMessage;
-  /** 用户头像 URL（cloud fileID 或 https），空则渲染默认头像 */
+  /** 用户头像 URL（cloud fileID 或 https），空则渲染默认占位 */
   userAvatar: string;
 }
 
@@ -53,11 +49,11 @@ const MessageRow = ({ message: m, userAvatar }: MessageRowProps) => {
     <Image
       className="chatting-state__face"
       src={mascotImg}
-      mode="aspectFill"
+      mode="aspectFit"
     />
   );
   const userFace = userAvatar ? (
-    <Image className="chatting-state__face" src={userAvatar} mode="aspectFill" />
+    <Image className="chatting-state__face" src={userAvatar} mode="aspectFit" />
   ) : (
     <View className="chatting-state__face chatting-state__face--fallback">
       <Text className="chatting-state__face-text">我</Text>
