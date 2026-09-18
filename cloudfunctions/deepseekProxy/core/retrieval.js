@@ -118,7 +118,7 @@ function invalidateCache(openid) {
  * @returns {Promise<Array<{question,answer,tags,type,source,score}>>}
  */
 async function searchKnowledge(db, query, opts = {}) {
-  const { openid, ...searchOpts } = opts;
+  const { openid, skipUsage, ...searchOpts } = opts;
   const [publicDocs, userDocs, tuning] = await Promise.all([
     loadPublicDocs(db),
     loadUserDocs(db, openid),
@@ -132,21 +132,9 @@ async function searchKnowledge(db, query, opts = {}) {
   if (docs.length === 0) return [];
 
   const hits = search(query, docs, { ...tuning, ...searchOpts });
-  // 异步累计召回统计（不阻塞，失败静默）
-  for (const hit of hits) {
-    if (hit.doc._id) {
-      db.collection("knowledge_base")
-        .doc(hit.doc._id)
-        .update({
-          data: {
-            usageCount: (hit.doc.usageCount || 0) + 1,
-            lastUsedAt: Date.now(),
-          },
-        })
-        .catch(() => {});
-    }
-  }
-  return hits.map((h) => ({
+  // 异步累计召回统计（不阻塞，失败静默）；多路召回场景由调用方对最终结果统一计数
+  if (!skipUsage) bumpUsage(db, hits.map((h) => ({ id: h.doc._id })));  return hits.map((h) => ({
+    id: h.doc._id || null,
     question: h.doc.question,
     answer: h.doc.answer,
     tags: h.doc.tags || [],
@@ -156,10 +144,24 @@ async function searchKnowledge(db, query, opts = {}) {
   }));
 }
 
+/** 命中文档 usageCount 原子+1（db.command.inc，不阻塞失败静默；hits 需含 id） */
+function bumpUsage(db, hits) {
+  const inc = db.command && db.command.inc ? db.command.inc(1) : 1;
+  for (const hit of hits) {
+    if (hit && hit.id) {
+      db.collection("knowledge_base")
+        .doc(hit.id)
+        .update({ data: { usageCount: inc, lastUsedAt: Date.now() } })
+        .catch(() => {});
+    }
+  }
+}
+
 module.exports = {
   searchKnowledge,
   loadPublicDocs,
   loadUserDocs,
   invalidateCache,
+  bumpUsage,
   DEFAULT_TUNING,
 };

@@ -121,7 +121,7 @@ async function runFrameworkLoop({
       const name = call.function?.name || "";
       const args = parseArgs(call.function?.arguments);
       const t0 = Date.now();
-      const result = await registry.invoke(name, args, { db, openid });
+      const result = await registry.invoke(name, args, { db, openid, llm });
       const obs = JSON.stringify(result ?? null);
       executed.push({ name, args, result });
       trace.push({

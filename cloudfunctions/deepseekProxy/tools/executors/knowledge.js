@@ -2,6 +2,7 @@
  * 知识检索 / 推荐 / 摘要类工具执行器
  */
 const { searchKnowledge } = require("../../core/retrieval");
+const { retrieveEnhanced } = require("../../core/ragPipeline");
 
 /** 截断标签数组为安全长度 */
 function safeTags(tags) {
@@ -24,18 +25,25 @@ async function getUserAbility(db, openid) {
 }
 
 const KNOWLEDGE_EXECUTORS = {
-  /** 知识库检索：公共库+个人材料合并，按培养方向加权，返回 topK 命中 */
-  search_knowledge: async ({ db, openid, args }) => {
+/**
+ * 知识库检索：公共库+个人材料合并，按培养方向加权，返回 topK 命中
+ * 持有 LLM 客户端时走 RAG 增强管线（查询改写+多路召回+RRF+LLM 重排），
+ * 否则纯稀疏检索（SDK 托管循环 / 本地降级场景）
+ */
+  search_knowledge: async ({ db, openid, args, llm }) => {
     const query = String(args.query || "").slice(0, 50);
     if (!query) {
       return { success: false, error: "缺少检索关键词", tags: [] };
     }
     try {
       const ability = await getUserAbility(db, openid);
-      const hits = await searchKnowledge(db, query, {
+      const searchOpts = {
         openid,
         ...(ability ? { preferAbilities: [ability] } : {}),
-      });
+      };
+      const hits = llm
+        ? await retrieveEnhanced(db, llm, query, searchOpts)
+        : await searchKnowledge(db, query, searchOpts);
       if (hits.length === 0) {
         return { success: false, error: "知识库暂无相关内容", tags: [] };
       }

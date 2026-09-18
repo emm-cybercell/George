@@ -6,7 +6,9 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV, timeout: 60000 });
 
 const { getActiveLLMConfig } = require("./config");
 const { runAgentLoop } = require("./core/agentRunner");
-const { runFrameworkLoop } = require("./core/framework/loop");
+const { createLLM } = require("./core/framework/llm");
+const { runPattern } = require("./patterns/index");
+const { chunkMaterial } = require("./core/chunking");
 
 /**
  * 自研框架开关：配置了网关环境变量（CB_GATEWAY_KEY/CB_GATEWAY_URL）即切换到
@@ -24,7 +26,7 @@ const I2I_MODEL = "HY-Image-v3.0-I2I-ToB-v1.0.1";
 const MATERIAL_LIMIT = 50;
 
 /**
- * 个人学习资料入库：上限校验 → 写 knowledge_base（openid 隔离）
+ * 个人学习资料入库：上限校验 → 长文本分块 → 写 knowledge_base（openid 隔离）
  * @returns {{success, error?, materialId?}}
  */
 async function ingestMaterial({ title, text }, openid, db) {
@@ -36,27 +38,36 @@ async function ingestMaterial({ title, text }, openid, db) {
   try {
     const col = db.collection("knowledge_base");
     const countRes = await col.where({ openid, source: "user" }).count();
-    if ((countRes.total || 0) >= MATERIAL_LIMIT) {
+    const used = countRes.total || 0;
+    if (used >= MATERIAL_LIMIT) {
       return {
         success: false,
         error: `个人资料库已满（${MATERIAL_LIMIT} 条），请先删除部分内容`,
       };
     }
-    const addRes = await col.add({
-      data: {
-        type: "material",
-        question: cleanTitle,
-        answer: cleanText,
-        tags: [],
-        abilityIds: [],
-        difficulty: 1,
-        source: "user",
-        openid,
-        usageCount: 0,
-        lastUsedAt: 0,
-      },
-    });
-    return { success: true, materialId: addRes._id };
+    // 长文本分块入库（配额内尽量多存，检索命中可引用局部内容）
+    const chunks = chunkMaterial(cleanText).slice(0, MATERIAL_LIMIT - used);
+    let materialId = null;
+    for (let i = 0; i < chunks.length; i++) {
+      const addRes = await col.add({
+        data: {
+          type: "material",
+          question:
+            chunks.length > 1 ? `${cleanTitle}·第${i + 1}段` : cleanTitle,
+          answer: chunks[i],
+          parentTitle: chunks.length > 1 ? cleanTitle : undefined,
+          tags: [],
+          abilityIds: [],
+          difficulty: 1,
+          source: "user",
+          openid,
+          usageCount: 0,
+          lastUsedAt: 0,
+        },
+      });
+      if (i === 0) materialId = addRes._id;
+    }
+    return { success: true, materialId };
   } catch (err) {
     console.error("ingestMaterial error:", err);
     return { success: false, error: String(err.message || err) };
@@ -225,18 +236,25 @@ exports.main = async (event) => {
     // 2. 读取最终生效的模型配置（代码默认兜底 + system_configs 动态热更）
     const activeConfig = await getActiveLLMConfig(cloud.database());
 
-    // 3. 委派给 ReAct Agent 循环（Function Calling 自主决策）
-    //    自研框架（手写循环 + trace）优先；网关未配置时回退 SDK 托管循环
+    // 3. 委派给 Agent 循环（Function Calling 自主决策）
+    //    自研框架（手写循环 + trace）优先，event.pattern 可选推理范式；
+    //    网关未配置时回退 SDK 托管循环
+    const agentConfig = { ...activeConfig, webSearch: !!event.webSearch };
     const agentResult = FRAMEWORK_ENABLED
-      ? await runFrameworkLoop({
+      ? await runPattern(event.pattern, {
           messages,
-          config: { ...activeConfig, webSearch: !!event.webSearch },
+          config: agentConfig,
           db,
           openid: OPENID,
+          llm: createLLM({
+            apiKey: process.env.CB_GATEWAY_KEY,
+            baseURL: process.env.CB_GATEWAY_URL,
+            model: activeConfig.model,
+          }),
         })
       : await runAgentLoop({
           messages,
-          config: { ...activeConfig, webSearch: !!event.webSearch },
+          config: agentConfig,
           db,
           openid: OPENID,
           cloud,
@@ -258,6 +276,7 @@ exports.main = async (event) => {
       modelUsed: activeConfig.model,
       provider: activeConfig.activeProvider,
       executedTools,
+      pattern: FRAMEWORK_ENABLED ? (event.pattern || "react") : "sdk-loop",
       // 自研框架链路附带 ReAct trace（thought/action/observation/durationMs）
       ...(trace ? { trace } : {}),
     };

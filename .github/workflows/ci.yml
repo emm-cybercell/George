@@ -17,5 +17,7 @@ jobs:
       - name: Run agent framework tests
         run: |
           node --test tests/reactLoop.spec.js
+          node --test tests/patterns.spec.js
+          node --test tests/ragPipeline.spec.js
           node --test tests/retrieval.spec.js
           node tests/deepseekProxy.spec.js
