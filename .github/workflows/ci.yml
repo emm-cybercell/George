@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # 评测驱动：ReAct 循环单测 + 检索核心单测 + 云函数全链路冒烟（mock wx-server-sdk）
+      - name: Run agent framework tests
+        run: |
+          node --test tests/reactLoop.spec.js
+          node --test tests/retrieval.spec.js
+          node tests/deepseekProxy.spec.js

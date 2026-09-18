@@ -6,6 +6,15 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV, timeout: 60000 });
 
 const { getActiveLLMConfig } = require("./config");
 const { runAgentLoop } = require("./core/agentRunner");
+const { runFrameworkLoop } = require("./core/framework/loop");
+
+/**
+ * 自研框架开关：配置了网关环境变量（CB_GATEWAY_KEY/CB_GATEWAY_URL）即切换到
+ * 手写 ReAct 循环（可观测 trace）；未配置时回退 SDK 托管循环，保证平滑上线
+ */
+const FRAMEWORK_ENABLED = !!(
+  process.env.CB_GATEWAY_KEY && process.env.CB_GATEWAY_URL
+);
 
 /** 生图模型：文生图 / 图生图（i2i 需传垫图 base64） */
 const T2I_MODEL = "HY-Image-3.0-Plus-4090-Tob-v1.0";
@@ -217,13 +226,22 @@ exports.main = async (event) => {
     const activeConfig = await getActiveLLMConfig(cloud.database());
 
     // 3. 委派给 ReAct Agent 循环（Function Calling 自主决策）
-    const { reply, executedTools } = await runAgentLoop({
-      messages,
-      config: { ...activeConfig, webSearch: !!event.webSearch },
-      db,
-      openid: OPENID,
-      cloud,
-    });
+    //    自研框架（手写循环 + trace）优先；网关未配置时回退 SDK 托管循环
+    const agentResult = FRAMEWORK_ENABLED
+      ? await runFrameworkLoop({
+          messages,
+          config: { ...activeConfig, webSearch: !!event.webSearch },
+          db,
+          openid: OPENID,
+        })
+      : await runAgentLoop({
+          messages,
+          config: { ...activeConfig, webSearch: !!event.webSearch },
+          db,
+          openid: OPENID,
+          cloud,
+        });
+    const { reply, executedTools, trace } = agentResult;
 
     // 4. 后置内容安全审查：AI 生成的回答
     if (reply && !(await checkText(reply, OPENID))) {
@@ -240,6 +258,8 @@ exports.main = async (event) => {
       modelUsed: activeConfig.model,
       provider: activeConfig.activeProvider,
       executedTools,
+      // 自研框架链路附带 ReAct trace（thought/action/observation/durationMs）
+      ...(trace ? { trace } : {}),
     };
   } catch (err) {
     console.error("deepseekProxy error:", err);
