@@ -132,3 +132,23 @@ evals/
 - 网关 API Key 不可用 → 退回 cloud.ai() 但循环照手写（SDK generateText 不带 tools 手动解析消息流受限时，用 streamText 或降级 axios+DeepSeek 免费额度演示）
 - embedding 模型不可用 → 混合检索的稠密腿用「混元小模型语义打分」替代，评测报告如实记录
 - CloudRun 首次部署 → MCP server 先用 HTTP 云函数 + Streamable HTTP 简化版落地
+
+---
+
+## 完成情况与简历 bullet（2026-09-18 定稿）
+
+**全部 Phase 0-4 完成，Phase 5 首轮报告产出。评测数据（166 条黄金集，同集同模型）：**
+
+| 方案 | Recall@1 | Recall@3 | MRR |
+|---|---|---|---|
+| 纯稀疏基线 | 0.392 | 0.590 | 0.511 |
+| LangGraph 轨（意图路由+改写+RRF） | 0.518 | 0.825 | 0.673 |
+| 自研增强轨（改写+RRF+LLM重排） | **0.904** | **0.928** | **0.918** |
+
+**简历 bullet 草稿**（按 AgentGuide L2-L3 表述规范）：
+
+- 自研轻量 Agent 框架（ReAct/Reflection/Plan-and-Execute 三范式可切换）：手写 Reason→Act→Observe 循环、JSON Schema 驱动的 Tool Registry、token 预算上下文构建器与分层记忆（工作/情景/语义），落地于微信小程序 AI 学习助手，工具调用全程 trace 可观测，步数/时间双预算熔断防死循环
+- 构建评测驱动的 RAG 优化闭环：自建 166 条黄金评测集（LLM 模拟学生口语提问），查询改写 + 双路召回 + RRF 融合 + LLM listwise 重排管线将 Recall@3 从 0.590 提升至 0.928、MRR 从 0.511 提升至 0.918；与 LangGraph.js 双轨实现构成消融实验，量化拆分改写(+23.5pp)与重排(+10.3pp)各自贡献，基于数据完成框架选型
+- 实现 MCP Server 将 5 个业务工具按协议暴露（Claude Desktop/Cursor 可直接调用），与小程序端复用同一份 Tool Registry 与执行器（一次注册多端复用）；建立 GitHub Actions CI 回归（33 项单测覆盖循环终止/范式分支/检索融合/图分支）
+
+**遗留待办**：① 微信开发者工具部署 deepseekProxy（新版含框架开关/三范式/增强检索/分块入库）；② （可选）MCP Server 部署 CloudRun + Streamable HTTP 公网化；③ （可选）answer_eval.js（LLM-as-judge 应答质量评测）补全 Phase 5 应答侧指标。
