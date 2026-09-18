@@ -1,0 +1,15 @@
+{
+  "name": "george-mcp-server",
+  "version": "1.0.0",
+  "description": "桥智同学 MCP Server：将小程序 Agent 的 5 个工具暴露给任意 MCP 宿主（Claude Desktop / Cursor）复用",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js",
+    "smoke": "node smoke.js"
+  },
+  "dependencies": {
+    "@cloudbase/node-sdk": "^4.0.0",
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}

@@ -14,10 +14,14 @@ jobs:
         with:
           node-version: 20
       # 评测驱动：ReAct 循环单测 + 检索核心单测 + 云函数全链路冒烟（mock wx-server-sdk）
+      - name: Install MCP server deps
+        run: npm install --no-fund
+        working-directory: mcp-server
       - name: Run agent framework tests
         run: |
           node --test tests/reactLoop.spec.js
           node --test tests/patterns.spec.js
           node --test tests/ragPipeline.spec.js
           node --test tests/retrieval.spec.js
+          node --test tests/mcpServer.spec.js
           node tests/deepseekProxy.spec.js
