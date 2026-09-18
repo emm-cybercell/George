@@ -17,6 +17,9 @@ jobs:
       - name: Install MCP server deps
         run: npm install --no-fund
         working-directory: mcp-server
+      - name: Install LangGraph tutor deps
+        run: npm install --no-fund
+        working-directory: langgraph-tutor
       - name: Run agent framework tests
         run: |
           node --test tests/reactLoop.spec.js
@@ -24,4 +27,5 @@ jobs:
           node --test tests/ragPipeline.spec.js
           node --test tests/retrieval.spec.js
           node --test tests/mcpServer.spec.js
+          node --test tests/langgraph.spec.js
           node tests/deepseekProxy.spec.js

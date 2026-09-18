@@ -1,0 +1,15 @@
+{
+  "name": "langgraph-tutor",
+  "version": "1.0.0",
+  "description": "LangGraph.js 对照轨：同一任务（意图→改写→检索→打分→应答）用 StateGraph 实现，与自研 agent-core 跑同一评测集做选型对比",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js",
+    "eval": "node eval.js"
+  },
+  "dependencies": {
+    "@langchain/core": "^0.3.0",
+    "@langchain/langgraph": "^0.2.0"
+  }
+}
