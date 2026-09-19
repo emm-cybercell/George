@@ -18,7 +18,7 @@ const DEFAULT_CONFIGS = {
       protocol: "wxai",
       apiKey: "",
       baseURL: "",
-      model: "hy3", // 成长计划免费包唯一可用生文模型（hy4-preview 需资源点套餐）
+      model: "hy3",
       temperature: 0.7,
       max_tokens: 2048,
     },
