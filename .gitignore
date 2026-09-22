@@ -1,9 +1,22 @@
+# 构建产物与依赖（可随时重建，禁止提交）
 dist/
 deploy_versions/
 .temp/
 .rn_temp/
 node_modules/
+.swc/
+
+# 本机私有配置（开发者工具自动生成，含个人调试设置）
+project.private.config.json
+
+# AI 助手会话数据（隐私）
+.zcode/
+.zcodeignore
+
+# 商业文档（第三方版权，不入仓库）
+docs/references/
+
+# 系统与本地环境
 .DS_Store
-.swc
 *.local
 .env*
