@@ -24,3 +24,4 @@ docs/references/
 # embedding service local artifacts
 embedding-svc/model/
 embedding-svc/.venv/
+embedding-svc/__pycache__/
