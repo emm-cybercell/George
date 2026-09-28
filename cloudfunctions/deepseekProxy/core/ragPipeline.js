@@ -1,16 +1,110 @@
 /**
- * RAG 增强管线（Phase 2 三件套）
- * 查询改写 → 多路稀疏召回 → RRF 融合 → LLM listwise 重排
- * 说明：当前网关（cloudbase 组）无 embedding 模型，稠密腿以「LLM 语义重排」
- * 替代（见 roadmap 风险预案），评测对比见 evals/retrieval_eval.js，报告如实记录。
- * 全链路可降级：无 LLM / 改写失败 / 重排失败均回退纯稀疏检索结果。
+ * RAG 检索管线 v2（评测驱动重构，2026-09-28）
+ * 主路径：稠密召回（embedding 服务）→ LLM listwise 重排 → topK
+ * 降级链：embedding 服务不可用 → 稀疏 top8 + LLM 重排；无 LLM → 纯稀疏
+ * 依据 evals/reports/2026-09-28-dense-leg.md：稠密+1次重排 Recall@3 0.982，
+ * 优于旧"改写+双路RRF+重排"（0.928）且 LLM 成本减半；弱稀疏腿融合反而损害头部精度。
+ * 旧组件（rewriteQuery/rrfFuse）保留导出供评测脚本复现历史方案。
  */
+const axios = require("axios");
 const { searchKnowledge, bumpUsage } = require("./retrieval");
 
-/** RRF 融合常数（论文默认 60） */
+/** RRF 融合常数（历史方案使用，保留） */
 const RRF_K = 60;
+/** 向量库缓存 TTL（与检索服务壳一致） */
+const VEC_TTL_MS = 5 * 60 * 1000;
 
-/** 查询改写：口语化提问 → 检索友好查询 + 同义扩展（失败返回原查询） */
+let vecCache = { docs: null, loadedAt: 0 };
+
+/** 余弦相似度（已归一化向量，点积即余弦） */
+function cosine(a, b) {
+  let dot = 0;
+  const n = Math.min(a.length, b.length);
+  for (let i = 0; i < n; i++) dot += a[i] * b[i];
+  return dot;
+}
+
+/**
+ * 稠密排序（纯函数，可单测）
+ * @param {number[]} queryVec 查询向量
+ * @param {Array<{id,question,answer,tags,type,source,vec}>} docVecs 文档向量记录
+ * @param {number} topK
+ */
+function denseRank(queryVec, docVecs, topK = 8) {
+  return docVecs
+    .map((d) => ({ ...d, score: Math.round(cosine(queryVec, d.vec) * 1000) / 1000 }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, topK)
+    .map(({ vec, ...rest }) => rest);
+}
+
+/** embedding 服务客户端（HTTP 薄封装，失败返回 null 走降级） */
+async function embedText(text) {
+  const url = process.env.EMBEDDING_SVC_URL;
+  if (!url) return null;
+  try {
+    const res = await axios.post(
+      `${url}/embed`,
+      { text },
+      { headers: { "X-API-Key": process.env.EMBEDDING_SVC_KEY || "" }, timeout: 5000 },
+    );
+    return Array.isArray(res.data?.embedding) ? res.data.embedding : null;
+  } catch (err) {
+    console.warn("embedding 服务不可用，降级稀疏检索:", err.message || err);
+    return null;
+  }
+}
+
+/** 文档向量库：kb_embeddings 集合（5 分钟 TTL，与检索壳缓存策略一致） */
+async function loadVectorizedDocs(db) {
+  if (vecCache.docs && Date.now() - vecCache.loadedAt < VEC_TTL_MS) return vecCache.docs;
+  try {
+    const res = await db.collection("kb_embeddings").limit(500).get();
+    vecCache = { docs: res.data || [], loadedAt: Date.now() };
+    return vecCache.docs;
+  } catch {
+    return [];
+  }
+}
+
+/** 失效向量缓存（知识库重建向量后调用） */
+function invalidateVectorCache() {
+  vecCache = { docs: null, loadedAt: 0 };
+}
+
+/**
+ * 检索入口 v2：稠密主路径 + 稀疏降级链
+ * @param {*} db 云数据库实例
+ * @param {{chatJSON: Function}} llm LLM 客户端（重排用；可空）
+ * @param {string} query 用户查询
+ * @param {{topK?: number, embedFn?: Function}} opts embedFn 依赖注入（测试用）
+ */
+async function retrieveEnhanced(db, llm, query, opts = {}) {
+  const { topK = 3, embedFn = embedText } = opts;
+  const [queryVec, vecDocs] = await Promise.all([
+    embedFn(query),
+    loadVectorizedDocs(db),
+  ]);
+
+  // 主路径：稠密召回 → LLM 重排（1 次调用）
+  if (queryVec && vecDocs.length) {
+    const denseLeg = denseRank(queryVec, vecDocs, 8);
+    if (denseLeg.length) {
+      const ranked = llm ? await rerank(llm, query, denseLeg, topK) : denseLeg.slice(0, topK);
+      bumpUsage(db, ranked);
+      return ranked;
+    }
+  }
+
+  // 降级：稀疏召回（无 embedding 服务/向量库为空/服务故障）→ LLM 重排或纯稀疏
+  const hits = await searchKnowledge(db, query, { ...opts, topK: 8, skipUsage: true });
+  if (!hits.length) return [];
+  const ranked = llm ? await rerank(llm, query, hits, topK) : hits.slice(0, topK);
+  bumpUsage(db, ranked);
+  return ranked;
+}
+
+/** 查询改写（历史方案组件，保留供评测复现；现管线已不含此步） */
 async function rewriteQuery(llm, query) {
   if (!llm || !llm.chatJSON) return { rewritten: query, synonyms: [] };
   try {
@@ -36,15 +130,13 @@ async function rewriteQuery(llm, query) {
   }
 }
 
-/** 候选去重键：type+question 唯一标识一条知识 */
+/** 候选去重键（历史方案组件，保留） */
 function docKey(hit) {
   return `${hit.type}|${hit.question}`;
 }
 
 /**
- * RRF 融合：score = Σ 1/(k + rank)，多路召回的排名倒数求和
- * @param {Array<Array>} hitLists 各路召回结果（每路已按相关度降序）
- * @param {number} topN 融合后保留数
+ * RRF 融合（历史方案组件，保留）：score = Σ 1/(k + rank)
  */
 function rrfFuse(hitLists, topN = 8) {
   const scores = new Map();
@@ -71,7 +163,7 @@ function rrfFuse(hitLists, topN = 8) {
 
 /**
  * LLM listwise 重排：单次调用给全部候选打相关性分，重排取 topK
- * 失败/未变动时回退 RRF 顺序（可用性优先）
+ * 失败/未变动时回退传入顺序（可用性优先）
  */
 async function rerank(llm, query, candidates, topK) {
   if (!llm || !llm.chatJSON || candidates.length <= 1) {
@@ -105,7 +197,7 @@ async function rerank(llm, query, candidates, topK) {
       .slice(0, topK)
       .map(({ rerankScore, ...c }) => ({
         ...c,
-        // 融合展示分：稀疏分 + 重排分归一，量级与纯稀疏可比
+        // 融合展示分：召回分 + 重排分归一，量级与纯稀疏可比
         score: Math.round((c.score + rerankScore / 10) * 1000) / 1000,
       }));
   } catch {
@@ -113,32 +205,15 @@ async function rerank(llm, query, candidates, topK) {
   }
 }
 
-/**
- * 增强检索入口：search_knowledge 工具在持有 LLM 客户端时走本管线
- * @returns {Promise<Array>} 与 searchKnowledge 同构的命中数组（含 id/question/answer/tags/type/source/score）
- */
-async function retrieveEnhanced(db, llm, query, opts = {}) {
-  const { topK = 3, ...rest } = opts;
-  // ① 查询改写
-  const { rewritten, synonyms } = await rewriteQuery(llm, query);
-  const legBQuery = [rewritten, ...synonyms].filter(Boolean).join(" ");
-
-  // ② 多路稀疏召回（改写路 = 原查询时不重复召回）
-  const [legA, legB] = await Promise.all([
-    searchKnowledge(db, query, { ...rest, topK: 8, skipUsage: true }),
-    legBQuery === query
-      ? Promise.resolve([])
-      : searchKnowledge(db, legBQuery, { ...rest, topK: 8, skipUsage: true }),
-  ]);
-
-  // ③ RRF 融合
-  const fused = rrfFuse([legA, legB].filter((l) => l.length), 8);
-  if (!fused.length) return [];
-
-  // ④ LLM 语义重排 → topK
-  const ranked = await rerank(llm, query, fused, topK);
-  bumpUsage(db, ranked); // 只对最终结果计数
-  return ranked;
-}
-
-module.exports = { retrieveEnhanced, rewriteQuery, rrfFuse, rerank, RRF_K };
+module.exports = {
+  retrieveEnhanced,
+  rewriteQuery,
+  rrfFuse,
+  rerank,
+  denseRank,
+  cosine,
+  embedText,
+  loadVectorizedDocs,
+  invalidateVectorCache,
+  RRF_K,
+};

@@ -20,3 +20,7 @@ docs/references/
 .DS_Store
 *.local
 .env*
+
+# embedding service local artifacts
+embedding-svc/model/
+embedding-svc/.venv/

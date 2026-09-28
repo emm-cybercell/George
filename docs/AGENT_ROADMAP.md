@@ -117,7 +117,11 @@ evals/
 > 纯稠密 0.946 → **稠密+LLM重排 0.982**。评测推翻旧架构判断（改写步不必要、
 > 弱稀疏腿拖累 RRF），检索主方案修正为"稠密召回+1次LLM重排"（成本减半）。
 > 详见 `evals/reports/2026-09-28-dense-leg.md`。
-> 待办：CloudRun embedding 服务（生产路径落地）、简历定稿。
+> **生产路径（2026-09-28）**：`embedding-svc/`（FastAPI+ONNX 容器，BGE 模型烘镜像）
+> 已本地验证并与 transformers.js 侧向量一致性实测通过；166 条文档向量已入
+> `kb_embeddings` 集合；`ragPipeline v2` 重构为「稠密召回+1次重排，稀疏降级」，
+> 由 `EMBEDDING_SVC_URL` 环境变量开关控制。待办：控制台开通云托管 → 部署
+> embedding-svc → 云函数配环境变量并重新部署 → 线上生效。
 
 | 周 | 内容 | 产出 |
 |---|---|---|
