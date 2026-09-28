@@ -106,6 +106,27 @@ test("denseRank：纯函数按余弦降序，剥离 vec 字段", () => {
   assert.ok(ranked[0].score > ranked[1].score);
 });
 
+test("loadVectorizedDocs 兼容 node-sdk {_id,data} 包裹格式", async () => {
+  const { loadVectorizedDocs } = require("../cloudfunctions/deepseekProxy/core/ragPipeline");
+  const wrappedDb = {
+    collection: () => ({
+      limit: () => ({
+        get: async () => ({
+          data: [
+            { _id: "d1", data: mkVecDoc("d1", [1, 0, 0]) },  // node-sdk 包裹
+            mkVecDoc("d2", [0, 1, 0]),                        // wx-server-sdk 扁平
+          ],
+        }),
+      }),
+    }),
+  };
+  const docs = await loadVectorizedDocs(wrappedDb);
+  assert.equal(docs.length, 2);
+  assert.equal(docs[0].question, "为什么先乘除后加减？");
+  assert.ok(Array.isArray(docs[0].vec));
+  assert.equal(docs[1].question, "什么东西越洗越脏？");
+});
+
 test("主路径：稠密召回→LLM重排→只对最终结果计数（1 次 LLM）", async () => {
   const llm = scriptedLLM([
     {

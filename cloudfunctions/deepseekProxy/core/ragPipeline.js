@@ -55,12 +55,15 @@ async function embedText(text) {
   }
 }
 
-/** 文档向量库：kb_embeddings 集合（5 分钟 TTL，与检索壳缓存策略一致） */
+/** 文档向量库：kb_embeddings 集合（5 分钟 TTL；兼容 node-sdk 的 {_id,data} 包裹格式） */
 async function loadVectorizedDocs(db) {
   if (vecCache.docs && Date.now() - vecCache.loadedAt < VEC_TTL_MS) return vecCache.docs;
   try {
     const res = await db.collection("kb_embeddings").limit(500).get();
-    vecCache = { docs: res.data || [], loadedAt: Date.now() };
+    vecCache = {
+      docs: (res.data || []).map((d) => (d && d.data && d._id ? d.data : d)),
+      loadedAt: Date.now(),
+    };
     return vecCache.docs;
   } catch {
     return [];
