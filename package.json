@@ -63,6 +63,7 @@
     "@babel/preset-react": "^7.24.1",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
+    "@huggingface/transformers": "^4.3.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.5",
     "@tarojs/cli": "4.2.1",
     "@tarojs/plugin-generator": "4.2.1",

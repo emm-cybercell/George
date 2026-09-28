@@ -10,6 +10,7 @@ const path = require("path");
 const { search } = require("../cloudfunctions/deepseekProxy/core/retrievalCore");
 const { rewriteQuery, rrfFuse, rerank } = require("../cloudfunctions/deepseekProxy/core/ragPipeline");
 const { createLLM } = require("../cloudfunctions/deepseekProxy/core/framework/llm");
+const { embedText, vectorSearch } = require("./vectorSearch");
 
 const SEEDS_DIR = path.join(__dirname, "../cloudfunctions/deepseekProxy/seeds");
 const GOLDEN = path.join(__dirname, "golden_set.jsonl");
@@ -85,11 +86,27 @@ function fmt(metricsList) {
 
 (async () => {
   const withLLM = process.argv.includes("--llm");
+  const vectorOnly = process.argv.includes("--vector-only");
+  const hybrid = process.argv.includes("--hybrid");
+  const denseRerank = process.argv.includes("--dense-rerank");
+  const mode = withLLM ? "enhanced(rewrite+rrf+rerank)"
+    : vectorOnly ? "dense_only(bge-small-zh)"
+    : hybrid ? "hybrid_sparse_dense_rrf(零LLM)"
+    : denseRerank ? "dense_plus_llm_rerank"
+    : "sparse_baseline";
   const docs = loadDocs();
   const golden = loadGolden();
-  console.log(`文档 ${docs.length} 条，评测查询 ${golden.length} 条（模式：${withLLM ? "增强管线" : "纯稀疏基线"}）`);
+  console.log(`文档 ${docs.length} 条，评测查询 ${golden.length} 条（模式：${mode}）`);
 
-  const llm = withLLM
+  // 向量模式公共准备：question → doc 元数据映射 + 查询向量缓存
+  const docByQuestion = new Map(docs.map((d) => [d.question, d]));
+  const queryVecCache = new Map();
+  async function getQueryVec(q) {
+    if (!queryVecCache.has(q)) queryVecCache.set(q, await embedText(q));
+    return queryVecCache.get(q);
+  }
+
+  const llm = withLLM || denseRerank
     ? createLLM({
         apiKey: process.env.CB_GATEWAY_KEY,
         baseURL: process.env.CB_GATEWAY_URL,
@@ -101,7 +118,37 @@ function fmt(metricsList) {
   const results = [];
   for (let i = 0; i < golden.length; i++) {
     const { query, doc: expected } = golden[i];
-    const ranked = llm ? await enhancedSearch(llm, query, docs) : sparseSearch(query, docs);
+    let ranked;
+    if (vectorOnly) {
+      // 纯稠密：查询向量 vs 全库文档向量，余弦 top10
+      const qv = await getQueryVec(query);
+      ranked = vectorSearch(qv, 10).map((h) => h.question);
+    } else if (hybrid) {
+      // 稀疏+稠密两路 RRF 融合（零 LLM 成本）
+      const qv = await getQueryVec(query);
+      const sparseLeg = search(query, docs, { topK: 8, threshold: 0.01 })
+        .map((h) => ({ ...h.doc, score: h.score }));
+      const denseLeg = vectorSearch(qv, 8)
+        .map((h) => {
+          const d = docByQuestion.get(h.question);
+          return d ? { ...d, score: h.score } : null;
+        })
+        .filter(Boolean);
+      const fused = rrfFuse([sparseLeg, denseLeg], 10);
+      ranked = fused.map((h) => h.question);
+    } else if (denseRerank) {
+      // 稠密召回 + LLM listwise 重排（每查询 1 次 LLM）
+      const qv = await getQueryVec(query);
+      const denseLeg = vectorSearch(qv, 8)
+        .map((h) => {
+          const d = docByQuestion.get(h.question);
+          return d ? { ...d, score: h.score } : null;
+        })
+        .filter(Boolean);
+      ranked = (await rerank(llm, query, denseLeg, 10)).map((h) => h.question);
+    } else {
+      ranked = llm ? await enhancedSearch(llm, query, docs) : sparseSearch(query, docs);
+    }
     results.push(metrics(ranked, expected));
     if ((i + 1) % 40 === 0) console.log(`进度 ${i + 1}/${golden.length}`);
     if (llm) await new Promise((r) => setTimeout(r, 300)); // 温和限速
@@ -113,7 +160,13 @@ function fmt(metricsList) {
   // 评测报告落盘
   if (!fs.existsSync(REPORTS_DIR)) fs.mkdirSync(REPORTS_DIR, { recursive: true });
   const date = new Date().toISOString().slice(0, 10);
-  const variant = withLLM ? "enhanced_rewrite_rrf_rerank" : "sparse_baseline";
+  const variant = {
+    "enhanced(rewrite+rrf+rerank)": "enhanced_rewrite_rrf_rerank",
+    "dense_only(bge-small-zh)": "dense_only_bge_small_zh",
+    "hybrid_sparse_dense_rrf(零LLM)": "hybrid_sparse_dense_rrf",
+    "dense_plus_llm_rerank": "dense_plus_llm_rerank",
+    "sparse_baseline": "sparse_baseline",
+  }[mode];
   const report = [
     `# 检索评测报告 · ${date}`,
     "",
