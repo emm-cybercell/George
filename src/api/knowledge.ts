@@ -1,3 +1,10 @@
+/**
+ * 知识内容域 API（合并模块）：知识库查询 / 个人学习材料 / 拍照识字 / 学习小结
+ * - 知识库随机抽题（首页灵感池）与个人材料 CRUD（knowledge_base 集合）
+ * - OCR 识字入口（cloud 函数代理）
+ * - 学习小结读取（learning_digests 集合，Agent summarize_session 工具归档）
+ * 原 knowledge.ts 与 digest.ts 按内容域内聚合并
+ */
 import Taro from "@tarojs/taro";
 
 /** 个人学习材料（knowledge_base 中 source:"user" 的文档） */
@@ -121,5 +128,31 @@ export async function pickFromKB(n: number): Promise<string[]> {
   } catch (err) {
     console.warn("灵感池云端抽取失败:", err);
     return [];
+  }
+}
+
+// ===== 学习小结 =====
+
+/** 学习小结（learning_digests 集合文档，由 Agent summarize_session 工具归档） */
+export interface LearningDigest {
+  _id?: string;
+  summary: string;
+  topics: string[];
+  createdAt: number;
+}
+
+/** 读取最近一条学习小结（失败返回 null，调用方降级隐藏卡片） */
+export async function getLatestDigest(): Promise<LearningDigest | null> {
+  if (!Taro.cloud || !Taro.cloud.database) return null;
+  try {
+    const res = await db()
+      .collection("learning_digests")
+      .orderBy("createdAt", "desc")
+      .limit(1)
+      .get();
+    return ((res.data || []) as LearningDigest[])[0] || null;
+  } catch (err) {
+    console.warn("learning_digests 读取失败:", err);
+    return null;
   }
 }

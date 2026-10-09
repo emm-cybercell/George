@@ -1,5 +1,65 @@
+/**
+ * 媒体域 API（合并模块）：AI 生图 / 云存储上传 / 作品集存取
+ * - generateImage：云函数混元生图（结果已由云函数转存为永久 cloud:// fileID）
+ * - uploadMediaToCloud：本地临时文件 → 云存储（作品图片/头像共用）
+ * - saveCreativeWork / fetchWorks / deleteWork：作品集 CRUD（creative_works 集合）
+ * 原 image.ts 与 works.ts 按媒体域内聚合并
+ */
 import Taro from "@tarojs/taro";
 import type { CreativeWork } from "@/types";
+
+export type ImageGenMode = "t2i" | "i2i";
+
+export interface GenerateImageResult {
+  success: boolean;
+  imageUrl?: string;
+  error?: string;
+  modelUsed?: string;
+}
+
+/** 读取本地临时文件为 base64（图生图垫图，直传云函数不占云存储） */
+export function fileToBase64(filePath: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    Taro.getFileSystemManager().readFile({
+      filePath,
+      encoding: "base64",
+      success: (res) => resolve(String(res.data)),
+      fail: reject,
+    });
+  });
+}
+
+/** 调云函数生图：t2i 文生图 / i2i 图生图（需传垫图 base64） */
+export async function generateImage(opts: {
+  prompt: string;
+  mode: ImageGenMode;
+  imageBase64?: string;
+}): Promise<GenerateImageResult> {
+  try {
+    const res = await Taro.cloud.callFunction({
+      name: "deepseekProxy",
+      data: {
+        type: "image",
+        prompt: opts.prompt,
+        mode: opts.mode,
+        imageBase64: opts.imageBase64,
+      },
+    });
+    const result = res.result as GenerateImageResult;
+    if (result && result.success && result.imageUrl) {
+      return result;
+    }
+    return {
+      success: false,
+      error: result?.error || "生图失败，请重试",
+    };
+  } catch (err) {
+    console.error("生图云函数调用失败:", err);
+    return { success: false, error: "网络异常，请稍后重试" };
+  }
+}
+
+// ===== 云存储与作品集 =====
 
 const db = () => Taro.cloud.database();
 

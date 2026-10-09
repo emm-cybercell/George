@@ -1,16 +1,21 @@
 import { useRef, useState } from "react";
 import Taro, { useDidShow } from "@tarojs/taro";
-import { fetchDeepSeekReply } from "@/api/deepseek";
-import { getCloudChatRecord, saveChatRecordToCloud } from "@/api/cloudChat";
+import {
+  buildTitle,
+  cloudRecordsToMessages,
+  fetchDeepSeekReply,
+  getChatSession,
+  getChatSessions,
+  getCloudChatRecord,
+  getCloudSessionRecords,
+  saveChatRecordToCloud,
+  saveChatSession,
+  streamChat,
+  type CloudChatRecord,
+} from "@/api/chat";
 import { awardChatPoints, countImageGeneration } from "@/api/rewards";
 import { playTextVoice } from "@/utils/tts";
 import { ABILITY_STORAGE_KEY, DEFAULT_ABILITY_ID } from "@/types/ability";
-import {
-  buildTitle,
-  getChatSession,
-  getChatSessions,
-  saveChatSession,
-} from "@/api/history";
 import type { ChatMessage } from "@/components/Learn/types";
 import type { AwardChatResult, ChatState } from "@/types";
 
@@ -58,15 +63,16 @@ export function useChatSession(
     Taro.showToast({ title: "已开启新对话 ✨", icon: "none" });
   };
   const restoreFromHistory = (historyId: string) => {
-    getCloudChatRecord(historyId)
-      .then((record) => {
-        if (record?.userQuery && record.aiReply) {
-          sessionIdRef.current = `session-${historyId}`;
-          setMessages([
-            { id: nextId(), role: "user", content: record.userQuery },
-            { id: nextId(), role: "assistant", content: record.aiReply },
-          ]);
-          setChatState("chatting");
+    // 云优先：按会话 ID 聚合出整段多轮对话；散记录降级单条；最后回退本地会话
+    getCloudSessionRecords(historyId)
+      .then(async (records) => {
+        if (records.length > 0) {
+          applyCloudRecords(historyId, records);
+          return;
+        }
+        const solo = await getCloudChatRecord(historyId.replace(/^solo-/, ""));
+        if (solo?.userQuery && solo.aiReply) {
+          applyCloudRecords(historyId, [solo]);
           return;
         }
         const local = getChatSession(historyId);
@@ -77,6 +83,13 @@ export function useChatSession(
         }
       })
       .catch((err) => console.warn("历史会话恢复失败:", err));
+  };
+
+  /** 云端会话 → 消息流：sessionIdRef 指回原会话，续聊写回同组 */
+  const applyCloudRecords = (id: string, records: CloudChatRecord[]) => {
+    sessionIdRef.current = id;
+    setMessages(cloudRecordsToMessages(records));
+    setChatState("chatting");
   };
 
   /**
@@ -140,6 +153,64 @@ export function useChatSession(
     setMessages(history);
     setChatState("thinking");
     const startedAt = Date.now();
+    const aiMsgId = nextId();
+
+    // 流式优先（闲聊直通打字机渲染）；relay 未配置或失败 → 回退云函数全量链路
+    let streamText = "";
+    if (!webSearch) {
+      let streaming = false;
+      const result = await streamChat(
+        history.map(({ role, content: c }) => ({ role, content: c })),
+        (delta) => {
+          streamText += delta;
+          if (!streaming) {
+            streaming = true;
+            setChatState("chatting");
+          }
+          // 渐进渲染：AI 消息随分块到达逐段生长
+          setMessages((list) => {
+            const exists = list.some((m) => m.id === aiMsgId);
+            const next = exists
+              ? list.map((m) =>
+                  m.id === aiMsgId ? { ...m, content: streamText } : m,
+                )
+              : [
+                  ...list,
+                  { id: aiMsgId, role: "assistant" as const, content: streamText },
+                ];
+            return next;
+          });
+        },
+      );
+      if (result.via === "stream" && result.text) {
+        const responseTime = Date.now() - startedAt;
+        const finalMsg: ChatMessage = {
+          id: aiMsgId,
+          role: "assistant",
+          content: result.text,
+          liked: null,
+          responseTime,
+        };
+        const withReply = [...history, finalMsg];
+        setMessages(withReply);
+        persist(withReply);
+        playTextVoice(result.text);
+        saveChatRecordToCloud({
+          userQuery: content,
+          aiReply: result.text,
+          abilityMode:
+            Taro.getStorageSync(ABILITY_STORAGE_KEY) || DEFAULT_ABILITY_ID,
+          sessionId: sessionIdRef.current,
+          responseTime,
+          modelUsed: "hy3",
+        });
+        onDidReply?.(await awardChatPoints([]));
+        return;
+      }
+      // 流式失败：清掉可能存在的半截流式消息，走全量链路
+      setMessages(history);
+      setChatState("thinking");
+    }
 
     try {
       const result = await fetchDeepSeekReply(
@@ -147,7 +218,6 @@ export function useChatSession(
         { webSearch },
       );
       const responseTime = Date.now() - startedAt;
-      const aiMsgId = nextId();
       const withReply: ChatMessage[] = [
         ...history,
         {
@@ -223,6 +293,7 @@ export function useChatSession(
       aiReply: IMAGE_GUIDE_REPLY,
       abilityMode:
         Taro.getStorageSync(ABILITY_STORAGE_KEY) || DEFAULT_ABILITY_ID,
+      sessionId: sessionIdRef.current,
     });
   };
 
