@@ -2,6 +2,14 @@
 
 桥智同学 RAG 稠密召回腿的向量服务：文本 → BGE 归一化向量，部署于 CloudBase 云托管（CloudRun 容器），云函数 `ragPipeline.js` 经 HTTP 调用。模型选型依据 `evals/reports/2026-09-28-dense-leg.md`（稠密召回使 Recall@3 从 0.928 → 0.982）。
 
+## 部署状态（2026-09-28 已上线）
+
+- CloudRun 版本 `embedding-svc-001` 运行中，规格 Cpu 0.25 / Mem 0.5 / MinNum 0（闲时缩容到 0）/ MaxNum 2 / Port 8080；
+- 公网域名：`https://embedding-svc-320752-4-1476112672.sh.run.tcloudbase.com`（X-API-Key 鉴权，密钥在容器环境变量 `EMBEDDING_API_KEY`，不入库）；
+- 云函数 `deepseekProxy` 已配 `EMBEDDING_SVC_URL/EMBEDDING_SVC_KEY`，`kb_embeddings` 集合 166/166 条向量在库；
+- **端到端已验证**：真实调用云函数提问，Agent 走稠密召回+LLM 重排命中目标文档（融合分 1.796），检索步 3.8s、日志无降级告警；
+- 冷启动注意：MinNum=0 首请求可能超过网关 30s 窗口返回 503，预热后 ~0.2s；介意可把 MinNum 调 1。
+
 ## 架构
 
 ```

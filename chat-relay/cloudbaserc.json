@@ -1,0 +1,6 @@
+{
+  "envId": "cloud1-d3g4mujv731fe8756",
+  "cloudrun": {
+    "name": "chat-relay"
+  }
+}

@@ -25,3 +25,7 @@ docs/references/
 embedding-svc/model/
 embedding-svc/.venv/
 embedding-svc/__pycache__/
+
+# chat-relay 本地虚拟环境
+chat-relay/.venv/
+chat-relay/__pycache__/

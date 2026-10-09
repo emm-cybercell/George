@@ -22,6 +22,8 @@ jobs:
         working-directory: langgraph-tutor
       - name: Run agent framework tests
         run: |
+          node --test tests/prompts.spec.js
+          node --test tests/metrics.spec.js
           node --test tests/reactLoop.spec.js
           node --test tests/patterns.spec.js
           node --test tests/ragPipeline.spec.js
