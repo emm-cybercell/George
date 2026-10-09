@@ -10,7 +10,7 @@ const DEFAULT_TIMEOUT_MS = 20000;
 /**
  * 创建 LLM 客户端
  * @param {{apiKey: string, baseURL: string, model: string, timeoutMs?: number}} cfg
- * @returns {{chat: (messages, opts) => Promise<AssistantMsg>, chatJSON: (messages, opts) => Promise<any>}}
+ * @returns {{chat: (messages, opts) => Promise<AssistantMsg>, chatJSON: (messages, opts) => Promise<any>, usage: {promptTokens: number, completionTokens: number, calls: number}}}
  */
 function createLLM(cfg) {
   const {
@@ -24,6 +24,9 @@ function createLLM(cfg) {
       "LLM 网关未配置：需要 CB_GATEWAY_KEY / CB_GATEWAY_URL 环境变量",
     );
   }
+
+  // 请求级 token 计量：chat 每次成功调用后累加，请求结束时随 metrics 落库
+  const usage = { promptTokens: 0, completionTokens: 0, calls: 0 };
 
   /**
    * 对话补全（返回原始 message：{role, content, tool_calls?}）
@@ -53,6 +56,11 @@ function createLLM(cfg) {
         });
         const msg = res.data?.choices?.[0]?.message;
         if (!msg) throw new Error("网关返回空消息");
+        // 接住网关 usage（此前被丢弃）——成本核算的数据源
+        const u = res.data?.usage || {};
+        usage.promptTokens += Number(u.prompt_tokens) || 0;
+        usage.completionTokens += Number(u.completion_tokens) || 0;
+        usage.calls += 1;
         return msg;
       } catch (err) {
         lastErr = err;
@@ -77,7 +85,7 @@ function createLLM(cfg) {
     }
   }
 
-  return { chat, chatJSON };
+  return { chat, chatJSON, usage };
 }
 
 module.exports = { createLLM };

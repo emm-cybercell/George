@@ -7,8 +7,15 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV, timeout: 60000 });
 const { getActiveLLMConfig } = require("./config");
 const { runAgentLoop } = require("./core/agentRunner");
 const { createLLM } = require("./core/framework/llm");
-const { runPattern } = require("./patterns/index");
+const { runPattern } = require("./patterns");
 const { chunkMaterial } = require("./core/chunking");
+const axios = require("axios");
+const {
+  recordRequest,
+  isOverBudget,
+  aggregateDaily,
+  costOf,
+} = require("./core/metrics");
 
 /**
  * 自研框架开关：配置了网关环境变量（CB_GATEWAY_KEY/CB_GATEWAY_URL）即切换到
@@ -93,8 +100,31 @@ async function ocrPrintedText(fileID) {
   }
 }
 
-/** 生图：经 cloud.ai() 混元生图模型，按模式分发 t2i / i2i */
-async function generateImage({ prompt, mode, imageBase64 }) {
+/**
+ * 生图结果转存：混元返回的是 24h 有效期的临时签名 URL，过期即 403。
+ * 趁签名有效立即拉取字节，转存到用户云存储返回永久 fileID。
+ * 任何失败（测试环境无 uploadFile / 拉取超时）都返回 null，由调用方回退临时 URL。
+ */
+async function persistGeneratedImage(url, openid) {
+  if (!url || typeof cloud.uploadFile !== "function") return null;
+  try {
+    const res = await axios.get(url, {
+      responseType: "arraybuffer",
+      timeout: 8000,
+    });
+    const upload = await cloud.uploadFile({
+      cloudPath: `ai-images/${openid || "anon"}/${Date.now()}.png`,
+      fileContent: Buffer.from(res.data),
+    });
+    return upload.fileID || null;
+  } catch (err) {
+    console.warn("生图转存失败，回退临时 URL:", err?.message || err);
+    return null;
+  }
+}
+
+/** 生图：经 cloud.ai() 混元生图模型，按模式分发 t2i / i2i，结果转存云存储 */
+async function generateImage({ prompt, mode, imageBase64 }, openid) {
   const content = String(prompt || "").trim();
   if (!content) {
     return { success: false, error: "请输入生图描述" };
@@ -114,7 +144,17 @@ async function generateImage({ prompt, mode, imageBase64 }) {
         : { size: "1024x1024" }),
     });
     const url = res?.data?.[0]?.url || "";
-    return { success: !!url, url, model: target, mode: isI2I ? "i2i" : "t2i" };
+    if (!url) {
+      return { success: false, error: "生图失败，请稍后再试" };
+    }
+    const fileID = await persistGeneratedImage(url, openid);
+    return {
+      success: true,
+      url,
+      fileID,
+      model: target,
+      mode: isI2I ? "i2i" : "t2i",
+    };
   } catch (err) {
     console.error("generateImage error:", err);
     return {
@@ -197,17 +237,32 @@ exports.main = async (event) => {
     }
   }
 
+  // 日聚合与告警（定时触发器或管理端手动触发；event.type === 'metrics_daily'）
+  if (event.type === "metrics_daily") {
+    try {
+      const result = await aggregateDaily(db, event.day);
+      return { success: true, ...result };
+    } catch (err) {
+      console.error("metrics_daily error:", err);
+      return { success: false, error: String(err?.message || err).slice(0, 160) };
+    }
+  }
+
   // 生图独立请求：event.type === 'image'（mode: t2i 文生图 / i2i 图生图）
   if (event.type === "image") {
-    const imgRes = await generateImage({
-      prompt: event.prompt,
-      mode: event.mode,
-      imageBase64: event.imageBase64,
-    });
+    const imgRes = await generateImage(
+      {
+        prompt: event.prompt,
+        mode: event.mode,
+        imageBase64: event.imageBase64,
+      },
+      OPENID,
+    );
     return {
       success: imgRes.success,
       reply: imgRes.error || "",
-      imageUrl: imgRes.url,
+      // 优先返回永久 fileID（转存成功）；失败回退临时 URL（24h 有效）
+      imageUrl: imgRes.fileID || imgRes.url,
       modelUsed: imgRes.model,
       provider: "wxai-image",
     };
@@ -236,21 +291,39 @@ exports.main = async (event) => {
     // 2. 读取最终生效的模型配置（代码默认兜底 + system_configs 动态热更）
     const activeConfig = await getActiveLLMConfig(cloud.database());
 
+    // 2.5 成本护栏：单用户单日 token 预算超限 → 降级短回复（不再调用模型）
+    if (await isOverBudget(db, OPENID)) {
+      return {
+        success: true,
+        reply:
+          "今天我们一起探索了好多内容，我的「能量」暂时用完啦 🌙 明天再来找我继续聊，好吗？",
+        modelUsed: activeConfig.model,
+        provider: activeConfig.activeProvider,
+        executedTools: [],
+        pattern: "budget-limited",
+      };
+    }
+
     // 3. 委派给 Agent 循环（Function Calling 自主决策）
     //    自研框架（手写循环 + trace）优先，event.pattern 可选推理范式；
-    //    网关未配置时回退 SDK 托管循环
+    //    网关未配置时回退 SDK 托管循环（createLLM 仅在框架分支构建——
+    //    本地测试/未配网关环境走 SDK 分支不受影响）
     const agentConfig = { ...activeConfig, webSearch: !!event.webSearch };
+    const startedAt = Date.now();
+    const llm = FRAMEWORK_ENABLED
+      ? createLLM({
+          apiKey: process.env.CB_GATEWAY_KEY,
+          baseURL: process.env.CB_GATEWAY_URL,
+          model: activeConfig.model,
+        })
+      : null;
     const agentResult = FRAMEWORK_ENABLED
       ? await runPattern(event.pattern, {
           messages,
           config: agentConfig,
           db,
           openid: OPENID,
-          llm: createLLM({
-            apiKey: process.env.CB_GATEWAY_KEY,
-            baseURL: process.env.CB_GATEWAY_URL,
-            model: activeConfig.model,
-          }),
+          llm,
         })
       : await runAgentLoop({
           messages,
@@ -260,6 +333,35 @@ exports.main = async (event) => {
           cloud,
         });
     const { reply, executedTools, trace } = agentResult;
+
+    // 3.5 可观测性与成本落库（fire-and-forget：失败静默，不影响响应）
+    //     采集：耗时/步数/工具错误/降级/usage tokens/成本/预算护栏
+    const toolErrors = executedTools.filter(
+      (t) => t.result && t.result.success === false,
+    ).length;
+    const degraded = (trace || []).some(
+      (t) =>
+        typeof t.observation === "string" &&
+        t.observation.includes("知识库暂无相关内容"),
+    );
+    const budgetExceeded = await isOverBudget(db, OPENID);
+    const usage = (llm && llm.usage) || {};
+    recordRequest(db, {
+      openid: OPENID,
+      pattern: event.pattern || "react",
+      framework: FRAMEWORK_ENABLED ? "self" : "sdk",
+      durationMs: Date.now() - startedAt,
+      steps: (trace || []).length,
+      llmCalls: usage.calls || 0,
+      toolCalls: (executedTools || []).length,
+      toolErrors,
+      degraded,
+      promptTokens: usage.promptTokens || 0,
+      completionTokens: usage.completionTokens || 0,
+      costYuan: costOf(activeConfig.model, usage.promptTokens || 0, usage.completionTokens || 0),
+      budgetExceeded,
+      model: activeConfig.model,
+    }).catch(() => {});
 
     // 4. 后置内容安全审查：AI 生成的回答
     if (reply && !(await checkText(reply, OPENID))) {
