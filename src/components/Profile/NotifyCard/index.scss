@@ -3,9 +3,10 @@
   align-items: center;
   margin: 0 24px 24px;
   padding: 26px 28px;
-  border-radius: 20px;
-  background: #ffffff;
-  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
+  border-radius: var(--radius-md);
+  background: var(--card-bg);
+  border: var(--border-soft);
+  box-shadow: var(--shadow-card);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -28,13 +29,13 @@
 
   &__label {
     font-size: 28px;
-    color: #1f2430;
+    color: var(--text-1);
   }
 
   &__sub {
     margin-top: 4px;
     font-size: 22px;
-    color: #9ca3af;
+    color: var(--text-3);
   }
 
   &__badge {
@@ -53,6 +54,6 @@
 
   &__arrow {
     font-size: 40px;
-    color: #c0c4cc;
+    color: #cbd5e1;
   }
 }

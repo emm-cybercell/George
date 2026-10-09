@@ -1,22 +1,49 @@
 // NutUI 组件样式通过 babel-plugin-import 按需引入（见 babel.config.js）
 // 这里只定义全局主题 Token 与基础样式
+// Token 体系对齐首页（src/pages/home）的 slate 冷灰 + 毛玻璃 + 蓝青渐变设计语言
 
-// ===== 桥智同学全局主题 Token (对齐 docs/PRD_MVP.md) =====
+// ===== 桥智同学全局主题 Token（设计基准：首页 Bento 体系）=====
 page {
-  // 主品牌紫
-  --color-primary: #8b5cf6;
-  --color-primary-dark: #7c3aed;
-  // 科技绿（选中高亮、成功）
-  --color-accent: #76c843;
-  --color-accent-strong: #22c55e;
-  // 页面背景 / 卡片
-  --color-bg: #f8f9fa;
-  --color-card: #ffffff;
-  --radius-card: 16px;
+  // 文字体系（slate）
+  --text-1: #0f172a; // 标题/正文强调
+  --text-2: #475569; // 次级说明
+  --text-3: #94a3b8; // 弱提示/占位
+
+  // 页面背景 / 卡片 / 图标底
+  --bg-page: #f8fafc;
+  --card-bg: #ffffff;
+  --icon-bg: #f1f5f9;
+
+  // 边框与阴影
+  --border-soft: 1px solid rgba(226, 232, 240, 0.8);
+  --shadow-card: 0 8px 24px rgba(15, 23, 42, 0.04);
+
+  // 主操作：蓝青渐变（首页 CTA 同款）
+  --grad-primary: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  --shadow-primary: 0 12px 28px -10px rgba(59, 130, 246, 0.45);
+
+  // 点缀三色（首页徽章/标签同款）：紫 / 琥珀 / 蓝
+  --violet: #7c3aed;
+  --violet-bg: #f3e8ff;
+  --amber: #d97706;
+  --amber-bg: #fef3c7;
+  --blue: #2563eb;
+  --blue-bg: #dbeafe;
+
+  // 圆角体系
+  --radius-xl: 24px; // 特大卡/弹层
+  --radius-lg: 22px; // bento 主卡
+  --radius-md: 20px; // 常规卡片
+  --radius-pill: 999px; // 胶囊
+
+  // 毛玻璃页头
+  --header-glass: rgba(255, 255, 255, 0.9);
+  --header-blur: blur(20px);
+
   // 底部 TabBar 内容高度（不含安全区）
   --tabbar-h: 100px;
 
-  background-color: var(--color-bg);
+  background-color: var(--bg-page);
   font-family:
     -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC",
     "Microsoft YaHei", sans-serif;
@@ -38,19 +65,19 @@ page {
   animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-// ===== 高质感"新对话"绿色渐变按钮 =====
+// ===== 主操作"新对话"按钮（蓝青渐变，与首页 CTA 同款）=====
 .btn-new-chat {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   padding: 14px 28px;
-  background: linear-gradient(135deg, #76c843 0%, #22c55e 100%);
+  background: var(--grad-primary);
   color: #ffffff;
   font-size: 26px;
   font-weight: 600;
-  border-radius: 999px;
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-primary);
   transition: transform 0.15s ease;
   cursor: pointer;
 

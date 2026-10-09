@@ -3,9 +3,10 @@
   align-items: center;
   margin: 0 24px 24px;
   padding: 26px 28px;
-  border-radius: 20px;
-  background: #ffffff;
-  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
+  border-radius: var(--radius-md);
+  background: var(--card-bg);
+  border: var(--border-soft);
+  box-shadow: var(--shadow-card);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -30,7 +31,7 @@
   &__label {
     font-size: 28px;
     font-weight: 600;
-    color: #1f2430;
+    color: var(--text-1);
   }
 
   &__pill {
@@ -38,16 +39,16 @@
     margin-top: 10px;
     padding: 6px 14px;
     border-radius: 999px;
-    background: #e8fbe8;
+    background: var(--blue-bg);
   }
 
   &__pill-text {
     font-size: 22px;
-    color: #16a34a;
+    color: var(--blue);
   }
 
   &__switch {
     font-size: 24px;
-    color: #9ca3af;
+    color: var(--text-3);
   }
 }

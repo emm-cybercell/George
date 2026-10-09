@@ -1,6 +1,6 @@
 .profile {
   min-height: 100vh;
-  background: #f8f9fa;
+  background: var(--bg-page);
   padding-bottom: 140px;
   box-sizing: border-box;
 
@@ -13,14 +13,15 @@
     justify-content: center;
     padding: 24px 32px 16px;
     padding-top: calc(env(safe-area-inset-top) + 150px) !important;
-    background: #8b5cf6;
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+    background: var(--header-glass);
+    backdrop-filter: var(--header-blur);
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
   }
 
   &__title {
     font-size: 38px;
     font-weight: 700;
-    color: #fff;
+    color: var(--text-1);
   }
 
   &__body {

@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { View, Text, Input, Image } from "@tarojs/components";
 import Taro from "@tarojs/taro";
-import { fileToBase64, generateImage, type ImageGenMode } from "@/api/image";
+import { fileToBase64, generateImage, type ImageGenMode } from "@/api/media";
 import "./index.scss";
 
 interface ImageGenPanelProps {
   visible: boolean;
   onClose: () => void;
-  /** 生成成功回调（返回图片 URL） */
+  /** 生成成功回调（永久云 fileID；转存失败时为 24h 临时 URL） */
   onGenerated: (imageUrl: string, prompt: string) => void;
 }
 

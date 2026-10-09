@@ -6,9 +6,10 @@
   display: flex;
   height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
   box-sizing: border-box;
-  background: #ffffff;
-  border-top: 1px solid #f0f0f0;
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
+  background: var(--header-glass);
+  backdrop-filter: var(--header-blur);
+  border-top: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 -2px 12px rgba(15, 23, 42, 0.04);
   padding-bottom: env(safe-area-inset-bottom);
 
   &__item {
@@ -42,23 +43,23 @@
   &__icon {
     font-size: 40px;
     line-height: 1;
-    color: #9ca3af;
+    color: var(--text-3);
   }
 
   &__label {
     margin-top: 6px;
     font-size: 22px;
-    color: #9ca3af;
+    color: var(--text-3);
   }
 
   &__item--active {
     .custom-tabbar__indicator {
-      background: #76c843;
+      background: #3b82f6;
     }
 
     .custom-tabbar__icon,
     .custom-tabbar__label {
-      color: #76c843;
+      color: #3b82f6;
     }
   }
 }

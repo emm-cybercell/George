@@ -2,10 +2,11 @@
   position: relative;
   width: calc(50% - 10px);
   margin-bottom: 20px;
-  background: #ffffff;
-  border-radius: 20px;
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  border: var(--border-soft);
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
+  box-shadow: var(--shadow-card);
   transition:
     transform 0.2s ease,
     opacity 0.2s ease;
@@ -20,7 +21,7 @@
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
-    background: #f3f4f6;
+    background: var(--icon-bg);
   }
 
   &__actions {
@@ -79,7 +80,7 @@
     flex: 1;
     font-size: 28px;
     font-weight: 700;
-    color: #1f2430;
+    color: var(--text-1);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -89,8 +90,8 @@
     flex-shrink: 0;
     padding: 4px 12px;
     font-size: 20px;
-    color: #8b5cf6;
-    background: #f3eeff;
+    color: var(--violet);
+    background: var(--violet-bg);
     border-radius: 999px;
   }
 
@@ -99,7 +100,7 @@
     margin-top: 12px;
     font-size: 22px;
     line-height: 1.5;
-    color: #6b7280;
+    color: var(--text-2);
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;

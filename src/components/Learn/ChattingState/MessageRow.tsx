@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import mascotImg from "@/assets/images/立绘2.jpg";
 import { getVoiceState, onVoiceChange, toggleTextVoice } from "@/utils/tts";
 import type { VoiceStatus } from "@/utils/tts";
-import { updateChatFeedback } from "@/api/cloudChat";
-import { saveCreativeWork } from "@/api/works";
+import { updateChatFeedback } from "@/api/chat";
+import { saveCreativeWork } from "@/api/media";
+import ChatMediaImage from "./ChatMediaImage";
 import type { ChatMessage } from "../types";
 
 /** 单个语音按钮：随全局语音状态实时刷新图标 */
@@ -109,9 +110,9 @@ const CollectBtn = ({ message: m }: { message: ChatMessage }) => {
   );
 };
 
-/** cloud:// 开头才是云存储作品图；AI 生图 https 链接也可收藏 */
+/** cloud:// 开头才是永久云文件：只收藏云文件，避免把会过期的临时链接存进作品集 */
 function isCloudFile(url: string): boolean {
-  return url.startsWith("cloud://") || url.startsWith("https://");
+  return url.startsWith("cloud://");
 }
 
 interface MessageRowProps {
@@ -142,17 +143,7 @@ const MessageRow = ({ message: m, userAvatar }: MessageRowProps) => {
       }`}
     >
       {m.mediaUrl ? (
-        <Image
-          className="chatting-state__media"
-          src={m.mediaUrl}
-          mode="aspectFill"
-          onClick={() =>
-            Taro.previewImage({
-              urls: [m.mediaUrl as string],
-              current: m.mediaUrl as string,
-            })
-          }
-        />
+        <ChatMediaImage src={m.mediaUrl} />
       ) : (
         <Text>{m.content}</Text>
       )}

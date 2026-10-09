@@ -22,7 +22,7 @@
     width: 72px;
     height: 72px;
     border-radius: 12px;
-    background: #f3eeff;
+    background: var(--icon-bg);
 
     &--thinking {
       animation: face-pulse 1.2s ease-in-out infinite;
@@ -32,13 +32,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #ddd6fe;
+      background: var(--blue-bg);
     }
 
     &-text {
       font-size: 28px;
       font-weight: 700;
-      color: #8b5cf6;
+      color: var(--blue);
     }
   }
 
@@ -52,7 +52,7 @@
 
   &__stage {
     font-size: 24px;
-    color: #8b5cf6;
+    color: var(--blue);
     white-space: nowrap;
   }
 
@@ -65,7 +65,7 @@
   &__dot {
     font-size: 28px;
     line-height: 1;
-    color: #a78bfa;
+    color: #93c5fd;
     animation: typing-bounce 1s ease-in-out infinite;
 
     &:nth-child(2) {
@@ -117,14 +117,14 @@
     &--user {
       margin-right: 16px;
       color: #fff;
-      background: #8b5cf6;
+      background: var(--grad-primary);
       border-radius: 16px 16px 2px 16px;
     }
 
     &--assistant {
       margin-left: 16px;
-      color: #1f2430;
-      background: #fff;
+      color: var(--text-1);
+      background: var(--card-bg);
       border-radius: 16px 16px 16px 2px;
     }
   }
@@ -149,8 +149,8 @@
   &__fb-tag {
     padding: 2px 12px;
     font-size: 20px;
-    color: #8b5cf6;
-    background: rgba(139, 92, 246, 0.08);
+    color: var(--violet);
+    background: rgba(124, 58, 237, 0.08);
     border-radius: 999px;
     white-space: nowrap;
   }
@@ -183,7 +183,7 @@
   &__fb-kb {
     font-size: 20px;
     line-height: 1.2;
-    color: #6b7280;
+    color: var(--text-2);
     white-space: nowrap;
   }
 
@@ -194,10 +194,24 @@
     height: 270px;
     border-radius: 16px;
     overflow: hidden;
-    background: #f3f4f6;
+    background: var(--icon-bg);
 
     &--user {
       border-radius: 16px;
+    }
+
+    // 历史遗留过期链接的占位态：与图片同尺寸，弱化展示
+    &--broken {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+      border: 2px dashed #e2e8f0;
+
+      text {
+        font-size: 24px;
+        color: #94a3b8;
+      }
     }
   }
 
@@ -208,7 +222,7 @@
     padding: 10px 14px;
     font-size: 28px;
     line-height: 1;
-    background: #f3f4f6;
+    background: var(--icon-bg);
     border-radius: 999px;
     transition:
       transform 0.2s ease,
@@ -221,8 +235,8 @@
     }
 
     &--on {
-      background: #f3eeff;
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+      background: var(--blue-bg);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
     }
   }
 }

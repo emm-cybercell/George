@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: #f8f9fa;
+  background: var(--bg-page);
   padding-bottom: calc(env(safe-area-inset-bottom) + var(--tabbar-h) + 88px);
   box-sizing: border-box;
 
@@ -13,8 +13,9 @@
     flex-shrink: 0;
     padding: 24px 32px 16px;
     padding-top: calc(env(safe-area-inset-top) + 160px) !important;
-    background: #8b5cf6;
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+    background: var(--header-glass);
+    backdrop-filter: var(--header-blur);
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
   }
 
   &__header-row {
@@ -39,9 +40,9 @@
   &__history-btn {
     padding: 10px 24px;
     font-size: 24px;
-    color: #fff;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: var(--text-1);
+    background: var(--icon-bg);
+    border: 1px solid rgba(226, 232, 240, 0.8);
     border-radius: 999px;
     white-space: nowrap;
   }
@@ -49,14 +50,14 @@
   &__title {
     font-size: 38px;
     font-weight: 700;
-    color: #fff;
+    color: var(--text-1);
     display: block;
   }
 
   &__subtitle {
     margin-top: 8px;
     font-size: 24px;
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--text-3);
     display: block;
   }
 
@@ -77,9 +78,9 @@
     transform: translateX(-50%);
     z-index: 990;
     padding: 14px 32px;
-    background: rgba(139, 92, 246, 0.94);
+    background: var(--grad-primary);
     border-radius: 999px;
-    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.35);
+    box-shadow: var(--shadow-primary);
     animation: award-float 1.8s ease forwards;
     pointer-events: none;
 

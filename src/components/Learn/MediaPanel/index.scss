@@ -36,7 +36,7 @@
   &__divider {
     height: 1px;
     margin: 16px 4px;
-    background: #eef0f4;
+    background: rgba(226, 232, 240, 0.8);
   }
 
   &__title {
@@ -44,7 +44,7 @@
     text-align: center;
     font-size: 32px;
     font-weight: 700;
-    color: #1f2430;
+    color: var(--text-1);
     margin-bottom: 8px;
     flex-shrink: 0;
   }
@@ -54,8 +54,8 @@
     align-items: center;
     padding: 22px 20px;
     margin-top: 8px;
-    background: #f8f9fa;
-    border-radius: 20px;
+    background: var(--icon-bg);
+    border-radius: var(--radius-md);
     transition:
       transform 0.2s ease,
       opacity 0.2s ease;
@@ -81,18 +81,18 @@
   &__label {
     font-size: 28px;
     font-weight: 700;
-    color: #1f2430;
+    color: var(--text-1);
   }
 
   &__sub {
     margin-top: 6px;
     font-size: 22px;
-    color: #9ca3af;
+    color: var(--text-3);
   }
 
   &__arrow {
     font-size: 32px;
-    color: #c0c4cc;
+    color: #cbd5e1;
   }
 
   &__cancel {
@@ -102,8 +102,8 @@
     font-size: 30px;
     font-weight: 600;
     text-align: center;
-    color: #6b7280;
-    background: #f3f4f6;
+    color: var(--text-2);
+    background: var(--icon-bg);
     border-radius: 999px;
     transition:
       transform 0.2s ease,

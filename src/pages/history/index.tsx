@@ -6,35 +6,38 @@ import {
   deleteChatSession,
   getChatSessions,
   type ChatSession,
-} from "@/api/history";
+} from "@/api/chat";
 import {
   clearCloudChatRecords,
-  deleteCloudChatRecord,
-  queryCloudChatRecords,
   type CloudChatRecord,
-} from "@/api/cloudChat";
-import { getLatestDigest, type LearningDigest } from "@/api/digest";
+} from "@/api/chat";
+import {
+  deleteCloudSessionRecords,
+  queryCloudSessions,
+  type CloudChatSession,
+} from "@/api/chat";
+import { getLatestDigest, type LearningDigest } from "@/api/knowledge";
 import HistoryCard, { formatTime, titleOf } from "@/components/HistoryCard";
 import "./index.scss";
 
 const History = () => {
-  const [cloudRecords, setCloudRecords] = useState<CloudChatRecord[]>([]);
+  const [cloudSessions, setCloudSessions] = useState<CloudChatSession[]>([]);
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeId, setActiveId] = useState("");
   const [useCloud, setUseCloud] = useState(false);
   const [loading, setLoading] = useState(true);
   const [digest, setDigest] = useState<LearningDigest | null>(null);
 
-  // 页面展示时云优先拉取真实记录，云端无记录降级本地会话
+  // 页面展示时云优先拉取真实记录（按会话聚合多轮），云端无记录降级本地会话
   const refresh = async () => {
     setLoading(true);
-    const cloud = await queryCloudChatRecords();
+    const cloud = await queryCloudSessions();
     if (cloud.length > 0) {
-      setCloudRecords(cloud);
+      setCloudSessions(cloud);
       setSessions([]);
       setUseCloud(true);
     } else {
-      setCloudRecords([]);
+      setCloudSessions([]);
       setSessions(getChatSessions());
       setUseCloud(false);
     }
@@ -50,10 +53,12 @@ const History = () => {
 
   const toggle = (id: string) => setActiveId((prev) => (prev === id ? "" : id));
 
-  const onDelete = async (id: string) => {
-    deleteChatSession(id);
-    if (useCloud) await deleteCloudChatRecord(id);
-    if (activeId === id) setActiveId("");
+  const onDelete = async (target: ChatSession | CloudChatSession) => {
+    deleteChatSession(target.id);
+    if (useCloud) {
+      await deleteCloudSessionRecords((target as CloudChatSession).records);
+    }
+    if (activeId === target.id) setActiveId("");
     refresh();
   };
 
@@ -78,18 +83,20 @@ const History = () => {
         if (useCloud) await clearCloudChatRecords();
         setActiveId("");
         setSessions([]);
-        setCloudRecords([]);
+        setCloudSessions([]);
         setUseCloud(false);
         Taro.showToast({ title: "已清空", icon: "success" });
       },
     });
   };
 
-  const isEmpty = cloudRecords.length === 0 && sessions.length === 0;
-  const rowsOf = (r: CloudChatRecord) => [
-    { role: "user" as const, content: r.userQuery },
-    { role: "assistant" as const, content: r.aiReply },
-  ];
+  const isEmpty = cloudSessions.length === 0 && sessions.length === 0;
+  // 整段会话展开为按时间升序的多轮气泡行
+  const rowsOf = (s: CloudChatSession) =>
+    s.records.flatMap((r: CloudChatRecord) => [
+      { role: "user" as const, content: r.userQuery },
+      { role: "assistant" as const, content: r.aiReply },
+    ]);
   return (
     <View className="history">
       <View className="history__header">
@@ -137,17 +144,17 @@ const History = () => {
               还没有对话记录，去学习页聊聊吧 ✨
             </Text>
           ) : useCloud ? (
-            cloudRecords.map((r) => (
+            cloudSessions.map((s) => (
               <HistoryCard
-                key={r._id}
-                title={titleOf(r.userQuery)}
-                timeText={formatTime(r.timestamp)}
-                rows={rowsOf(r)}
+                key={s.id}
+                title={titleOf(s.title)}
+                timeText={formatTime(s.updatedAt)}
+                rows={rowsOf(s)}
                 showContinue={false}
-                expanded={activeId === r._id}
-                onOpen={() => onOpen(r._id as string)}
-                onToggle={() => toggle(r._id as string)}
-                onDelete={() => onDelete(r._id as string)}
+                expanded={activeId === s.id}
+                onOpen={() => onOpen(s.id)}
+                onToggle={() => toggle(s.id)}
+                onDelete={() => onDelete(s)}
               />
             ))
           ) : (
@@ -165,7 +172,7 @@ const History = () => {
                 onOpen={() => onOpen(s.id)}
                 onToggle={() => toggle(s.id)}
                 onContinue={() => onContinue(s.id)}
-                onDelete={() => onDelete(s.id)}
+                onDelete={() => onDelete(s)}
               />
             ))
           )}

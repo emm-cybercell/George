@@ -1,8 +1,7 @@
 import { useRef, useState } from "react";
 import { View, Text } from "@tarojs/components";
 import Taro, { useDidHide, useLoad, useRouter } from "@tarojs/taro";
-import IdleState from "@/components/Learn/IdleState";
-import ThinkingState from "@/components/Learn/ThinkingState";
+import { IdleState, ThinkingState } from "@/components/Learn/ChattingState/states";
 import ChattingState from "@/components/Learn/ChattingState";
 import ChatInput from "@/components/ChatInput";
 import MediaPanel from "@/components/Learn/MediaPanel";

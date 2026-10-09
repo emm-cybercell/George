@@ -53,7 +53,7 @@
   &__mark-all {
     z-index: 1;
     font-size: 24px;
-    color: #8b5cf6;
+    color: var(--blue);
     padding: 10px 8px;
     cursor: pointer;
 
@@ -90,8 +90,9 @@
 
     &--active {
       color: #ffffff;
-      background: #8b5cf6;
-      border-color: #8b5cf6;
+      background: var(--grad-primary);
+      border-color: transparent;
+      box-shadow: var(--shadow-primary);
     }
   }
 
@@ -127,9 +128,10 @@
   gap: 16px;
   margin-bottom: 16px;
   padding: 24px;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  border: var(--border-soft);
+  box-shadow: var(--shadow-card);
   transition: transform 0.2s ease;
 
   &:active {
@@ -154,8 +156,8 @@
     align-items: center;
     justify-content: center;
     font-size: 36px;
-    background: #f8fafc;
-    border-radius: 18px;
+    background: var(--icon-bg);
+    border-radius: var(--radius-md);
     flex-shrink: 0;
   }
 

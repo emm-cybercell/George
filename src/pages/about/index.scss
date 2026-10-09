@@ -1,6 +1,6 @@
 .about {
   min-height: 100vh;
-  background: #f8f9fa;
+  background: var(--bg-page);
   padding-bottom: 40px;
   box-sizing: border-box;
 
@@ -12,7 +12,7 @@
     display: block;
     font-size: 32px;
     font-weight: 700;
-    color: #1f2430;
+    color: var(--text-1);
     margin: 8px 24px 20px;
   }
 }
@@ -22,9 +22,9 @@
   flex-direction: column;
   margin: 0 24px 24px;
   padding: 36px 28px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
+  border-radius: var(--radius-lg);
+  background: var(--grad-primary);
+  box-shadow: var(--shadow-primary);
 
   &__mark {
     font-size: 56px;
@@ -47,9 +47,10 @@
   flex-direction: column;
   margin: 0 24px 24px;
   padding: 28px;
-  border-radius: 20px;
-  background: #ffffff;
-  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
+  border-radius: var(--radius-md);
+  background: var(--card-bg);
+  border: var(--border-soft);
+  box-shadow: var(--shadow-card);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -63,8 +64,8 @@
     align-self: flex-start;
     padding: 6px 16px;
     font-size: 22px;
-    color: #8b5cf6;
-    background: #f3eeff;
+    color: var(--violet);
+    background: var(--violet-bg);
     border-radius: 999px;
     margin-bottom: 12px;
   }
@@ -72,14 +73,14 @@
   &__title {
     font-size: 32px;
     font-weight: 700;
-    color: #1f2430;
+    color: var(--text-1);
     margin-bottom: 12px;
   }
 
   &__desc {
     font-size: 26px;
     line-height: 1.7;
-    color: #6b7280;
+    color: var(--text-2);
   }
 }
 
@@ -88,9 +89,10 @@
   align-items: center;
   margin: 0 24px 20px;
   padding: 28px;
-  border-radius: 20px;
-  background: #ffffff;
-  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
+  border-radius: var(--radius-md);
+  background: var(--card-bg);
+  border: var(--border-soft);
+  box-shadow: var(--shadow-card);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -118,19 +120,19 @@
   &__title {
     font-size: 32px;
     font-weight: 700;
-    color: #1f2430;
+    color: var(--text-1);
   }
 
   &__en {
     margin-left: 12px;
     font-size: 22px;
-    color: #9ca3af;
+    color: var(--text-3);
   }
 
   &__desc {
     margin-top: 8px;
     font-size: 24px;
-    color: #6b7280;
+    color: var(--text-2);
   }
 }
 
@@ -139,8 +141,8 @@
   flex-direction: column;
   margin: 0 24px 20px;
   padding: 24px 28px;
-  border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -165,7 +167,7 @@
   &__zone {
     font-size: 28px;
     font-weight: 700;
-    color: #1f2430;
+    color: var(--text-1);
   }
 
   &__tags {

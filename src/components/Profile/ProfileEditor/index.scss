@@ -28,14 +28,14 @@
     text-align: center;
     font-size: 34px;
     font-weight: 700;
-    color: #1f2430;
+    color: var(--text-1);
   }
 
   &__subtitle {
     display: block;
     margin-top: 12px;
     font-size: 24px;
-    color: #6b7280;
+    color: var(--text-2);
     text-align: center;
   }
 
@@ -50,7 +50,7 @@
     height: 128px;
     border-radius: 50%;
     overflow: hidden;
-    background: #f3f4f6;
+    background: var(--icon-bg);
     flex-shrink: 0;
 
     &--empty {
@@ -67,7 +67,7 @@
     font-size: 26px;
     font-weight: 600;
     color: #fff;
-    background: #8b5cf6;
+    background: var(--grad-primary);
     border-radius: 999px;
     box-sizing: border-box;
 
@@ -88,13 +88,13 @@
 
   &__loading-box {
     padding: 32px 48px;
-    background: #fff;
-    border-radius: 20px;
+    background: var(--card-bg);
+    border-radius: var(--radius-md);
   }
 
   &__loading-text {
     font-size: 28px;
-    color: #1f2430;
+    color: var(--text-1);
   }
 
   &__field {
@@ -105,7 +105,7 @@
     display: block;
     font-size: 26px;
     font-weight: 600;
-    color: #6b7280;
+    color: var(--text-2);
     margin-bottom: 16px;
   }
 
@@ -113,7 +113,7 @@
     height: 88px;
     padding: 0 24px;
     font-size: 28px;
-    color: #1f2430;
+    color: var(--text-1);
     background: #f3f4f6;
     border-radius: 16px;
   }
@@ -127,16 +127,16 @@
   &__option {
     padding: 20px 28px;
     font-size: 26px;
-    color: #1f2430;
-    background: #f3f4f6;
+    color: var(--text-1);
+    background: var(--icon-bg);
     border-radius: 16px;
     transition: all 0.2s ease;
     cursor: pointer;
 
     &--active {
-      color: #8b5cf6;
-      background: #f3eeff;
-      border: 2px solid #8b5cf6;
+      color: var(--blue);
+      background: var(--blue-bg);
+      border: 2px solid #3b82f6;
     }
   }
 
@@ -152,8 +152,8 @@
     font-size: 30px;
     font-weight: 600;
     text-align: center;
-    color: #6b7280;
-    background: #f3f4f6;
+    color: var(--text-2);
+    background: var(--icon-bg);
     border-radius: 999px;
     transition:
       transform 0.2s ease,
@@ -173,7 +173,7 @@
     font-weight: 600;
     text-align: center;
     color: #ffffff;
-    background: #8b5cf6;
+    background: var(--grad-primary);
     border-radius: 999px;
     transition:
       transform 0.2s ease,

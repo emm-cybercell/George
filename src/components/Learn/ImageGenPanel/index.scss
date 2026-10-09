@@ -62,9 +62,9 @@
     cursor: pointer;
 
     &--active {
-      color: #8b5cf6;
-      background: #f3eeff;
-      border-color: #8b5cf6;
+      color: var(--blue);
+      background: var(--blue-bg);
+      border-color: #3b82f6;
       font-weight: 600;
     }
   }
@@ -87,7 +87,7 @@
 
     &--filled {
       border-style: solid;
-      border-color: #8b5cf6;
+      border-color: #3b82f6;
     }
   }
 
@@ -131,8 +131,8 @@
     font-size: 30px;
     font-weight: 600;
     text-align: center;
-    color: #6b7280;
-    background: #f3f4f6;
+    color: var(--text-2);
+    background: var(--icon-bg);
     border-radius: 999px;
     transition:
       transform 0.2s ease,
@@ -152,7 +152,7 @@
     font-weight: 700;
     text-align: center;
     color: #ffffff;
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    background: var(--grad-primary);
     border-radius: 999px;
     transition:
       transform 0.2s ease,

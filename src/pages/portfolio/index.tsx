@@ -7,7 +7,7 @@ import {
   queryCreativeWorks,
   saveCreativeWork,
   uploadMediaToCloud,
-} from "@/api/works";
+} from "@/api/media";
 import type { CreativeWork } from "@/types";
 import "./index.scss";
 

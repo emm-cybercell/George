@@ -1,6 +1,6 @@
 import { View, Text } from "@tarojs/components";
 import Taro from "@tarojs/taro";
-import { uploadMediaToCloud } from "@/api/works";
+import { uploadMediaToCloud } from "@/api/media";
 import "./index.scss";
 
 interface MediaPanelProps {
