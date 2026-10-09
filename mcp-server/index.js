@@ -22,7 +22,7 @@ const {
 const {
   TOOL_DEFINITIONS,
   TOOL_EXECUTORS,
-} = require("../cloudfunctions/deepseekProxy/tools/index");
+} = require("../cloudfunctions/deepseekProxy/tools");
 
 const SERVER_INFO = {
   name: "george-tutor-tools",

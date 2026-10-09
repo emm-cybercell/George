@@ -3,7 +3,7 @@
  * - 定义（schema，发给模型）与执行（handler，代码实现）统一注册
  * - ReAct 循环只依赖本模块，不感知具体工具 → 新增工具零侵入
  */
-const { TOOL_DEFINITIONS, TOOL_EXECUTORS } = require("../../tools/index");
+const { TOOL_DEFINITIONS, TOOL_EXECUTORS } = require("../../tools");
 
 class ToolRegistry {
   constructor() {

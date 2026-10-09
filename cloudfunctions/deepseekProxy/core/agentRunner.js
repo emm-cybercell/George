@@ -4,7 +4,7 @@
  *   generateText(maxSteps) 由 SDK 自动执行工具循环（旧 callOpenAI 接口已下线）
  * - 最大循环 3 轮（防死循环与超时）；工具执行失败回填给模型自主降级，绝不中断
  */
-const { TOOL_DEFINITIONS, TOOL_EXECUTORS } = require("../tools/index");
+const { TOOL_DEFINITIONS, TOOL_EXECUTORS } = require("../tools");
 
 const MAX_LOOPS = 3;
 

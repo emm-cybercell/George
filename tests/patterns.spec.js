@@ -5,7 +5,7 @@
  */
 const { test } = require("node:test");
 const assert = require("node:assert");
-const { runPattern, PATTERNS } = require("../cloudfunctions/deepseekProxy/patterns/index");
+const { runPattern, PATTERNS } = require("../cloudfunctions/deepseekProxy/patterns");
 const { scriptedLLM, stubRegistry, BASE } = require("./helpers");
 
 const MSGS = [{ role: "user", content: "帮我做数学作业第3题" }];

@@ -2,13 +2,13 @@
  * ReAct Loop：手写 Agent 循环（自研框架核心，对应 hello-agents Ch4/Ch7）
  * - Reason → Act → Observe 显式循环：模型每轮输出对代码完全透明，全程产出 trace
  * - 与 SDK 托管循环（core/agentRunner.js）的区别：循环控制、终止判定、观察回填
- *   均由本文件显式实现 → 可单测、可讲、可扩展范式（patterns/）
+ *   均由本文件显式实现 → 可单测、可讲、可扩展范式（patterns.js）
  * - 工具执行异常由 registry.invoke 转为 error 观察回填模型，自主降级不中断
  * - 双重预算：maxSteps 步数上限 + 整体时间预算（云函数超时 60s 内强制返回）
+ * - 情景记忆召回内聚在本文件（唯一消费者是循环入口，无需独立模块）
  */
 const { createLLM } = require("./llm");
 const { createDefaultRegistry } = require("./registry");
-const { recallRelevantDigests } = require("./memory");
 
 /** 单次请求最大模型轮数（与 SDK maxSteps=3 对齐，成本可控） */
 const MAX_STEPS = 3;
@@ -29,6 +29,39 @@ function parseArgs(raw) {
     return JSON.parse(raw || "{}");
   } catch {
     return {};
+  }
+}
+
+/**
+ * 情景记忆召回（文本锚点版）：以最近用户输入为锚，学习小结话题被文本命中则计分，
+ * 取前 topN 条注入 system 层。零额外模型调用；失败静默返回空（可用性优先）
+ */
+async function recallRelevantDigests(db, openid, recentText, topN = 2) {
+  try {
+    const text = String(recentText || "");
+    if (!text || !db) return [];
+    const res = await db
+      .collection("learning_digests")
+      .where({ _openid: openid })
+      .orderBy("createdAt", "desc")
+      .limit(20)
+      .get();
+    return (res.data || [])
+      .map((d) => ({
+        summary: String(d.summary || "").slice(0, 60),
+        topics: d.topics || [],
+        createdAt: d.createdAt,
+      }))
+      .map((d) => ({
+        ...d,
+        score: d.topics.filter((t) => t && text.includes(t)).length,
+      }))
+      .filter((d) => d.score > 0)
+      .sort((a, b) => b.score - a.score || b.createdAt - a.createdAt)
+      .slice(0, topN)
+      .map((d) => `${d.summary}（话题：${d.topics.join("/")}）`);
+  } catch {
+    return [];
   }
 }
 
